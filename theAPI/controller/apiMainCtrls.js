@@ -291,6 +291,8 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 	var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
 	var reqBody = req.body;
 	var template = {};
+  var k;
+  var v;
 	var templateMain = {email: 'required',
 	                      confirmEmail: 'required', 
 	                      password: 'required', 
@@ -314,6 +316,9 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
           template[reqBodyKey] = 'required';
           template['expectedResponse'] = 'false';
+
+          k = reqBodyKey;
+          v = reqBody[reqBodyKey];
 
 					var testerJOB = {firstname: '      AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz       '};
 					var testerJOB2 = {displayname: 'Nyc123456'};
@@ -360,8 +365,8 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
                   }
 
-                  /*
-                  user[reqBodyKey] = reqBody[reqBodyKey];
+                  user[k] = v;
+
                   user.save(function(err) {
                   
                     if (err) {
@@ -375,10 +380,7 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
                     }
                   
                   });
-                  */
-
-                  sendJSONresponse(res, 201, { 'response': 'success' });
-								
+	
 								});
 						  
 						}else{
