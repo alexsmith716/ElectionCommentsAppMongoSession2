@@ -21,6 +21,7 @@ block content
         .modal-header
           button.close(type="button" data-dismiss="modal") &times;
           h4.modal-title Edit Profile Update Alert
+
         .modal-body
 
           .editProfileModalAlertSuccess.hide(style="margin-top: 10px; margin-bottom: 22px;")
@@ -49,7 +50,7 @@ block content
 
         .modal-body
 
-          form(action="https://localhost:3000/api/evaluateuserprofile", id="editProfileForm", name="editProfileForm", method="post", enctype="application/x-www-form-urlencoded")
+          form(action="https://localhost:3000/api/evaluateuserprofile", id="editProfileForm", name="editProfileForm", method="put", enctype="application/x-www-form-urlencoded")
 
             fieldset
 
@@ -105,7 +106,8 @@ block content
 
           .row
             .col-xs-12
-              p #{csrfToken}
+              p.small CSRF token: <br> #{csrfToken}
+              p.small user profile!
 
               - if (error != undefined)
                 .alert.alert-danger(role="alert") #{error}

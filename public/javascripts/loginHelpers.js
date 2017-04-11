@@ -38,6 +38,7 @@ var helper = {
             $("#forgotPasswordForm").get(0).reset();
             $('#forgotPassword').removeAttr('disabled');
             $('#forgotPasswordForm .loginerror').removeClass('show').html('');
+            $('#forgotPasswordForm .formerror').removeClass('show');
             $('#forgotPassword').removeClass('has-error');
             $('.modalAlertWarning').hide();
             $('.modalOkayBtn').hide();
@@ -79,6 +80,7 @@ var helper = {
             data['_csrf'] = $('meta[name="csrf-token"]').attr('content');
             
             $.ajax({
+                
                 rejectUnauthorized: false,
                 url: serviceUrl,
                 type: 'POST',
@@ -135,6 +137,7 @@ var helper = {
             e.preventDefault();
             showLoading();
 
+            $('#loginForm .formerror').removeClass('show').addClass('hide');
             $('#loginForm .loginerror').removeClass('show');
             $('#loginForm .form-control').removeClass('has-error');
 
@@ -175,11 +178,14 @@ var helper = {
 
                         } else {
 
-                            $('#loginForm .form-control').addClass('has-error');
-                            $('#loginForm .loginerror').addClass('show');
-                            $('#loginForm .loginerror').html('Email and Password don\'t match. Please try again.');
-
-                            //helper.handleErrorResponse(data.validatedData);
+                            if(data.validatedData){
+                                $('#loginForm .form-control').addClass('has-error');
+                                $('#loginForm .loginerror').addClass('show');
+                                $('#loginForm .loginerror').html('Email and Password don\'t match. Please try again.');
+                                //helper.handleErrorResponse(data.validatedData);
+                            }else{
+                                $('#loginForm .formerror').removeClass('hide').addClass('show');
+                            }
 
                             hideLoading();
                             return false;
@@ -213,6 +219,7 @@ var helper = {
         $("#forgotPasswordForm").get(0).reset();
         $('#forgotPassword').removeAttr('disabled');
         $('#forgotPasswordForm .loginerror').removeClass('show').html('');
+        $('#forgotPasswordForm .formerror').removeClass('show');
         $('#forgotPassword').removeClass('has-error');
         $('.modalAlertWarning').hide();
         $('.modalOkayBtn').hide();

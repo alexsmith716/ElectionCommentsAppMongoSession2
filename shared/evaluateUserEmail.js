@@ -2,8 +2,6 @@ var User = require('../theAPI/model/userSchema.js');
 
 module.exports = function (email, expectingARegisteredEmail, callback) {
 
-  console.log('###### > evaluateUserEmail.js > IN:',email)
-
   User.findOne( { email: email } ).exec(function(err, user) {
     
     if (err) {

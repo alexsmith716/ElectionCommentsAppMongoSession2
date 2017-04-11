@@ -111,6 +111,11 @@ block content
                   .text-danger.hide.loginerror Email and Password are required. Please try again.
 
               .row
+                .col-xs-12(style="margin-top:8px;")
+                  .text-danger.hide.formerror
+                    strong Login failed!
+
+              .row
                 .col-xs-12(style="margin-top:12px;")
                   i
                     a(href="#" id="forgotPasswordAnchor", onclick="helper.clearForgotPassword();") Forgot your password?
