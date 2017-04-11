@@ -75,7 +75,7 @@ var helper = {
             e.preventDefault();
             showLoading();
 
-            $('.formerror').removeClass('show');
+            $('#signUpForm .formerror').removeClass('show').addClass('hide');
             var data = helper.postData();
             var constrainedFormElements = document.getElementById('signUpForm').querySelectorAll('[required]');
             var serviceUrl = $(this).attr('action');
@@ -115,15 +115,19 @@ var helper = {
                         $('#signUpForm .form-control').removeClass('has-error');
                         $('#signUpForm .form-group .error').removeClass('show').addClass('hide');
                         $('#signUpForm .form-group .text-danger').removeClass('show').addClass('hide');
-                        $('.formerror').removeClass('show').addClass('hide');
+                        $('#signUpForm .formerror').removeClass('show').addClass('hide');
 
                         location.href = data.redirect;
 
                     } else {
 
-                        $('#signUpForm').data('validatedData', data.validatedData);
-                        helper.handleErrorResponse(data.validatedData);
-        
+                        if(data.validatedData){
+                            $('#signUpForm').data('validatedData', data.validatedData);
+                            helper.handleErrorResponse(data.validatedData);
+                        }else{
+                            $('#signUpForm .formerror').removeClass('hide').addClass('show');
+                        }
+                        
                         hideLoading();
                         return false;
                     }

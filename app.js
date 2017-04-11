@@ -143,12 +143,13 @@ app.use(function(req, res, next){
   app.locals.notifyMessage = null;
   app.locals.notifyMessageType = null;
 
+  // return next(createError(401, 'Please login to view this page.'));
+
   if(reqBody['badInput'] || reqQuery['badInput'] || reqParams['badInput']){
 
     var err = new Error('Bad Request');
     err.status = 400;
 
-    // return next(createError(401, 'Please login to view this page.'));
     return next(err);
 
   }else{
@@ -165,8 +166,6 @@ app.use(function(req, res, next){
 
   res.locals.currentUser = req.user;
   res.locals.currentURL = req.url;
-
-  console.log('########## app.js > req.user: ', req.user)
 
   //if(res.locals.currentUser){
     //req.session.paginateFrom = res.locals.sortDocsFrom;

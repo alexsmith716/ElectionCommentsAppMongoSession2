@@ -64,7 +64,7 @@ var helper = {
 
         $('#editProfileForm').on('submit', function(e) {
 
-            console.log('#editProfileForm > SUBMIT ++1');
+            console.log('#editProfileForm > SUBMIT +++');
 
             e.preventDefault();
 
@@ -82,8 +82,10 @@ var helper = {
             var pathName = whichformdataid.replace(/-/g, '');
             
             if(!userInput){
-                console.log('#editProfileForm > BAD FORM');
+
+                console.log('#editProfileForm > BAD FORM: ', userInput);
                 return false;
+
             }
 
             console.log('#editProfileForm > GOOD FORM');
@@ -97,57 +99,67 @@ var helper = {
 
             $('.loading').show();
 
-            data = {
-                pathName: pathName,
-                pathNameData: userInput,
-                expectedResponse: 'false',
-                _csrf: $('meta[name="csrf-token"]').attr('content')
-            };
+            data[pathName] = userInput;
+            data['_csrf'] = $('meta[name="csrf-token"]').attr('content');
 
             $.ajax({
+
                 rejectUnauthorized: false,
                 url: serviceUrl,
                 type: 'PUT',
                 data: JSON.stringify(data),
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
-                accept: 'application/json',
+                accepts: 'application/json',
 
                 success: function(data, status, xhr) {
-                    if (data.message === 'success') {
-                        console.log('#editProfileFormX > ajax > SUCCESS > SUCCESS');
+
+                    if (data.response === 'success') {
+
+                        console.log('#editProfileForm > ajax > SUCCESS > SUCCESS');
+
                         $('.loading').hide();
                         $('#editProfileFormModal').modal('hide');
                         $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re '+labelText+' has been successfully edited!');
                         $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show');
                         $('#editProfileModalAlert').modal('show');
                         $('.'+whichformdataid).text(userInput);
+
                     } else {
-                        console.log('#editProfileFormX > ajax > SUCCESS > ERROR');
-                        $('.editProfileFormError').html('Could not edit your '+labelText+'.');
+
+                        console.log('#editProfileForm > ajax > SUCCESS > ERROR');
+
+                        if(data.validatedData){
+
+                            $('.editProfileFormError').html('Could not edit your '+labelText+'.');
+ 
+                            helper.handleErrorResponse(data.validatedData);
+
+                        }else{
+
+                            $('.editProfileFormError').html('Could not edit your '+labelText+'.');
+
+                        }
+                        
                         $('.editProfileFormError').addClass('show');
                         $(activeElem).addClass('has-error');
+
                         $('.loading').hide();
                         return false;
                     }
+
                 },
                 error: function(xhr, status, error) {
-                    $('.loading').hide();
 
                     var parsedXHR = JSON.parse(xhr.responseText);
 
-                    console.log('#editProfileFormX > ajax > ERROR > ERROR > parsedXHR: ', parsedXHR);
+                    location.href = parsedXHR.redirect;
 
-                    if(parsedXHR.type === 'token'){
-                        location.href = parsedXHR.redirect;
-                    }else{
-                        $('.editProfileFormError').html('Could not edit your '+labelText+'. Try again or contact customer service.');
-                        $('.editProfileFormError').addClass('show');
-                        $(activeElem).addClass('has-error');
-                    }
                     return false;
+
                 }
             });
+
         });
 
         /*
@@ -416,6 +428,41 @@ var helper = {
           keyboard: false,
           backdrop: 'static'
         })
+    },
+
+    handleErrorResponse: function(data) {
+
+        Object.keys(data).forEach(function(p) {
+
+            switch (p) {
+                
+                case 'email':
+                    console.log('### handleErrorResponse: ', p, ' :: ', data[p]);
+                    break;
+
+                case 'confirmEmail':
+                    console.log('### handleErrorResponse: ', p, ' :: ', data[p]);
+                    break;
+   
+                case 'password':
+                    console.log('### handleErrorResponse: ', p, ' :: ', data[p]);
+                    break;
+
+                case 'confirmPassword':
+                    console.log('### handleErrorResponse: ', p, ' :: ', data[p]);
+                    break;
+       
+                case 'firstname':
+                case 'lastname':
+                case 'city':
+                    console.log('### handleErrorResponse: ', p, ' :: ', data[p]);
+                    break;
+
+                case 'state':
+                    console.log('### handleErrorResponse: ', p, ' :: ', data[p]);
+                    break;
+            }
+        });
     },
 
 }
