@@ -19,7 +19,7 @@ var MongoStore  = require('connect-mongo')(session);
 var setUpAuthentication = require('./theAPI/model/authentication');
 var serverRoutes  = require('./theServer/routes/serverRoutes');
 var apiRoutes   = require('./theAPI/routes/apiRoutes');
-var createError   = require('http-errors')
+var createError   = require('http-errors');
 
 require('./theAPI/model/dbConnector');
 var sanitize  = require('./shared/sanitizeInput.js');
