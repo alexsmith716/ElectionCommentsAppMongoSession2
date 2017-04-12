@@ -270,7 +270,12 @@ var helper = {
 
         console.log('evaluateInput > whichFormElementType:', whichFormElementType)
 
+        var s = document.getElementById('state');
+
         var whichTypeVal = whichFormElementType.val();
+        
+        whichType === 'select' ? whichTypeVal = s.options[s.selectedIndex].text : null;
+
         whichTypeVal = whichTypeVal.trim();
         var elementTitle = whichFormElementType.attr('title');
         

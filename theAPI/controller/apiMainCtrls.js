@@ -290,9 +290,9 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
 	var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
 	var reqBody = req.body;
+  var reqBodyProp;
+  var reqBodyValue;
 	var template = {};
-  var k;
-  var v;
 	var templateMain = {email: 'required',
 	                      confirmEmail: 'required', 
 	                      password: 'required', 
@@ -302,55 +302,46 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 	                      city: 'required', 
 	                      state: 'required'};
 
-	if(Object.keys(req.body).length > 2){
+  if(Object.keys(req.body).length == 2){
 
-	  sendJSONresponse(res, 400, errResponse);
+    for (var p in reqBody){
 
-	}else{
+      if(p !== '_csrf') {
 
-		for (var reqBodyKey in reqBody){
+        reqBodyProp = p;
+        reqBodyValue = reqBody[reqBodyProp];
 
-			if(reqBodyKey !== '_csrf') {
+        if(reqBodyProp in templateMain){
 
-				if(reqBodyKey in templateMain){
-
-          template[reqBodyKey] = 'required';
+          template[reqBodyProp] = 'required';
           template['expectedResponse'] = 'false';
 
-          k = reqBodyKey;
-          v = reqBody[reqBodyKey];
+          serverSideValidation(req, res, template, function(validatedResponse) {
 
-					var testerJOB = {firstname: '      AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz       '};
-					var testerJOB2 = {displayname: 'Nyc123456'};
-					// req.body = testerJOB;
+            var validationErrors = false;
 
+            if(validatedResponse.status === 'err') {
 
-					serverSideValidation(req, res, template, function(validatedResponse) {
+              return next(validatedResponse.message);
 
-						var validationErrors = false;
+            }else{
 
-						if(validatedResponse.status === 'err') {
-
-						  return next(validatedResponse.message);
-
-						}else{
-
-							for(var prop in validatedResponse) {
+              for(var prop in validatedResponse) {
 
                 // needs to be tested 
                 //validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'
-								if(validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid'){
+                if(validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid'){
 
-								  validationErrors = true;
-								  break;
+                  validationErrors = true;
+                  break;
 
-								}
-						  }
-						}
+                }
+              }
+            }
 
-						if(!validationErrors){
+            if(!validationErrors){
 
-								User.findById(res.locals.currentUser.id).exec(function(err, user) {
+                User.findById(res.locals.currentUser.id).exec(function(err, user) {
 
                   if(err){
 
@@ -365,7 +356,18 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
                   }
 
-                  user[k] = v;
+                  if(reqBodyProp === 'state'){
+
+                    var stateInit = stateNamer(req, res, reqBodyValue);
+
+                    reqBodyValue = {
+                      full: reqBodyValue,
+                      initials: stateInit
+                    };
+
+                  }
+
+                  user[reqBodyProp] = reqBodyValue;
 
                   user.save(function(err) {
                   
@@ -380,26 +382,28 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
                     }
                   
                   });
-	
-								});
-						  
-						}else{
+          
+                });
+              
+            }else{
 
-						  sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
+              sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
 
-						}
-					});
+            }
+          });
 
-				}else{
+        }
+      }
+      break;
+    }
 
-				  sendJSONresponse(res, 400, errResponse);
+  }else{
 
-				}
+    sendJSONresponse(res, 400, errResponse);
 
-			}
-		}
-	}
+  }
 };
+
 
 
 
@@ -633,7 +637,7 @@ module.exports.ajaxSignUpUser = function(req, res, next){
 
       var newUser = new User();
 
-      var stateFull = stateNamer(req, res, req.body.state, 'full');
+      var stateFull = stateNamer(req, res, req.body.state);
 
       req.body.state = {
         full: stateFull,
