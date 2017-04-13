@@ -284,9 +284,28 @@ module.exports.ajaxEvaluateRegisteredUser = function(req, res, next) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
+module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
+
+  console.log('####### > ajaxUserProfileEmailPass +++++++++++++')
+
+  var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
+  var reqBody = req.body;
+  var reqBodyProp;
+  var reqBodyValue;
+  var template = {};
+  var templateMain = {email: 'required',
+                        confirmEmail: 'required', 
+                        password: 'required', 
+                        confirmPassword: 'required'};
+
+};
 
 
+
+// AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
 module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
+
+  console.log('####### > ajaxEvaluateUserProfile +++++++++++++')
 
 	var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
 	var reqBody = req.body;
@@ -320,6 +339,8 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
             var validationErrors = false;
 
+            console.log('####### > ajaxEvaluateUserProfile > validatedResponse: ', validatedResponse)
+
             if(validatedResponse.status === 'err') {
 
               return next(validatedResponse.message);
@@ -327,6 +348,8 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
             }else{
 
               for(var prop in validatedResponse) {
+
+                console.log('####### > ajaxEvaluateUserProfile > validatedResponse[prop]: ', validatedResponse[prop])
 
                 // needs to be tested 
                 //validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'
@@ -390,6 +413,7 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
               sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
 
             }
+            
           });
 
         }

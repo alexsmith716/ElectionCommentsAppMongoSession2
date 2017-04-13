@@ -80,10 +80,12 @@ var helper = {
 
             var userInput = helper.evaluateInput(whichformdataid, whichFormDataType);
             var pathName = whichformdataid.replace(/-/g, '');
+            var checkConstraints = $('#'+activeElem)[0].checkValidity();
+            console.log('#editProfileForm > checkConstraints: ', activeElem, ' :: ', checkConstraints);
             
-            if(!userInput){
+            if(!checkConstraints){
 
-                console.log('#editProfileForm > BAD FORM: ', userInput);
+                console.log('#editProfileForm > BAD FORM: ', checkConstraints);
                 return false;
 
             }
@@ -162,88 +164,15 @@ var helper = {
 
         });
 
-        /*
-        $('#submitEditProfileBtn').on('click', function(e) {
-            console.log('#submitEditProfileBtn ++++')
-            e.preventDefault();
-            var serviceUrl;
-            var dataObject = {};
-            var data = {};
-            var editedUserProfileID;
-            var activeElem;
-
-            var whichformdataid = $('#editProfileForm').data('whichformdataid');
-            var whichFormDataType = $('#editProfileForm').data('whichformdatatype');
-            var labelText = helper.makeTitleFromElementID(whichformdataid);
-
-            whichFormDataType === 'select' ? activeElem = $('#state') : activeElem = $('#editProfileInputElement');
-
-            //var dataElement = $('div[data-id^='+whichformdataid+']');
-            var userInput = helper.evaluateInput(whichformdataid, whichFormDataType);
-            var pathName = whichformdataid.replace(/-/g, '');
-
-            console.log('TheModal > submitEditProfileBtn > pathName: ', pathName); 
-            console.log('TheModal > submitEditProfileBtn > userInput: ', userInput);
-            console.log('TheModal > submitEditProfileBtn > whichFormDataType: ', whichFormDataType);
-            
-            // TheModal > submitEditProfileBtn > pathName:  email, state, firstname, password
-            // TheModal > submitEditProfileBtn > userInput:  bbb@bbb.com, Alaska, Joe, 555nnn
-            // TheModal > submitEditProfileBtn > whichFormDataType:  text, email, select, password
-            
-            if(!userInput){
-                console.log('submitEditProfileBtn > BAD FORM');
-                return false;
-            }else{
-                console.log('submitEditProfileBtn > GOOD FORM');
-                $('.loading').show();
-
-                serviceUrl = 'https://localhost:3000/api/evaluateuserprofile';
-
-                data = {
-                    pathName: pathName,
-                    pathNameData: userInput,
-                    expectedResponse: 'false'
-                };
-           
-                $.ajax({
-                    rejectUnauthorized: false,
-                    url: serviceUrl,
-                    type: 'PUT',
-                    data: JSON.stringify(data),
-                    dataType: 'json',
-                    contentType: 'application/json; charset=utf-8',
-
-                    success: function(data, status, xhr) {
-                        if (data.message === 'success') {
-                            console.log('submitEditProfileBtn > ajax > success > success');
-                            $('.loading').hide();
-                            $('#editProfileFormModal').modal('hide');
-                            $('#editProfileModalAlert .editProfileModalAlertSuccess strong').text('You\'re '+labelText+' has been successfully edited!');
-                            $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show').removeClass('hide');
-                            $('#editProfileModalAlert').modal('show');
-                            $('.'+whichformdataid).text(userInput);
-                        } else {
-                            console.log('submitEditProfileBtn > ajax > success > error');
-                            $('.editProfileFormError').text('editProfileForm .editProfileFormError 111');
-                            $('.editProfileFormError').addClass('show').removeClass('hide');
-                            $(activeElem).removeClass("valid").addClass("invalid");
-                            $('.loading').hide();
-                            return false;
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.log('submitEditProfileBtn > ajax > error > error');
-                        $('.editProfileFormError').text('Could not edit your '+labelText+'. Try again or contact customer service.');
-                        $('.editProfileFormError').addClass('show').removeClass('hide');
-                        $(activeElem).removeClass("valid").addClass("invalid");
-                        $('.loading').hide();
-                        return false;
-                    }
-                });
-            }
-        });
-        */
     },
+
+
+    pattern: {
+        email: /^\S+@\S+\.\S+/,
+        password: /^\S{4,}$/,
+        basictext: /^(?=\s*\S)(.{1,35})$/
+    },
+
 
     makeTitleFromElementID: function(whichID) {
         whichID = whichID.replace(/-/g, ' ');
@@ -251,9 +180,13 @@ var helper = {
         return labelText;
     },
 
-    // whichFormDataID:  first-name , whichFormDataType:  text
-    // whichFormDataID:  state ,      whichFormDataType:  select
-    // whichFormDataID:  email/password ,      whichFormDataType:  email/password
+
+    validateEmailValue: function(email) {
+        var pattern = helper.pattern.email;
+        return pattern.test(email);
+    },
+
+
     evaluateInput: function(whichID, whichType) {
         console.log('evaluateInput +++++')
         var emailPattern = /\S+@\S+\.\S+/;
@@ -339,17 +272,7 @@ var helper = {
     doEditProfileModal: function(editProfileFormModalID, editProfileFormID, editBtnClicked) {
         console.log('doEditProfileModal ++++++++');
 
-        var voo = 'aaa';
-        var emailPattern = /\S+@\S+\.\S+/;
-        var passwordPattern = /^\S{4,}$/;
-        var alphaStringPattern = /^[a-zA-Z]+$/;
-        var userNamePattern = /^[a-zA-Z0-9_]{4,21}$/;
-
-        var vqq = userNamePattern.test(voo);
-        console.log('doEditProfileModal > userNamePattern.test: ', vqq);
-
         var editBtnClickedParentElem = $(editBtnClicked).parent();
-
         var dataID = editBtnClickedParentElem.data('id');
         var currentFormType = editBtnClickedParentElem.data('formelementtype');
         var labelText = helper.makeTitleFromElementID(dataID);
@@ -381,48 +304,34 @@ var helper = {
             });
 
             switch (dataID) {
+
                 case 'first-name':
                     $('#editProfileInputElement').attr({ 
-                        maxlength: '21',
-                        title: 'Please type a First Name'
+                        pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                        title: 'Please type a valid First Name. Maximum 35 characters'
                     });
                     break;
+
                 case 'last-name':
                     $('#editProfileInputElement').attr({ 
-                        maxlength: '31',
-                        title: 'Please type a Last Name'
+                        pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                        title: 'Please type a valid Last Name. Maximum 35 characters'
                     });
                     break;
+
                 case 'city':
                     $('#editProfileInputElement').attr({ 
-                        maxlength: '31',
-                        title: 'Please type a City'
+                        pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                        title: 'Please type a valid City. Maximum 35 characters'
                     });
                     break;
-                case 'email':
-                    $('#editProfileInputElement').attr({ 
-                        maxlength: '31',
-                        title: 'Please type a valid Email Address'
-                    });
-                    break;
-                case 'password':
-                    $('#editProfileInputElement').attr({ 
-                        pattern: '[^\S]{4,}',
-                        minlength: '4',
-                        title: 'Password must be at least 4 characters long. No whitespace allowed'
-                    });
-                    break;
+
             }
         }
 
         $('#editProfileFormLabelCurrent').html('Current ' + labelText + ':');
 
-        if(dataID === 'password'){
-            $('#editProfileFormLabelUpdated').html('To change password, first submit your current password');
-            $('#editProfileInputElement').attr({ placeholder: 'Current Password' });
-        }else{
-            $('#editProfileFormLabelUpdated').html('Change your ' + labelText + ':');
-        }
+        $('#editProfileFormLabelUpdated').html('Change your ' + labelText + ':');
 
         $('#modalFormElementValueCurrent').html(currentFormValue);
         

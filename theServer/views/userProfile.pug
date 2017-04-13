@@ -41,6 +41,8 @@ block content
         .modal-footer
 
 
+
+
   .modal.fade(id="editProfileFormModal", name="editProfileFormModal", tabindex="-1")
     .modal-dialog
       .modal-content
@@ -68,7 +70,7 @@ block content
                 div(style="height:50px; width:100%; style=margin-top:10px;")
 
                   div.hide(id="editProfileInputElementParent", style="position:absolute; width:100%; padding-right: 36px;")
-                    input.form-control.input-md(id="editProfileInputElement", name="inputElement", autofocus)
+                    input.form-control.input-md(id="editProfileInputElement", name="inputElement", required, autofocus)
               
                   div.hide(id="editProfileSelectElementParent", style="position:absolute; width:100%; padding-right: 36px;")
                     +selectStateFormControl()
@@ -82,6 +84,8 @@ block content
 
         .modal-footer
           .loading(style="display:none;")
+
+
 
 
   .modal.fade(id="editProfileEmailPassModal", name="editProfileEmailPassModal", tabindex="-1")
