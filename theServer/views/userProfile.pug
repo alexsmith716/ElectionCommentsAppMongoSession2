@@ -84,6 +84,71 @@ block content
           .loading(style="display:none;")
 
 
+  .modal.fade(id="editProfileEmailPassModal", name="editProfileEmailPassModal", tabindex="-1")
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type="button" data-dismiss="modal") &times;
+          h4.modal-title
+
+        .modal-body
+
+          form(action="https://localhost:3000/api/userprofileemailpass", id="changeEmailPassForm", name="changeEmailPassForm", method="put", enctype="application/x-www-form-urlencoded")
+            
+            fieldset
+
+              .modalAlertNotification(style="margin-top: 6px; margin-bottom: 12px;")
+                alert
+                  strong
+          
+
+              .form-group
+          
+                label.control-label(id="currentEmailPassLabel", style="margin-top:1px;")
+          
+                input.form-control.input-md(id="currentEmailPass", name="currentEmailPass", placeholder="", title="", type="", required)
+
+                .text-danger.hide.loginerror(style="margin-top:8px;")
+
+
+              .form-group
+          
+                label.control-label(id="newEmailPassLabel", style="margin-top:6px;")
+          
+                input.form-control.input-md(id="newEmailPass", name="newEmailPass", placeholder="", title="", type="", required)
+
+                .text-danger.hide.loginerror(style="margin-top:8px;")
+
+                span.hide.text-danger(id="newImproper") newImproper
+                span.hide.error(id="newRegistered") newRegistered
+                span.hide.error(id="newError") Please fill out this field.
+
+
+              .form-group
+          
+                label.control-label(id="confirmEmailPassLabel", style="margin-top:6px;")
+          
+                input.form-control.input-md(id="confirmEmailPass", name="confirmEmailPass", placeholder="", title="", type="", required)
+
+                .text-danger.hide.loginerror(style="margin-top:8px;")
+
+                span.hide.text-danger(id="confirmImproper") confirmImproper
+                span.hide.error(id="confirmRegistered") confirmRegistered
+                span.hide.text-danger(id="confirmMatch") confirmMatch
+                span.hide.error(id="confirmError") Please fill out this field.
+
+
+              button(class="btn btn-default btn-md modalOkayBtn" data-dismiss="modal" style="display:none;") OK
+              | 
+              div(class="modalCancelSubmitBtns")
+                button(class="btn btn-default btn-md" data-dismiss="modal") Cancel
+                | &nbsp;&nbsp;&nbsp;&nbsp;
+                button(type="submit", id="forgotPasswordSubmitBtn", name="forgotPasswordSubmitBtn", class="btn btn-primary btn-md") Submit
+
+        .modal-footer
+          .loading(style="display:none;")
+
+
   .main
     br
     br

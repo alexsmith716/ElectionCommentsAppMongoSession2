@@ -194,6 +194,15 @@ app.use(function(req, res, next){
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
+if (app.get('env') === 'development') {
+  app.locals.pretty = true;
+}
+
+
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+
 app.use('/', serverRoutes);
 app.use('/api', apiRoutes);
 
