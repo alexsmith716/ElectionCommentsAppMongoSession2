@@ -95,9 +95,9 @@ app.use(cookieParser());
 
 
 // var cookieExpireDate = new Date( Date.now() + 14 * 24 * 60 * 60 );
-// var sessionExpireDate = 6 * 60 * 60 * 1000; // 6 hours
+var sessionExpireDate = 6 * 60 * 60 * 1000; // 6 hours
 // var sessionExpireDate = 1 * 60 * 1000; // 1 minute
-var sessionExpireDate = 10 * 60 * 1000; // 10 minutes
+//var sessionExpireDate = 10 * 60 * 1000; // 10 minutes
 
 
 app.use(session({
