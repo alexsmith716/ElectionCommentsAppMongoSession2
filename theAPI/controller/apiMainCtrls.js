@@ -305,7 +305,8 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 // AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
 module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
-  console.log('####### > ajaxEvaluateUserProfile +++++++++++++')
+  console.log('####### > ajaxEvaluateUserProfile > 11111:', req.body)
+  console.log('####### > ajaxEvaluateUserProfile > 222222:', Object.keys(req.body).length)
 
 	var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
 	var reqBody = req.body;
@@ -320,7 +321,7 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 	                      lastname: 'required', 
 	                      city: 'required', 
 	                      state: 'required'};
-
+     
   if(Object.keys(req.body).length == 2){
 
     for (var p in reqBody){
@@ -339,9 +340,10 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
             var validationErrors = false;
 
-            console.log('####### > ajaxEvaluateUserProfile > validatedResponse: ', validatedResponse)
+            console.log('####### > ajaxEvaluateUserProfile > 3333333:', validatedResponse)
 
             if(validatedResponse.status === 'err') {
+              console.log('####### > ajaxEvaluateUserProfile ')
 
               return next(validatedResponse.message);
 
@@ -349,11 +351,12 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
               for(var prop in validatedResponse) {
 
-                console.log('####### > ajaxEvaluateUserProfile > validatedResponse[prop]: ', validatedResponse[prop])
+                console.log('####### > ajaxEvaluateUserProfile > 444444:', validatedResponse[prop])
 
-                // needs to be tested 
-                //validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'
-                if(validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid'){
+                //if(validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid'){
+                if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
+
+                  console.log('####### > ajaxEvaluateUserProfile > 55555 > [prop].error (empty or invalid)')
 
                   validationErrors = true;
                   break;
@@ -364,51 +367,56 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
             if(!validationErrors){
 
-                User.findById(res.locals.currentUser.id).exec(function(err, user) {
+              console.log('####### apiMainCtrls > ajaxEvaluateUserProfile 666 > NO validationErrors > going to Db')
 
-                  if(err){
 
+              User.findById(res.locals.currentUser.id).exec(function(err, user) {
+
+                if(err){
+
+                  return next(err);
+
+                }
+
+                if(!user){
+
+                  sendJSONresponse(res, 201, { 'response': 'error' });
+                  return;
+
+                }
+
+                if(reqBodyProp === 'state'){
+
+                  var stateInit = stateNamer(req, res, reqBodyValue);
+
+                  reqBodyValue = {
+                    full: reqBodyValue,
+                    initials: stateInit
+                  };
+
+                }
+
+                user[reqBodyProp] = reqBodyValue;
+
+                user.save(function(err) {
+                
+                  if (err) {
+                  
                     return next(err);
-
-                  }
-
-                  if(!user){
-
-                    sendJSONresponse(res, 201, { 'response': 'error' });
-                    return;
-
-                  }
-
-                  if(reqBodyProp === 'state'){
-
-                    var stateInit = stateNamer(req, res, reqBodyValue);
-
-                    reqBodyValue = {
-                      full: reqBodyValue,
-                      initials: stateInit
-                    };
-
-                  }
-
-                  user[reqBodyProp] = reqBodyValue;
-
-                  user.save(function(err) {
                   
-                    if (err) {
-                    
-                      return next(err);
-                    
-                    } else {
-                    
-                      sendJSONresponse(res, 201, { 'response': 'success' });
-                    
-                    }
+                  } else {
                   
-                  });
-          
+                    sendJSONresponse(res, 201, { 'response': 'success' });
+                  
+                  }
+                
                 });
+
+              });
               
             }else{
+
+              console.log('####### apiMainCtrls > ajaxEvaluateUserProfile 777 > validationErrors > going to Client')
 
               sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
 
@@ -423,9 +431,12 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
   }else{
 
+    console.log('####### > ajaxEvaluateUserProfile > Fatal Error 888 > Object.keys length !== 2')
+
     sendJSONresponse(res, 400, errResponse);
 
   }
+
 };
 
 
