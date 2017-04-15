@@ -3,17 +3,16 @@ var helper = {
 
     init: function() {
 
-        document.getElementById('state').setAttribute('tabindex', '9');
-
         window.showLoading = function() {
             $('.modal-backdrop').show();
         };
         window.hideLoading = function() {
             $('.modal-backdrop').hide();
         };
+
+        document.getElementById('state').setAttribute('tabindex', '9');
         
         showLoading();
-
 
         $('[name="displayname"]').prop('required', true);
         $('[name="email"]').prop('required', true);
@@ -29,7 +28,6 @@ var helper = {
 
         helper.initializeJqueryEvents();
     },
-
 
     testFormValidity: function (theForm, eventListener) {
 

@@ -429,7 +429,7 @@ var helper = {
             $('#state').find('[option]').focus();
 
             $('#'+elementID).attr('required', true);
-            previousElementID !== undefined ? $('#'+previousElementID).attr('required', false) : null;
+            previousElementID !== undefined && previousElementID !== elementID ? $('#'+previousElementID).attr('required', false) : null;
 
         }else{
 
@@ -437,7 +437,7 @@ var helper = {
             $('#editProfileInputElementParent').removeClass('hide').addClass('show');
 
             $('#'+elementID).attr('required', true);
-            previousElementID !== undefined ? $('#'+previousElementID).attr('required', false) : null;
+            previousElementID !== undefined && previousElementID !== elementID ? $('#'+previousElementID).attr('required', false) : null;
 
             $('#editProfileInputElement').attr({ 
                 placeholder: labelText,
@@ -445,26 +445,6 @@ var helper = {
             });
 
             switch (dataID) {
-
-                /*
-                case 'first-name':
-                    $('#firstname').attr({ 
-                        title: 'Please type a valid First Name. Maximum 35 characters'
-                    });
-                    break;
-
-                case 'last-name':
-                    $('#lastname').attr({ 
-                        title: 'Please type a valid Last Name. Maximum 35 characters'
-                    });
-                    break;
-
-                case 'city':
-                    $('#city').attr({ 
-                        title: 'Please type a valid City. Maximum 35 characters'
-                    });
-                    break;
-                */
 
                 case 'first-name':
                     $('#firstname').attr({ 
@@ -489,6 +469,7 @@ var helper = {
 
             }
         }
+
         $('#editProfileForm').data('previousElementID', elementID);
 
         $('#editProfileFormLabelCurrent').html('Current ' + labelText + ':');
