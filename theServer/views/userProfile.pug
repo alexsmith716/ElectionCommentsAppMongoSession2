@@ -73,24 +73,23 @@ block content
                 div(style="height:50px; width:100%; style=margin-top:10px;")
 
                   div.hide(id="editProfileInputElementParent", style="position:absolute; width:100%; padding-right: 36px;")
-                    input.form-control.input-md(autofocus)
+                    input.form-control.input-md
               
                   div.hide(id="editProfileSelectElementParent", style="position:absolute; width:100%; padding-right: 36px;")
-                    +selectStateFormControlBad()
+                    +selectStateFormControl()
 
                 span.hide.error
-
-
-            div
-              .text-danger.hide.formerror
-                strong Could not update your information!
-
 
 
             div(class="modalCancelSubmitBtns")
               button(class="btn btn-default btn-md" data-dismiss="modal") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
               button(type="submit", class="btn btn-primary btn-md", id="submitEditProfileBtn") Submit
+
+
+            div(style="margin-top:8px;")
+              .text-danger.hide.formerror
+                strong Could not update your information!
 
 
         .modal-footer
@@ -117,40 +116,43 @@ block content
                   strong
           
 
-              .form-group
-          
-                label.control-label(id="currentEmailPassLabel", style="margin-top:1px;")
-          
-                input.form-control.input-md(id="currentEmailPass", name="currentEmailPass", placeholder="", title="", type="", required)
+              div(id="required-fields")
+                .form-group
 
-                .text-danger.hide.loginerror(style="margin-top:8px;")
+                  label.control-label(id="currentEmailPassLabel", style="margin-top:1px;")
 
+                  input.form-control.input-md(id="currentEmailPass", name="currentEmailPass", placeholder="", title="", type="", required)
 
-              .form-group
-          
-                label.control-label(id="newEmailPassLabel", style="margin-top:6px;")
-          
-                input.form-control.input-md(id="newEmailPass", name="newEmailPass", placeholder="", title="", type="", required)
-
-                .text-danger.hide.loginerror(style="margin-top:8px;")
-
-                span.hide.text-danger(id="newEmailPassImproper") newImproper
-                span.hide.error(id="newEmailPassRegistered") newRegistered
-                span.hide.error(id="newEmailPassError") Please fill out this field.
+                  span.hide.error(id="currentEmailPassError") Please fill out this field.
 
 
-              .form-group
-          
-                label.control-label(id="confirmEmailPassLabel", style="margin-top:6px;")
-          
-                input.form-control.input-md(id="confirmEmailPass", name="confirmEmailPass", placeholder="", title="", type="", required)
+              div(id="required-fields")
+                .form-group
 
-                .text-danger.hide.loginerror(style="margin-top:8px;")
+                  label.control-label(id="newEmailPassLabel", style="margin-top:6px;")
 
-                span.hide.text-danger(id="confirmEmailPassImproper") confirmImproper
-                span.hide.error(id="confirmEmailPassRegistered") confirmRegistered
-                span.hide.text-danger(id="confirmEmailPassMatch") confirmMatch
-                span.hide.error(id="confirmEmailPassError") Please fill out this field.
+                  input.form-control.input-md(id="newEmailPass", name="newEmailPass", placeholder="", title="", type="", required)
+
+                  .text-danger.hide.loginerror(style="margin-top:8px;")
+
+                  span.hide.text-danger(id="newEmailPassImproper") newImproper
+                  span.hide.error(id="newEmailPassRegistered") newRegistered
+                  span.hide.error(id="newEmailPassError") Please fill out this field.
+
+
+              div(id="required-fields")
+                .form-group
+
+                  label.control-label(id="confirmEmailPassLabel", style="margin-top:6px;")
+
+                  input.form-control.input-md(id="confirmEmailPass", name="confirmEmailPass", placeholder="", title="", type="", required)
+
+                  .text-danger.hide.loginerror(style="margin-top:8px;")
+
+                  span.hide.text-danger(id="confirmEmailPassImproper") confirmImproper
+                  span.hide.error(id="confirmEmailPassRegistered") confirmRegistered
+                  span.hide.text-danger(id="confirmEmailPassMatch") confirmMatch
+                  span.hide.error(id="confirmEmailPassError") Please fill out this field.
 
 
               button(class="btn btn-default btn-md modalOkayBtn" data-dismiss="modal" style="display:none;") OK

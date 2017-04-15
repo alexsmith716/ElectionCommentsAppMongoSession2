@@ -10,6 +10,8 @@ var helper = {
             $('.modal-backdrop').hide();
         };
 
+        $('#state').attr('required', false);
+
         showLoading(); 
 
         setTimeout(function() { hideLoading(); }, 500);
@@ -17,13 +19,48 @@ var helper = {
         helper.initializeJqueryEvents();
     },
 
+    testFormValidity: function (theForm, eventListener) {
+
+        var boundEventTypes;
+        var formElement;
+        var checkConstraints;
+        var formValid = null;
+        var resp = {};
+
+        for( var i = 0; i < theForm.length; i++ ) {
+
+            formElement = $(theForm[i]);
+            checkConstraints = formElement.get(0).checkValidity();
+            
+            if(!checkConstraints && formValid === null){
+                formValid = false;
+                resp.formValid = false;
+                resp.focusFirstElement = formElement;
+            }
+
+            if(eventListener === 'change'){
+                boundEventTypes = $._data( formElement[0], 'events' );
+                for (var eType in boundEventTypes){
+                  helper.handleFormEvents(formElement.attr('id'), eType, formElement.val());
+                }
+            }
+            
+            if(eventListener === 'focusout'){
+                formElement.on('focusout', function(e) {
+                    helper.handleFormEvents(formElement.attr('id'), 'focusout', formElement.val());
+                })
+                formElement.trigger('focusout');
+            }
+
+        }
+        return resp;
+    },
+
     initializeJqueryEvents:  function(){
 
         $('#editProfileFormModal').on('shown.bs.modal', function() {
-
           // $(this).find('[autofocus]').focus();
           //var hasFocus = $('#editProfileForm').data('elementID').is(':focus');
-
         });
 
         $('#editProfileFormModal').on('hidden.bs.modal', function () {
@@ -48,37 +85,44 @@ var helper = {
             console.log('#editProfileForm > SUBMIT +++');
 
             e.preventDefault();
+            $('.loading').show();
+
+            $('#editProfileForm .formerror').removeClass('show').addClass('hide');
+            $('#editProfileForm .formerror').removeClass('show').addClass('hide');
 
             var elementID = $('#editProfileForm').data('elementID');
             var whichformdataid = $('#editProfileForm').data('whichformdataid');
             var labelText = helper.makeTitleFromElementID(whichformdataid);
+            var newVal;
+            var s = document.getElementById(elementID);
+            elementID === 'state' ? newVal = s.options[s.selectedIndex].text : newVal = $('#'+elementID).val();
+            newVal = newVal.trim();
 
             var data = {};
             var serviceUrl = $(this).attr('action');
 
-            $('#editProfileForm .formerror').removeClass('show').addClass('hide');
+
             var constrainedFormElements = document.getElementById('editProfileForm').querySelectorAll('[required]');
 
+            if(is_safari){
 
-            console.log('#editProfileForm > elementID!!!!: ', elementID);
+                var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout');
 
-            /*
-            //if(!userInput){
-                //console.log('#editProfileForm > BAD FORM > userInput2: ', userInput);
-                //return false;
-            //}
-            
-            if(!checkConstraints){
-                console.log('#editProfileForm > BAD FORM > checkConstraints: ', checkConstraints);
-                return false;
+                if (testFocusout.formValid !== undefined){
+
+                    console.log('+++++++++++ BAD FORM !!!!!!!!!!!');
+                    testFocusout.focusFirstElement.focus();
+                    $('.loading').hide();
+                    return false;
+
+                }
             }
-            */
 
-            console.log('#editProfileForm > GOOD FORM');
-            console.log('#editProfileForm > GOOD FORM> labelText: ', labelText);
-            console.log('#editProfileForm > GOOD FORM> ID TEXT: ', $('#'+elementID).val());
-
-            $('.loading').show();
+            // console.log('#editProfileForm > GOOD FORM');
+            // console.log('#editProfileForm > GOOD FORM> labelText: ', labelText);
+            // console.log('#editProfileForm > GOOD FORM> newVal: ', newVal);
+            // console.log('#editProfileForm > GOOD FORM> ID TEXT: ', $('#'+elementID).val());
+            // console.log('#editProfileForm > GOOD FORM> whichformdataid: ', whichformdataid);
 
             data[elementID] = $('#'+elementID).val();
 
@@ -105,20 +149,19 @@ var helper = {
                         $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re '+labelText+' has been successfully edited!');
                         $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show');
                         $('#editProfileModalAlert').modal('show');
-                        $('#'+elementID).text($('#'+elementID).val());
+                        $('.'+whichformdataid).text(newVal);
 
                     } else {
 
                         if(data.validatedData){
 
-                            console.log('#editProfileForm > ajax > SUCCESS > ERROR 11111: ', data.validatedData);
-                            //.html('Could not edit your '+labelText+'.');
+                            console.log('#editProfileForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData);
                             helper.handleErrorResponse(data.validatedData);
 
                         }else{
 
-                            console.log('#editProfileForm > ajax > SUCCESS > ERROR 22222');
-                            //.html('Could not edit your '+labelText+'.');
+                            console.log('#editProfileForm > ajax > SUCCESS > ERROR');
+                            $('#editProfileForm .formerror').removeClass('hide').addClass('show');
 
                         }
 
@@ -129,7 +172,7 @@ var helper = {
                 },
                 error: function(xhr, status, error) {
 
-                    console.log('#editProfileForm > ajax > ERROR > ERROR');
+                    console.log('#editProfileForm > ajax > ERROR > ERROR: ', xhr);
 
                     var parsedXHR = JSON.parse(xhr.responseText);
 
@@ -139,6 +182,7 @@ var helper = {
 
                 }
             });
+   
 
         });
 
@@ -235,8 +279,6 @@ var helper = {
 
     textElementValidation: function(elementID, pattern, err1) {
 
-        console.log('textElementValidation > 1111111: ', elementID, ' :: ', pattern);
-
         var thisElementValue = $('#'+elementID).val().trim();
         var title = $('#'+elementID).attr('title');
         err1 !== undefined && err1.error === 'empty' ? thisElementValue = '' : null;
@@ -251,30 +293,25 @@ var helper = {
         }
 
         if(thisElementValue !== ''){
-            console.log('textElementValidation > 22222222');
 
             if(!patternTestValue){
-                console.log('textElementValidation > 3333333');
 
                 is_safari ? $('#'+elementID+'Error').text('Invalid input. '+$('#'+elementID).attr('title')) : null;
                 err1 !== undefined && !is_safari ? $('#'+elementID+'Error').text('Please match the requested format. '+ title) : null;
     
                 if((err1 !== undefined && !is_safari) ||  is_safari){
-                    console.log('textElementValidation > 4444444');
 
                     $('#'+elementID+'Error').removeClass('hide').addClass('show');
 
                 }
 
                 if(err1 !== undefined &&  err1.lengthError === 'maxlength'){
-                    console.log('textElementValidation > 5555555');
 
                     var newVal = helper.validateMaxLengthUserInput($('#'+elementID).val(), err1.stringValLength);
                     $('#'+elementID).val(newVal);
                 }
 
             }else{
-                console.log('textElementValidation > 666666666');
 
                 is_safari ? $('#'+elementID+'Error').text('') : null;
                 is_safari ? $('#'+elementID+'Error').removeClass('show').addClass('hide') : null;
@@ -283,13 +320,11 @@ var helper = {
             }
 
         }else{
-            console.log('textElementValidation > 7777777');
 
             is_safari ? $('#'+elementID+'Error').text('Please fill out this field. ' + $('#'+elementID).attr('title')) : null;
             err1 !== undefined && !is_safari ? $('#'+elementID+'Error').text('Please fill out this field.') : null;
 
             if((err1 !== undefined && !is_safari) ||  is_safari){
-                console.log('textElementValidation > 888888888');
 
                 $('#'+elementID+'Error').removeClass('hide').addClass('show')
 
@@ -302,9 +337,6 @@ var helper = {
 
         var thisElementValue = $('#'+elementID).val();
 
-        console.log('selectElementValidation > 1111111: ', elementID, ' :: ', thisElementValue);
-
-
         err1 !== undefined && err1.error === 'empty' ? thisElementValue = '' : null;
 
         if(err1 !== undefined){
@@ -314,8 +346,6 @@ var helper = {
         }
         
         if(thisElementValue !== ''){
-
-            console.log('selectElementValidation > 222222: ', elementID, ' :: ', thisElementValue);
 
             $('#'+elementID+'Error').text('');
             $('#'+elementID+'Error').removeClass('show').addClass('hide');
@@ -366,16 +396,13 @@ var helper = {
 
     doEditProfileModal: function(editBtnClicked) {
 
-        console.log('doEditProfileModal > editBtnClicked: ', editBtnClicked);
-
         var editBtnClickedParentElem = $(editBtnClicked).parent();
         var dataID = editBtnClickedParentElem.data('id');
 
         console.log('doEditProfileModal > editBtnClicked dataID: ', dataID);
 
         var elementID = dataID.replace(/-/g, '');
-
-        //$('[name="state"]').prop('required', true);
+        var previousElementID;
 
         $('#editProfileForm').data('elementID', elementID);
         $('#editProfileForm .form-group .error').attr('id', elementID+'Error');
@@ -385,27 +412,32 @@ var helper = {
         var currentFormValue = $('.'+dataID).text();
         currentFormValue = currentFormValue.trim();
 
-
         console.log('doEditProfileModal > dataID: ', dataID);
         console.log('doEditProfileModal > currentFormType: ', currentFormType);
         console.log('doEditProfileModal > labelText: ', labelText);
         console.log('doEditProfileModal > currentFormValue: ', currentFormValue);
 
-
         $('#editProfileInputElementParent').removeClass('show').addClass('hide');
         $('#editProfileSelectElementParent').removeClass('show').addClass('hide');
+
+        var previousElementID = $('#editProfileForm').data('previousElementID');
 
         if(elementID === 'state'){
 
             $('#editProfileForm .form-group select').attr('id', elementID);
             $('#editProfileSelectElementParent').removeClass('hide').addClass('show');
             $('#state').find('[option]').focus();
-            //$('#state').attr({ title: 'Please select a State' });
+
+            $('#'+elementID).attr('required', true);
+            previousElementID !== undefined ? $('#'+previousElementID).attr('required', false) : null;
 
         }else{
 
             $('#editProfileForm .form-group input').attr('id', elementID);
             $('#editProfileInputElementParent').removeClass('hide').addClass('show');
+
+            $('#'+elementID).attr('required', true);
+            previousElementID !== undefined ? $('#'+previousElementID).attr('required', false) : null;
 
             $('#editProfileInputElement').attr({ 
                 placeholder: labelText,
@@ -414,48 +446,50 @@ var helper = {
 
             switch (dataID) {
 
-                case 'first-name':
-                    $('#firstname').attr({ 
-                        title: 'Please type a valid First Name. Maximum 35 characters'
-                    });
-                    break;
-
-                case 'last-name':
-                    $('#lastname').attr({ 
-                        title: 'Please type a valid Last Name. Maximum 35 characters'
-                    });
-                    break;
-
-                case 'city':
-                    $('#city').attr({ 
-                        title: 'Please type a valid City. Maximum 35 characters'
-                    });
-                    break;
                 /*
                 case 'first-name':
                     $('#firstname').attr({ 
-                        pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                         title: 'Please type a valid First Name. Maximum 35 characters'
                     });
                     break;
 
                 case 'last-name':
                     $('#lastname').attr({ 
-                        pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                         title: 'Please type a valid Last Name. Maximum 35 characters'
                     });
                     break;
 
                 case 'city':
                     $('#city').attr({ 
-                        pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                         title: 'Please type a valid City. Maximum 35 characters'
                     });
                     break;
                 */
 
+                case 'first-name':
+                    $('#firstname').attr({ 
+                        pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                        title: 'Please type a valid First Name. Maximum 35 characters'
+                    });
+                    break;
+
+                case 'last-name':
+                    $('#lastname').attr({ 
+                        pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                        title: 'Please type a valid Last Name. Maximum 35 characters'
+                    });
+                    break;
+
+                case 'city':
+                    $('#city').attr({ 
+                        pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                        title: 'Please type a valid City. Maximum 35 characters'
+                    });
+                    break;
+
             }
         }
+        $('#editProfileForm').data('previousElementID', elementID);
 
         $('#editProfileFormLabelCurrent').html('Current ' + labelText + ':');
 
@@ -464,7 +498,6 @@ var helper = {
         $('#modalFormElementValueCurrent').html(currentFormValue);
         
         $('#editProfileForm').data('whichformdataid', dataID);
-        $('#editProfileForm').data('whichformdatatype', currentFormType);
         
         $('#editProfileFormModal').modal({
           keyboard: false,
