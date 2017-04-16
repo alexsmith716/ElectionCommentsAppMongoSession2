@@ -634,7 +634,7 @@ var helper = {
         if(dataID === 'email'){
 
             $('#currentEmailPass').attr({
-                type: 'email',
+                type: 'text',
                 title: 'Please enter a valid Email Address',
                 placeholder: 'Current Email Address'
             });
@@ -655,7 +655,6 @@ var helper = {
 
             $('#currentEmailPass').attr({ 
                 type: 'password',
-                pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                 title: 'Please enter your Password',
                 placeholder: 'Current Password'
             });
