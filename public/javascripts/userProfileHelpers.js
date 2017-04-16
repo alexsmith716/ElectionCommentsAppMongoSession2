@@ -654,21 +654,21 @@ var helper = {
         }else{
 
             $('#currentEmailPass').attr({ 
-                type: 'email',
+                type: 'password',
                 pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                 title: 'Please enter your Password',
                 placeholder: 'Current Password'
             });
 
             $('#newEmailPass').attr({ 
-                type: 'email',
+                type: 'password',
                 pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                 title: 'Password must be at least 4 characters long. No whitespace allowed',
                 placeholder: 'New Password'
             });
             
             $('#confirmEmailPass').attr({ 
-                type: 'email',
+                type: 'password',
                 pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                 title: 'Password must be at least 4 characters long. No whitespace allowed',
                 placeholder: 'Confirm New Password'
