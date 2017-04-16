@@ -59,8 +59,8 @@ var helper = {
     initializeJqueryEvents:  function(){
 
         $('#editProfileFormModal').on('shown.bs.modal', function() {
-          // $(this).find('[autofocus]').focus();
-          //var hasFocus = $('#editProfileForm').data('elementID').is(':focus');
+          var activeElementID = $('#editProfileForm').data('elementID');
+          $('#'+activeElementID).focus();
         });
 
         $('#editProfileFormModal').on('hidden.bs.modal', function () {
@@ -79,6 +79,35 @@ var helper = {
 
         });
 
+        $('#editProfileEmailPassModal').on('shown.bs.modal', function() {
+            $(this).find('[autofocus]').focus();
+        });
+
+        $('#editProfileEmailPassModal').on('hidden.bs.modal', function () {
+
+            $('#changeEmailPassForm').get(0).reset();
+
+            $('#currentEmailPassError').removeClass('show').html('');
+            $('#newEmailPassImproper').removeClass('show').html('');
+            $('#newEmailPassRegistered').removeClass('show').html('');
+            $('#newEmailPassRegistered').removeClass('show').html('');
+            $('#confirmEmailPassImproper').removeClass('show').html('');
+            $('#confirmEmailPassRegistered').removeClass('show').html('');
+            $('#confirmEmailPassMatch').removeClass('show').html('');
+            $('#confirmEmailPassImproper').removeClass('show').html('');
+
+            $('#currentEmailPass').removeClass('has-error');
+            $('#newEmailPass').removeClass('has-error');
+            $('#confirmEmailPass').removeClass('has-error');
+
+            $('.modalAlertSuccess').hide();
+            $('.modalAlertDanger').hide();
+            $('.modalOkayBtn').hide();
+            $('.modalCancelSubmitBtns').show();
+
+        });
+
+
 
         $('#editProfileForm').on('submit', function(e) {
 
@@ -87,7 +116,6 @@ var helper = {
             e.preventDefault();
             $('.loading').show();
 
-            $('#editProfileForm .formerror').removeClass('show').addClass('hide');
             $('#editProfileForm .formerror').removeClass('show').addClass('hide');
 
             var elementID = $('#editProfileForm').data('elementID');
@@ -186,6 +214,103 @@ var helper = {
 
         });
 
+
+
+        $('#changeEmailPassForm').on('submit', function(e) {
+
+            console.log('#changeEmailPassForm > SUBMIT +++');
+
+            e.preventDefault();
+            $('.loading').show();
+
+            $('#changeEmailPassForm .formerror').removeClass('show').addClass('hide');
+
+            var data = {};
+            var serviceUrl = $(this).attr('action');
+
+            var constrainedFormElements = document.getElementById('changeEmailPassForm').querySelectorAll('[required]');
+
+            if(is_safari){
+
+                var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout');
+
+                if (testFocusout.formValid !== undefined){
+
+                    console.log('+++++++++++ BAD FORM !!!!!!!!!!!');
+                    testFocusout.focusFirstElement.focus();
+                    $('.loading').hide();
+                    return false;
+
+                }
+            }
+
+            data[elementID] = $('#'+elementID).val();
+
+            var data = {
+                displayname: $('#displayname').val(),
+                email: $('#email').val(),
+                confirmEmail: $('#confirmEmail').val()
+            };
+
+
+            data['_csrf'] = $('meta[name="csrf-token"]').attr('content');
+
+            $.ajax({
+
+                rejectUnauthorized: false,
+                url: serviceUrl,
+                type: 'PUT',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                accepts: 'application/json',
+
+                success: function(data, status, xhr) {
+
+                    if (data.response === 'success') {
+
+                        console.log('#changeEmailPassForm > ajax > SUCCESS > SUCCESS: ');
+
+                        $('.loading').hide();
+
+                    } else {
+
+                        if(data.validatedData){
+
+                            console.log('#changeEmailPassForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData);
+                            helper.handleErrorResponse(data.validatedData);
+
+                        }else{
+
+                            console.log('#changeEmailPassForm > ajax > SUCCESS > ERROR');
+                            $('#changeEmailPassForm .formerror').removeClass('hide').addClass('show');
+
+                        }
+
+                        $('.loading').hide();
+                        return false;
+                    }
+
+                },
+                error: function(xhr, status, error) {
+
+                    console.log('#changeEmailPassForm > ajax > ERROR > ERROR: ', xhr);
+
+                    var parsedXHR = JSON.parse(xhr.responseText);
+
+                    location.href = parsedXHR.redirect;
+
+                    return false;
+
+                }
+            });
+   
+
+        });
+
+
+
+
         $('#personalInfoToggle').click(function(){
             helper.toggleEditBtn('personalInfo', true);
         });
@@ -204,6 +329,10 @@ var helper = {
 
         $('.editFormElement').click(function(){
             helper.doEditProfileModal(this);
+        });
+
+        $('.editFormEmailPassElement').click(function(){
+            helper.doEditProfileEmailPassModal(this);
         });
 
         // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -449,21 +578,24 @@ var helper = {
                 case 'first-name':
                     $('#firstname').attr({ 
                         pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
-                        title: 'Please type a valid First Name. Maximum 35 characters'
+                        title: 'Please type a valid First Name. Maximum 35 characters',
+                        placeholder: 'First Name'
                     });
                     break;
 
                 case 'last-name':
                     $('#lastname').attr({ 
                         pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
-                        title: 'Please type a valid Last Name. Maximum 35 characters'
+                        title: 'Please type a valid Last Name. Maximum 35 characters',
+                        placeholder: 'Last Name'
                     });
                     break;
 
                 case 'city':
                     $('#city').attr({ 
                         pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
-                        title: 'Please type a valid City. Maximum 35 characters'
+                        title: 'Please type a valid City. Maximum 35 characters',
+                        placeholder: 'City'
                     });
                     break;
 
@@ -471,16 +603,81 @@ var helper = {
         }
 
         $('#editProfileForm').data('previousElementID', elementID);
-
         $('#editProfileFormLabelCurrent').html('Current ' + labelText + ':');
-
         $('#editProfileFormLabelUpdated').html('Change your ' + labelText + ':');
-
         $('#modalFormElementValueCurrent').html(currentFormValue);
-        
         $('#editProfileForm').data('whichformdataid', dataID);
         
         $('#editProfileFormModal').modal({
+          keyboard: false,
+          backdrop: 'static'
+        })
+    },
+
+
+    doEditProfileEmailPassModal: function(editBtnClicked) {
+
+        var editBtnClickedParentElem = $(editBtnClicked).parent();
+        var dataID = editBtnClickedParentElem.data('id');
+        var labelText = helper.makeTitleFromElementID(dataID);
+        dataID === 'email' ? labelText = labelText + ' Address' : null;
+
+        console.log('doEditProfileEmailPassModal > dataID: ', dataID);
+        console.log('doEditProfileEmailPassModal > labelText: ', labelText);
+
+        $('#editProfileEmailPassModal .modal-title').html('Change your ' + labelText + ':');
+        $('#currentEmailPassLabel').html('Current ' + labelText + ':');
+        $('#newEmailPassLabel').html('New ' + labelText + ':');
+        $('#confirmEmailPassLabel').html('Confirm new ' + labelText + ':');
+
+
+        if(dataID === 'email'){
+
+            $('#currentEmailPass').attr({
+                type: 'email',
+                title: 'Please enter a valid Email Address',
+                placeholder: 'Current Email Address'
+            });
+
+            $('#newEmailPass').attr({
+                type: 'email',
+                title: 'Please type a valid Email Address',
+                placeholder: 'New Email Address'
+            });
+            
+            $('#confirmEmailPass').attr({
+                type: 'email',
+                title: 'Please type a valid Email Address',
+                placeholder: 'Confirm New Email Address'
+            });
+
+        }else{
+
+            $('#currentEmailPass').attr({ 
+                type: 'email',
+                pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                title: 'Please enter your Password',
+                placeholder: 'Current Password'
+            });
+
+            $('#newEmailPass').attr({ 
+                type: 'email',
+                pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                title: 'Password must be at least 4 characters long. No whitespace allowed',
+                placeholder: 'New Password'
+            });
+            
+            $('#confirmEmailPass').attr({ 
+                type: 'email',
+                pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                title: 'Password must be at least 4 characters long. No whitespace allowed',
+                placeholder: 'Confirm New Password'
+            });
+
+        }
+        $(":input").each(function (i) { $(this).attr('tabindex', i + 1); });
+
+        $('#editProfileEmailPassModal').modal({
           keyboard: false,
           backdrop: 'static'
         })
