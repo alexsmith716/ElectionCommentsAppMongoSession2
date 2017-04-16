@@ -11,7 +11,6 @@ var csrfProtection 		= csrf({ cookie: true });
 
 router.get('/', serverControllers.getIndex);
 
-router.get('/resetpassword', csrfProtection, serverControllers.getResetPassword);
 router.get('/loginorsignup', serverControllers.getLoginOrSignup);
 router.get('/notifyError', serverControllers.getNotifyError);
 
@@ -37,4 +36,3 @@ router.get('/team', serverControllers.getTeam);
 router.get('/customerservice', serverControllers.getCustomerService);
 
 module.exports = router;
-
