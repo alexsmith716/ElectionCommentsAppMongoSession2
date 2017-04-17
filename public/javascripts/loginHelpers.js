@@ -12,10 +12,6 @@ var helper = {
 
         showLoading(); 
 
-        $('[name="forgotPassword"]').prop('required', true);
-        $('[name="email"]').prop('required', true);
-        $('[name="password"]').prop('required', true);
-
         setTimeout(function() { hideLoading(); }, 500);
 
         helper.initializeJqueryEvents();

@@ -10,20 +10,10 @@ var helper = {
             $('.modal-backdrop').hide();
         };
 
-        document.getElementById('state').setAttribute('tabindex', '9');
-        
         showLoading();
 
-        $('[name="displayname"]').prop('required', true);
-        $('[name="email"]').prop('required', true);
-        $('[name="confirmEmail"]').prop('required', true);
-        $('[name="password"]').prop('required', true);
-        $('[name="confirmPassword"]').prop('required', true);
-        $('[name="firstname"]').prop('required', true);
-        $('[name="lastname"]').prop('required', true);
-        $('[name="city"]').prop('required', true);
-        $('[name="state"]').prop('required', true);
-
+        document.getElementById('state').setAttribute('tabindex', '9');
+        
         setTimeout(function() { hideLoading(); }, 500);
 
         helper.initializeJqueryEvents();

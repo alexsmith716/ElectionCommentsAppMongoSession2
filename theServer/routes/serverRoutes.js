@@ -12,7 +12,8 @@ var csrfProtection 		= csrf({ cookie: true });
 router.get('/', serverControllers.getIndex);
 
 router.get('/loginorsignup', serverControllers.getLoginOrSignup);
-router.get('/notifyError', serverControllers.getNotifyError);
+router.get('/notifyerror', serverControllers.getNotifyError);
+router.get('/notifyerrorbasic', serverControllers.getNotifyErrorBasic);
 
 router.get('/userhome', auth.ensureAuthenticated, serverControllers.getUserHome);
 router.get('/membersonly', auth.ensureAuthenticated, serverControllers.getMembersOnly);

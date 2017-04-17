@@ -3,7 +3,7 @@ var evaluateUserEmail = require('./evaluateUserEmail.js');
 
 module.exports = function (req, res, validateTemplate, cb) {
 
-  console.log('####### > serverSideValidation > req.body > IN: ', req.body);
+  console.log('####### > serverSideValidation > req.body > IN: ', req.body, ' :: ', validateTemplate);
 
   /*
       pattern: {

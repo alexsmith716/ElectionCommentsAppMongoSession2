@@ -58,7 +58,7 @@ var _handleError = function (req, res, statusCode) {
 
   res.status(statusCode);
 
-  res.render('notifyError', {
+  res.render('notifyErrorBasic', {
     message : title + '\n\n' + content,
     type : 'danger'
   });
@@ -493,6 +493,35 @@ module.exports.getNotifyError = function(req, res) {
     }else{
 
       res.render('notifyError', {
+        message: notifyMessage,
+        type: notifyMessageType
+      });
+
+    };
+  });
+};
+
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+
+module.exports.getNotifyErrorBasic = function(req, res) {
+
+  var notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
+  var notifyMessageType = 'danger';
+
+  req.app.locals.notifyMessage ? notifyMessage = req.app.locals.notifyMessage : null;
+  req.app.locals.notifyMessageType ? notifyMessageType = req.app.locals.notifyMessageType : null;
+
+  req.session.regenerate(function(err) {
+
+    if(err){
+
+      handleError(req, res, 400);
+
+    }else{
+
+      res.render('notifyErrorBasic', {
         message: notifyMessage,
         type: notifyMessageType
       });
