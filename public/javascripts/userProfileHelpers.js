@@ -244,14 +244,11 @@ var helper = {
                 }
             }
 
-            data[elementID] = $('#'+elementID).val();
-
             var data = {
                 displayname: $('#displayname').val(),
                 email: $('#email').val(),
                 confirmEmail: $('#confirmEmail').val()
             };
-
 
             data['_csrf'] = $('meta[name="csrf-token"]').attr('content');
 
@@ -269,7 +266,7 @@ var helper = {
 
                     if (data.response === 'success') {
 
-                        console.log('#changeEmailPassForm > ajax > SUCCESS > SUCCESS: ');
+                        console.log('#changeEmailPassForm > ajax > SUCCESS > SUCCESS: ', data);
 
                         $('.loading').hide();
 
@@ -528,7 +525,7 @@ var helper = {
         var editBtnClickedParentElem = $(editBtnClicked).parent();
         var dataID = editBtnClickedParentElem.data('id');
 
-        console.log('doEditProfileModal > editBtnClicked dataID: ', dataID);
+        console.log('doEditProfileModal > editBtnClicked dataID +++++++: ', dataID);
 
         var elementID = dataID.replace(/-/g, '');
         var previousElementID;
@@ -560,6 +557,8 @@ var helper = {
             $('#'+elementID).attr('required', true);
             previousElementID !== undefined && previousElementID !== elementID ? $('#'+previousElementID).attr('required', false) : null;
 
+            console.log('doEditProfileModal > STATE > elementID: ', $('#'+elementID));
+
         }else{
 
             $('#editProfileForm .form-group input').attr('id', elementID);
@@ -568,15 +567,13 @@ var helper = {
             $('#'+elementID).attr('required', true);
             previousElementID !== undefined && previousElementID !== elementID ? $('#'+previousElementID).attr('required', false) : null;
 
-            $('#editProfileInputElement').attr({ 
-                placeholder: labelText,
-                type: currentFormType
-            });
+            console.log('doEditProfileModal > INPUT elementID: ', $('#'+elementID));
 
             switch (dataID) {
 
                 case 'first-name':
                     $('#firstname').attr({ 
+                        type: 'text',
                         pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                         title: 'Please type a valid First Name. Maximum 35 characters',
                         placeholder: 'First Name'
@@ -585,6 +582,7 @@ var helper = {
 
                 case 'last-name':
                     $('#lastname').attr({ 
+                        type: 'text',
                         pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                         title: 'Please type a valid Last Name. Maximum 35 characters',
                         placeholder: 'Last Name'
@@ -593,6 +591,7 @@ var helper = {
 
                 case 'city':
                     $('#city').attr({ 
+                        type: 'text',
                         pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                         title: 'Please type a valid City. Maximum 35 characters',
                         placeholder: 'City'
@@ -630,7 +629,46 @@ var helper = {
         $('#newEmailPassLabel').html('New ' + labelText + ':');
         $('#confirmEmailPassLabel').html('Confirm new ' + labelText + ':');
 
+        if(dataID === 'email'){
 
+            $('#currentEmailPass').attr({
+                type: 'text',
+                title: 'Please enter a valid Email Address',
+                placeholder: 'Current Email Address'
+            });
+
+            $('#newEmailPass').attr({
+                title: 'Please type a valid Email Address',
+                placeholder: 'New Email Address'
+            });
+            
+            $('#confirmEmailPass').attr({
+                title: 'Please type a valid Email Address',
+                placeholder: 'Confirm New Email Address'
+            });
+
+        }else{
+
+            $('#currentEmailPass').attr({ 
+                type: 'password',
+                title: 'Please enter your Password',
+                placeholder: 'Current Password'
+            });
+
+            $('#newEmailPass').attr({ 
+                type: 'password',
+                title: 'Password must be at least 4 characters long. No whitespace allowed',
+                placeholder: 'New Password'
+            });
+            
+            $('#confirmEmailPass').attr({ 
+                type: 'password',
+                title: 'Password must be at least 4 characters long. No whitespace allowed',
+                placeholder: 'Confirm New Password'
+            });
+
+        }
+        /*
         if(dataID === 'email'){
 
             $('#currentEmailPass').attr({
@@ -661,19 +699,21 @@ var helper = {
 
             $('#newEmailPass').attr({ 
                 type: 'password',
-                pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                pattern: '[\\S]{4,}',
                 title: 'Password must be at least 4 characters long. No whitespace allowed',
                 placeholder: 'New Password'
             });
             
             $('#confirmEmailPass').attr({ 
                 type: 'password',
-                pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                pattern: '[\\S]{4,}',
                 title: 'Password must be at least 4 characters long. No whitespace allowed',
                 placeholder: 'Confirm New Password'
             });
 
         }
+        */
+
         $(":input").each(function (i) { $(this).attr('tabindex', i + 1); });
 
         $('#editProfileEmailPassModal').modal({

@@ -286,10 +286,10 @@ module.exports.ajaxEvaluateRegisteredUser = function(req, res, next) {
 
 module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 
-  console.log('####### > ajaxUserProfileEmailPass +++++++++++++')
+  console.log('####### > ajaxUserProfileEmailPass > req.body 1:', req.body)
+  console.log('####### > ajaxUserProfileEmailPass > Object.keys(req.body).length:', Object.keys(req.body).length)
 
-  var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
-  var reqBody = req.body;
+  var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerrorbasic'};
   var reqBodyProp;
   var reqBodyValue;
   var template = {};
@@ -298,6 +298,123 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
                         password: 'required', 
                         confirmPassword: 'required'};
 
+  if(Object.keys(req.body).length == 4){
+
+    delete req.body['_csrf'];
+
+    req.body = {firstnameXX:'Freddncsdlcscnsdcijdcsd'}
+
+    for (var p in req.body){
+
+      console.log('PPPPPPPPPpppppppp: ', p, ' :: ', req.body)
+
+      reqBodyProp = p;
+      reqBodyValue = req.body[reqBodyProp];
+
+      if(reqBodyProp in templateMain){
+
+        console.log('AAAAAAAAAAaaaaaaaaaaaaaa: ', reqBodyProp, ' :: ', reqBodyValue)
+
+        template[reqBodyProp] = 'required';
+        //template['expectedResponse'] = 'false';
+
+        /*
+        serverSideValidation(req, res, template, function(validatedResponse) {
+
+          var validationErrors = false;
+
+          if(validatedResponse.status === 'err') {
+            console.log('####### > ajaxUserProfileEmailPass ')
+
+            return next(validatedResponse.message);
+
+          }else{
+
+            for(var prop in validatedResponse) {
+
+              if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
+
+                validationErrors = true;
+                break;
+
+              }
+            }
+          }
+
+          if(!validationErrors){
+
+            User.findById(res.locals.currentUser.id).exec(function(err, user) {
+
+              if(err){
+
+                return next(err);
+
+              }
+
+              if(!user){
+
+                sendJSONresponse(res, 201, { 'response': 'error' });
+                return;
+
+              }
+
+              if(reqBodyProp === 'state'){
+
+                var stateFull = stateNamer(req, res, reqBodyValue);
+
+                reqBodyValue = {
+                  full: stateFull,
+                  initials: reqBodyValue
+                };
+
+              }
+
+              user[reqBodyProp] = reqBodyValue;
+
+              user.save(function(err) {
+              
+                if (err) {
+                
+                  return next(err);
+                
+                } else {
+                
+                  sendJSONresponse(res, 201, { 'response': 'success' });
+                
+                }
+              
+              });
+
+
+            });
+            
+          }else{
+
+            sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
+
+          }
+          
+        });
+        */
+
+      }else{
+
+        console.log('BBBBBBBBbbbbbbbbbb: ', p, ' :: ', req.body[p])
+
+        sendJSONresponse(res, 400, errResponse);
+
+      }
+      console.log('TTTTTTTTTttttttttttttt: ', template);
+      sendJSONresponse(res, 201, { 'response': 'success' });
+
+    }
+
+  }else{
+
+    sendJSONresponse(res, 400, errResponse);
+
+  }
+
 };
 
 
@@ -305,117 +422,114 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 // AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
 module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
-  console.log('####### > ajaxEvaluateUserProfile > req.body:', req.body)
+  console.log('####### > ajaxEvaluateUserProfile > req.body 1:', req.body)
   console.log('####### > ajaxEvaluateUserProfile > Object.keys(req.body).length:', Object.keys(req.body).length)
 
-	var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
-	var reqBody = req.body;
+	var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerrorbasic'};
   var reqBodyProp;
   var reqBodyValue;
 	var template = {};
-	var templateMain = {email: 'required',
-	                      confirmEmail: 'required', 
-	                      password: 'required', 
-	                      confirmPassword: 'required',
-	                      firstname: 'required', 
+	var templateMain = {firstname: 'required', 
 	                      lastname: 'required', 
 	                      city: 'required', 
 	                      state: 'required'};
      
   if(Object.keys(req.body).length == 2){
 
-    for (var p in reqBody){
+    delete req.body['_csrf'];
+    req.body = {firstnameXX:'Freddncsdlcscnsdcijdcsd'}
 
-      if(p !== '_csrf') {
+    for (var p in req.body){
 
-        reqBodyProp = p;
-        reqBodyValue = reqBody[reqBodyProp];
+      reqBodyProp = p;
+      reqBodyValue = req.body[reqBodyProp];
 
-        if(reqBodyProp in templateMain){
+      if(reqBodyProp in templateMain){
 
-          template[reqBodyProp] = 'required';
-          template['expectedResponse'] = 'false';
+        template[reqBodyProp] = 'required';
+        template['expectedResponse'] = 'false';
 
-          serverSideValidation(req, res, template, function(validatedResponse) {
+        serverSideValidation(req, res, template, function(validatedResponse) {
 
-            var validationErrors = false;
+          var validationErrors = false;
 
-            if(validatedResponse.status === 'err') {
-              console.log('####### > ajaxEvaluateUserProfile ')
+          if(validatedResponse.status === 'err') {
 
-              return next(validatedResponse.message);
+            return next(validatedResponse.message);
 
-            }else{
+          }else{
 
-              for(var prop in validatedResponse) {
+            for(var prop in validatedResponse) {
 
-                if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
+              if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
 
-                  validationErrors = true;
-                  break;
+                validationErrors = true;
+                break;
 
-                }
               }
             }
+          }
 
-            if(!validationErrors){
+          if(!validationErrors){
 
-              User.findById(res.locals.currentUser.id).exec(function(err, user) {
+            User.findById(res.locals.currentUser.id).exec(function(err, user) {
 
-                if(err){
+              if(err){
 
-                  return next(err);
+                return next(err);
 
-                }
+              }
 
-                if(!user){
+              if(!user){
 
-                  sendJSONresponse(res, 201, { 'response': 'error' });
-                  return;
+                sendJSONresponse(res, 201, { 'response': 'error' });
+                return;
 
-                }
+              }
 
-                if(reqBodyProp === 'state'){
+              if(reqBodyProp === 'state'){
 
-                  var stateFull = stateNamer(req, res, reqBodyValue);
+                var stateFull = stateNamer(req, res, reqBodyValue);
 
-                  reqBodyValue = {
-                    full: stateFull,
-                    initials: reqBodyValue
-                  };
+                reqBodyValue = {
+                  full: stateFull,
+                  initials: reqBodyValue
+                };
 
-                }
+              }
 
-                user[reqBodyProp] = reqBodyValue;
+              user[reqBodyProp] = reqBodyValue;
 
-                user.save(function(err) {
-                
-                  if (err) {
-                  
-                    return next(err);
-                  
-                  } else {
-                  
-                    sendJSONresponse(res, 201, { 'response': 'success' });
-                  
-                  }
-                
-                });
-
-
-              });
+              user.save(function(err) {
               
-            }else{
+                if (err) {
+                
+                  return next(err);
+                
+                } else {
+                
+                  sendJSONresponse(res, 201, { 'response': 'success' });
+                
+                }
+              
+              });
 
-              sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
-
-            }
+            });
             
-          });
+          }else{
 
-        }
+            sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
+
+          }
+          
+        });
+
+      }else{
+
+        sendJSONresponse(res, 400, errResponse);
+
       }
-      break;
+
     }
 
   }else{

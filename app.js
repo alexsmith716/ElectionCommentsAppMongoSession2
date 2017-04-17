@@ -128,13 +128,18 @@ app.use(passport.session());
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 app.use(function(req, res, next){
 
   console.log('REQ.METHOD :: REQ.URL: ', req.method, " :: ", req.url)
-  console.log('REQ.HEADERS +++: ', req.headers['user-agent']);
+  console.log('REQ.HEADERS.referer +++: ', req.headers['referer']);
+  console.log('REQ.HEADERS.user-agent +++: ', req.headers['user-agent']);
   console.log('REQ.SESSIONID +++: ', req.sessionID);
   console.log('REQ.USER +++: ', req.user);
+  console.log('REQ.BODY +++: ', req.body);
+
 
   var reqBody = sanitize(req.body);
   var reqQuery = sanitize(req.query);
@@ -165,6 +170,7 @@ app.use(function(req, res, next){
 app.use(function(req, res, next){
 
   res.locals.currentUser = req.user;
+  res.locals.reqUrl = req.url;
   res.locals.currentURL = req.url;
 
   //if(res.locals.currentUser){
@@ -210,7 +216,6 @@ app.use('/api', apiRoutes);
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
@@ -225,7 +230,7 @@ if (app.get('env') === 'development') {
 
  	app.use(function (err, req, res, next) {
 
- 	console.log('################################ DEVELOPMENT ############################');
+ 	  console.log('################################ DEVELOPMENT ############################');
 
     res.status(err.status || 500);
 
@@ -246,8 +251,7 @@ if (app.get('env') === 'development') {
 
       if (req.xhr) {
 
-        res.status(400);
-        res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'});
+        res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'});
 
       }else{
 
@@ -293,7 +297,7 @@ app.use(function(err, req, res, next) {
       if (req.xhr) {
 
         res.status(400);
-        res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'});
+        res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'});
 
       }else{
 
