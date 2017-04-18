@@ -9,6 +9,8 @@ var sanitizeInputModule = require('../../shared/sanitizeInput.js');
 require('../../shared/sessionPrototype');
 var serverSideValidation = require('../../shared/serverSideValidation.js');
 
+var createError   = require('http-errors');
+
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -31,9 +33,7 @@ if (process.env.NODE_ENV === 'production') {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
-var _handleError = function (req, res, statusCode) {
-
-  console.log('################################ _handleError ############################');
+var handleError = function (req, res, statusCode) {
 
   var title;
   var content;
@@ -58,7 +58,7 @@ var _handleError = function (req, res, statusCode) {
 
   res.status(statusCode);
 
-  res.render('notifyErrorBasic', {
+  res.render('notifyExceptionError', {
     message : title + '\n\n' + content,
     type : 'danger'
   });
@@ -66,31 +66,20 @@ var _handleError = function (req, res, statusCode) {
 };
 
 
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-
-module.exports.nocache = function(req, res, next){
-  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-  res.header('Expires', '-1');
-  res.header('Pragma', 'no-cache');
-  next();
-}
-
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
-module.exports.getLogout = function(req, res){
+module.exports.getLogout = function(req, res, next){
+
+  req.logout();
 
   req.session.destroy(function(err) {
 
-    req.logout();
-
     if(err){
 
-      handleError(req, res, 400);
+      return next(err);
 
     }else{
 
@@ -105,20 +94,28 @@ module.exports.getLogout = function(req, res){
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
-module.exports.getIndex = function(req, res){
+module.exports.getIndex = function(req, res, next){
 
   var requestOptions, path;
   path = '/api/index';
+
   requestOptions = {
     rejectUnauthorized: false,
     url : apiOptions.server + path,
     method : 'GET',
     json : {}
   };
+
   request(requestOptions, function(err, response) {
+
+    return next(createError(400, 'Bad request.'));
+
     if(err){
-      handleError(req, res, err);
+
+      return next(err);
+
     }else if (response.statusCode === 200) {
+
       var htitle = 'Election App 2016!';
       var stitle = 'Log In or Sign Up to join the discussion';
       res.render('indexView', {
@@ -127,9 +124,13 @@ module.exports.getIndex = function(req, res){
         },
         subtitle: stitle
       })
+
     }else{
-      handleError(req, res, response.statusCode);
+
+      handleError(req, res, 400);
+
     }
+
   });
 };
 
@@ -187,70 +188,6 @@ module.exports.getComments = function(req, res){
 };
 
 
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-
-
-module.exports.putUserProfile = function(req, res){ 
-
-  var requestOptions, path, postdata;
-  path = '/api/userprofile/' + res.locals.currentUser.id;
-  var reqBody = req.body;
-  var userProfileChangeKey;
-  var userProfileChangeValue;
-
-  for (var v in reqBody){
-    if (typeof reqBody[v] !== 'function') {
-      if(v !== '_csrf') {
-        userProfileChangeKey = v;
-        userProfileChangeValue = reqBody[v];
-      }
-    }
-  }
-
-  var val = userProfileChangeValue;
-  if(userProfileChangeKey === 'state'){
-    val = JSON.parse(userProfileChangeValue);
-  }
-
-  postdata = {
-    [userProfileChangeKey]: val
-  };
-
-  requestOptions = {
-    rejectUnauthorized: false,
-    url : apiOptions.server + path,
-    method : 'PUT',
-    json : postdata
-  };
-
-  var objKey = Object.keys(postdata)
-
-  if (!objKey[0]) {
-    var m = 'All User Profile fields required'
-    res.redirect('/userprofile/' + res.locals.currentUser.id + '/?err='+m);
-
-  } else {
-    request(requestOptions, function(err, response, body) {
-      if (response.statusCode === 200) {
-        res.redirect('/userprofile');
-
-      } else if (response.statusCode === 400 && body.name && body.name === 'ValidationError' ) {
-        handleError(req, res, response.statusCode);
-
-      } else if (response.statusCode === 404) {
-
-      } else {
-        if (body.message){
-          m = body.message
-          res.redirect('/signup/?err='+m);
-        }
-        handleError(req, res, response.statusCode);
-      }
-    });
-  }
-};
 
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -352,32 +289,18 @@ module.exports.getAddNewComment = function(req, res) {
 };
 
 
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-
-var testValidatedUserInput = function (v) {
-
-  for (var key in v){
-    if(v[key].hasOwnProperty('error')){
-      return true;
-    }
-  }
-
-};
-
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
-module.exports.getLogin = function(req, res) {
+module.exports.getLogin = function(req, res, next) {
 
   req.session.regenerate(function(err) {
 
     if(err){
 
-      handleError(req, res, 400);
+      return next(err);
 
     }else{
 
@@ -394,13 +317,13 @@ module.exports.getLogin = function(req, res) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
-module.exports.getSignup = function(req, res) {
+module.exports.getSignup = function(req, res, next) {
 
   req.session.regenerate(function(err) {
 
     if(err){
 
-      handleError(req, res, 400);
+      return next(err);
 
     }else{
 
@@ -417,10 +340,8 @@ module.exports.getSignup = function(req, res) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
-module.exports.getUserProfile = function(req, res) {
+module.exports.getUserProfile = function(req, res, next) {
 
-  var error;
-  req.session.csrfError ? error = req.session.csrfError : null;
   var requestOptions, path;
   path = '/api/userprofile/' + res.locals.currentUser.id;
 
@@ -435,19 +356,18 @@ module.exports.getUserProfile = function(req, res) {
 
     if(err){
 
-      handleError(req, res, err);
+      return next(err);
 
     }else if (response.statusCode === 200) {
 
       res.render('userProfile', {
         csrfToken: req.csrfToken(),
-        responseBody: body,
-        error: error
+        responseBody: body
       });
 
     }else{
 
-      handleError(req, res, response.statusCode);
+      handleError(req, res, 400);
 
     }
 
@@ -476,7 +396,7 @@ module.exports.getMembersOnly = function(req, res) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
-module.exports.getNotifyError = function(req, res) {
+module.exports.renderNotifyError = function(req, res) {
 
   var notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
   var notifyMessageType = 'danger';
@@ -484,20 +404,28 @@ module.exports.getNotifyError = function(req, res) {
   req.app.locals.notifyMessage ? notifyMessage = req.app.locals.notifyMessage : null;
   req.app.locals.notifyMessageType ? notifyMessageType = req.app.locals.notifyMessageType : null;
 
-  req.session.regenerate(function(err) {
+  res.render('notifyError', {
+    message: notifyMessage,
+    type: notifyMessageType
+  });
+};
+
+module.exports.getNotifyError = function(req, res, next) {
+
+  req.logout();
+
+  req.session.destroy(function(err) {
 
     if(err){
 
-      handleError(req, res, 400);
+      return next(err);
 
     }else{
 
-      res.render('notifyError', {
-        message: notifyMessage,
-        type: notifyMessageType
-      });
+      res.redirect('/rendernotifyerror');
 
     };
+
   });
 };
 
@@ -505,28 +433,51 @@ module.exports.getNotifyError = function(req, res) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
-module.exports.getNotifyErrorBasic = function(req, res) {
+module.exports.renderNotifyExceptionError = function(req, res) {
 
-  var notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
-  var notifyMessageType = 'danger';
+  console.log('renderNotifyExceptionError > REQ.METHOD :: REQ.URL: ', req.method, " :: ", req.url)
+  console.log('renderNotifyExceptionError > HEADERS: ', req.headers['referer']);
 
-  req.app.locals.notifyMessage ? notifyMessage = req.app.locals.notifyMessage : null;
-  req.app.locals.notifyMessageType ? notifyMessageType = req.app.locals.notifyMessageType : null;
+  if(req.url !== '/notifyexceptionerror'){
 
-  req.session.regenerate(function(err) {
+    res.render('loginorsignup', {
+      /* +++++++= */
+    });
+
+  }else{
+
+    var notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
+    var notifyMessageType = 'danger';
+
+    req.app.locals.notifyMessage ? notifyMessage = req.app.locals.notifyMessage : null;
+    req.app.locals.notifyMessageType ? notifyMessageType = req.app.locals.notifyMessageType : null;
+
+    res.render('notifyExceptionError', {
+      message: notifyMessage,
+      type: notifyMessageType
+    });
+
+  }
+
+};
+
+
+module.exports.getNotifyExceptionError = function(req, res, next) {
+
+  req.logout();
+
+  req.session.destroy(function(err) {
 
     if(err){
 
-      handleError(req, res, 400);
+      return next(err);
 
     }else{
 
-      res.render('notifyErrorBasic', {
-        message: notifyMessage,
-        type: notifyMessageType
-      });
+      res.redirect('/rendernotifyexceptionerror');
 
     };
+
   });
 };
 

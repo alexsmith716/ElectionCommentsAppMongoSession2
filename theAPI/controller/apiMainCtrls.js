@@ -19,9 +19,12 @@ var sendJSONresponse = function(res, status, content) {
   res.json(content);
 };
 
+
 module.exports.getIndexResponse = function(req, res) {
+  console.log('################ module.exports.getIndexResponse ++++++++++++++++++++')
   sendJSONresponse(res, 200), { "response": "getIndexResponse Response!!!" };
 };
+
 
 module.exports.getUserHomeResponse = function(req, res) {
   sendJSONresponse(res, 200), { "response": "getUserHomeResponse Response!!!" };
@@ -289,7 +292,7 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
   console.log('####### > ajaxUserProfileEmailPass > req.body 1:', req.body)
   console.log('####### > ajaxUserProfileEmailPass > Object.keys(req.body).length:', Object.keys(req.body).length)
 
-  var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerrorbasic'};
+  var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyexceptionerror'};
   var reqBodyProp;
   var reqBodyValue;
   var template = {};
@@ -401,7 +404,7 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 
         console.log('BBBBBBBBbbbbbbbbbb: ', p, ' :: ', req.body[p])
 
-        sendJSONresponse(res, 400, errResponse);
+        sendJSONresponse(res, 400, exceptionError);
 
       }
       console.log('TTTTTTTTTttttttttttttt: ', template);
@@ -411,7 +414,7 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 
   }else{
 
-    sendJSONresponse(res, 400, errResponse);
+    sendJSONresponse(res, 400, exceptionError);
 
   }
 
@@ -422,10 +425,11 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 // AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
 module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
-  console.log('####### > ajaxEvaluateUserProfile > req.body 1:', req.body)
-  console.log('####### > ajaxEvaluateUserProfile > Object.keys(req.body).length:', Object.keys(req.body).length)
+  console.log('####### > API > ajaxEvaluateUserProfile > req.body 1:', req.body)
+  console.log('####### > API > ajaxEvaluateUserProfile > Object.keys(req.body).length:', Object.keys(req.body).length)
 
-	var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerrorbasic'};
+	var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyexceptionerror'};
+
   var reqBodyProp;
   var reqBodyValue;
 	var template = {};
@@ -526,7 +530,7 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
       }else{
 
-        sendJSONresponse(res, 400, errResponse);
+        sendJSONresponse(res, 400, exceptionError);
 
       }
 
@@ -534,7 +538,7 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
   }else{
 
-    sendJSONresponse(res, 400, errResponse);
+    sendJSONresponse(res, 400, exceptionError);
 
   }
 
