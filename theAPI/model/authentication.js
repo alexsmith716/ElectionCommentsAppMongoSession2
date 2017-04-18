@@ -6,7 +6,7 @@ module.exports = function() {
   
   // serialize user into session
   passport.serializeUser(function(user, cb) {
-    console.log('####### AUTHENTICATION > PASSPORT.serializeUser $$$$$$: ', user.id)
+    console.log('####### AUTHENTICATION > PASSPORT.serializeUser $$$$$$')
     cb(null, user.id);
   });
 
@@ -14,7 +14,7 @@ module.exports = function() {
   passport.deserializeUser(function(id, cb) {
     User.findById(id, function(err, user) {
       if(user){
-        console.log('####### AUTHENTICATION > PASSPORT.deserializeUser $$$$$$: ', user.id)
+        console.log('####### AUTHENTICATION > PASSPORT.deserializeUser $$$$$$')
       }
       cb(err, user);
     });
@@ -47,7 +47,7 @@ module.exports = function() {
 
             }else{
 
-              console.log('####### authentication > PASSPORT.use CHECKPASSWORD GOOD $$$$$$')
+              console.log('####### AUTHENTICATION > PASSPORT > USER CHECKPASSWORD GOOD $$$$$$')
               return cb(null, user);
 
             }

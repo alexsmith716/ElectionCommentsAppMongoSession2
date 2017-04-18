@@ -27,7 +27,6 @@ require('./shared/sessionPrototype');
 
 var app   = express();
 
-var logDirectory  = path.join(__dirname, 'httpRequestLog');
 
 app.use(helmet());
 // app.use(helmet.noCache());
@@ -37,6 +36,11 @@ app.use(helmet());
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
+var logDirectory  = path.join(__dirname, 'httpRequestLog');
+
+
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 var options = {
 	key: fs.readFileSync(__dirname + '/ssl/thisgreatappPEM.pem'),
@@ -77,7 +81,7 @@ var accessLogStream = rfs('access.log', {
 
 
 app.use(morgan('dev'));
-app.use(morgan('combined', {stream: accessLogStream}));
+// app.use(morgan('combined', {stream: accessLogStream}));
 
 
 
@@ -133,7 +137,7 @@ app.use(passport.session());
 
 app.use(function(req, res, next){
 
-  console.log('REQ.METHOD :: REQ.URL: ', req.method, " :: ", req.url)
+  console.log('REQ.METHOD :: REQ.URL: ', req.method, ' :: ', req.url)
   console.log('REQ.HEADERS.referer +++: ', req.headers['referer']);
   console.log('REQ.HEADERS.user-agent +++: ', req.headers['user-agent']);
   console.log('REQ.SESSIONID +++: ', req.sessionID);
@@ -202,7 +206,20 @@ app.use(function(req, res, next){
 
 if (app.get('env') === 'development') {
   app.locals.pretty = true;
-}
+};
+
+
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+
+app.use(function(req, res, next){
+
+
+  //return next(createError(401, 'Please login to view this page.'));
+  next();
+
+});
 
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -245,9 +262,9 @@ if (app.get('env') === 'development') {
     console.log('DEV ERROR (code|status|name|message|xhr): ', err.code,  ' :: ', err.status, ' :: ', err.name, ' :: ', req.xhr);
     console.log('DEV ERR: ', err);
 
-    req.session.destroy(function(err) {
+    req.logout();
 
-      req.logout();
+    req.session.destroy(function(err) {
 
       if (req.xhr) {
 
@@ -255,10 +272,13 @@ if (app.get('env') === 'development') {
 
       }else{
 
+        // res.redirect('/notifyexceptionerror');
+
         res.render('notifyError', {
           message: app.locals.notifyMessage,
           type: app.locals.notifyMessageType
         });
+
 
       }
 
@@ -289,10 +309,10 @@ app.use(function(err, req, res, next) {
 
     app.locals.notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
     app.locals.notifyMessageType = 'danger';
+
+    req.logout();
    
     req.session.destroy(function(err) {
-
-      req.logout();
 
       if (req.xhr) {
 

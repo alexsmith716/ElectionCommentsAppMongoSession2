@@ -20,9 +20,11 @@ router.get('/:commentid', auth.ensureAuthenticated, apiControllers.getOneComment
 
 
 router.post('/loginuser', csrfProtection, apiControllers.ajaxLoginUser);
+
 router.post('/forgotpassword', csrfProtection, apiControllers.ajaxForgotPassword);
 
 router.post('/signupuser', csrfProtection, apiControllers.ajaxSignUpUser);
+
 router.put('/evaluateuserprofile', auth.ensureAuthenticated, csrfProtection, apiControllers.ajaxEvaluateUserProfile);
 
 router.put('/userprofileemailpass', auth.ensureAuthenticated, csrfProtection, apiControllers.ajaxUserProfileEmailPass);
