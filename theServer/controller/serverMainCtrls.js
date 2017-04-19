@@ -108,7 +108,7 @@ module.exports.getIndex = function(req, res, next){
 
   request(requestOptions, function(err, response) {
 
-    return next(createError(400, 'Bad request.'));
+    //return next(createError(400, 'Bad Request.'));
 
     if(err){
 
@@ -396,18 +396,17 @@ module.exports.getMembersOnly = function(req, res) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
+
 module.exports.renderNotifyError = function(req, res) {
 
   var notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
   var notifyMessageType = 'danger';
 
-  req.app.locals.notifyMessage ? notifyMessage = req.app.locals.notifyMessage : null;
-  req.app.locals.notifyMessageType ? notifyMessageType = req.app.locals.notifyMessageType : null;
-
   res.render('notifyError', {
     message: notifyMessage,
     type: notifyMessageType
   });
+
 };
 
 module.exports.getNotifyError = function(req, res, next) {
@@ -423,58 +422,6 @@ module.exports.getNotifyError = function(req, res, next) {
     }else{
 
       res.redirect('/rendernotifyerror');
-
-    };
-
-  });
-};
-
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-
-module.exports.renderNotifyExceptionError = function(req, res) {
-
-  console.log('renderNotifyExceptionError > REQ.METHOD :: REQ.URL: ', req.method, " :: ", req.url)
-  console.log('renderNotifyExceptionError > HEADERS: ', req.headers['referer']);
-
-  if(req.url !== '/notifyexceptionerror'){
-
-    res.render('loginorsignup', {
-      /* +++++++= */
-    });
-
-  }else{
-
-    var notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
-    var notifyMessageType = 'danger';
-
-    req.app.locals.notifyMessage ? notifyMessage = req.app.locals.notifyMessage : null;
-    req.app.locals.notifyMessageType ? notifyMessageType = req.app.locals.notifyMessageType : null;
-
-    res.render('notifyExceptionError', {
-      message: notifyMessage,
-      type: notifyMessageType
-    });
-
-  }
-
-};
-
-
-module.exports.getNotifyExceptionError = function(req, res, next) {
-
-  req.logout();
-
-  req.session.destroy(function(err) {
-
-    if(err){
-
-      return next(err);
-
-    }else{
-
-      res.redirect('/rendernotifyexceptionerror');
 
     };
 

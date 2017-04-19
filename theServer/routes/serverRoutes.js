@@ -27,13 +27,10 @@ router.get('/login', csrfProtection, serverControllers.getLogin);
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 router.get('/rendernotifyerror', serverControllers.renderNotifyError);
-router.get('/rendernotifyexceptionerror', serverControllers.renderNotifyExceptionError);
+router.get('/notifyerror', serverControllers.getNotifyError);
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-router.get('/notifyerror', auth.ensureAuthenticated, serverControllers.getNotifyError);
-
-router.get('/notifyexceptionerror', auth.ensureAuthenticated, serverControllers.getNotifyExceptionError);
 
 router.get('/userhome', auth.ensureAuthenticated, serverControllers.getUserHome);
 

@@ -10,6 +10,8 @@ var serverSideValidation = require('../../shared/serverSideValidation.js');
 var evaluateUserEmail = require('../../shared/evaluateUserEmail.js');
 var stateNamer = require('../../shared/stateNamer.js');
 
+var createError   = require('http-errors');
+
 var sortKey = 'time'
 var sort = '-' + sortKey
 var sortDocsFrom = 0;
@@ -224,63 +226,6 @@ module.exports.deleteOneComment = function(req, res) {
 
 
 
-module.exports.updateUserResponse = function(req, res) {
-  if (!req.params.userid) {
-    sendJSONresponse(res, 404, { "response": "All fields required" });
-    return;
-  }
-  User.findById(req.params.userid).exec(function(err, user) {
-    if (err) {
-      sendJSONresponse(res, 400, err);
-      return;
-    } 
-    if (!user || user === null) {
-      sendJSONresponse(res, 404, user);
-      return;
-    }
-    user.previouslogin = user.lastlogin;
-    user.lastlogin = new Date();
-    user.save(function(err, success) {
-      if (err) {
-        sendJSONresponse(res, 404, err);
-      } else {
-        sendJSONresponse(res, 200, success);
-      }
-    });
-  });
-};
-
-
-module.exports.ajaxEvaluateRegisteredUser = function(req, res, next) {
-
-  if(!req.body.email || !req.body.password) {
-    sendJSONresponse(res, 400, { 'message': 'error' });
-  }else{
-
-    passport.authenticate('local', function(err, user, info){
-      if (err) {
-        sendJSONresponse(res, 404, { 'message': 'error' });
-        return;
-      }
-      if (info) {
-
-        // returns message either incorrect username or password
-        sendJSONresponse(res, 401, { 'message': 'error' });
-        return;
-
-      }
-      if(user){
-
-        sendJSONresponse(res, 201, { 'message': 'success' });
-
-      }
-    })(req, res, next);
-  }
-};
-
-
-
-
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -292,7 +237,8 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
   console.log('####### > ajaxUserProfileEmailPass > req.body 1:', req.body)
   console.log('####### > ajaxUserProfileEmailPass > Object.keys(req.body).length:', Object.keys(req.body).length)
 
-  var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyexceptionerror'};
+  var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'};
+  var newExceptionError;
   var reqBodyProp;
   var reqBodyValue;
   var template = {};
@@ -305,7 +251,7 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 
     delete req.body['_csrf'];
 
-    req.body = {firstnameXX:'Freddncsdlcscnsdcijdcsd'}
+    //req.body = {firstnameXX:'Freddncsdlcscnsdcijdcsd'}
 
     for (var p in req.body){
 
@@ -403,8 +349,10 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
       }else{
 
         console.log('BBBBBBBBbbbbbbbbbb: ', p, ' :: ', req.body[p])
-
-        sendJSONresponse(res, 400, exceptionError);
+        //sendJSONresponse(res, 400, exceptionError);
+        newExceptionError = new Error('Bad Request');
+        err.status = 400;
+        return next(err);
 
       }
       console.log('TTTTTTTTTttttttttttttt: ', template);
@@ -414,7 +362,10 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 
   }else{
 
-    sendJSONresponse(res, 400, exceptionError);
+    //sendJSONresponse(res, 400, exceptionError);
+    newExceptionError = new Error('Bad Request');
+    err.status = 400;
+    return next(err);
 
   }
 
@@ -428,8 +379,8 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
   console.log('####### > API > ajaxEvaluateUserProfile > req.body 1:', req.body)
   console.log('####### > API > ajaxEvaluateUserProfile > Object.keys(req.body).length:', Object.keys(req.body).length)
 
-	var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyexceptionerror'};
-
+	var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'};
+  var newExceptionError;
   var reqBodyProp;
   var reqBodyValue;
 	var template = {};
@@ -441,7 +392,8 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
   if(Object.keys(req.body).length == 2){
 
     delete req.body['_csrf'];
-    req.body = {firstnameXX:'Freddncsdlcscnsdcijdcsd'}
+
+    //req.body = {firstnameXX:'Freddncsdlcscnsdcijdcsd'}
 
     for (var p in req.body){
 
@@ -530,7 +482,10 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
       }else{
 
-        sendJSONresponse(res, 400, exceptionError);
+        //sendJSONresponse(res, 400, exceptionError);
+        newExceptionError = new Error('Bad Request');
+        err.status = 400;
+        return next(err);
 
       }
 
@@ -538,7 +493,10 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
   }else{
 
-    sendJSONresponse(res, 400, exceptionError);
+    //sendJSONresponse(res, 400, exceptionError);
+    newExceptionError = new Error('Bad Request');
+    err.status = 400;
+    return next(err);
 
   }
 

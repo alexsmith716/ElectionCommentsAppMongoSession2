@@ -149,11 +149,6 @@ app.use(function(req, res, next){
   var reqQuery = sanitize(req.query);
   var reqParams = sanitize(req.params);
 
-  app.locals.notifyMessage = null;
-  app.locals.notifyMessageType = null;
-
-  // return next(createError(401, 'Please login to view this page.'));
-
   if(reqBody['badInput'] || reqQuery['badInput'] || reqParams['badInput']){
 
     var err = new Error('Bad Request');
@@ -215,8 +210,7 @@ if (app.get('env') === 'development') {
 
 app.use(function(req, res, next){
 
-
-  //return next(createError(401, 'Please login to view this page.'));
+  // return next(createError(401, 'Please login to view this page.'));
   next();
 
 });
@@ -251,13 +245,11 @@ if (app.get('env') === 'development') {
 
     res.status(err.status || 500);
 
-    //res.locals.notifyMessage = '';
-    //res.locals.notifyMessageType = '';
-    app.locals.notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
-    app.locals.notifyMessageType = 'danger';
-    app.locals.notifyMessageErr = err;
-    app.locals.notifyMessageReqXhr = req.xhr;
-    app.locals.notifyMessageReferer = req.headers['referer'];
+    res.locals.notifyErrorMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
+    res.locals.notifyErrorMessageType = 'danger';
+    app.locals.notifyErrorMessageObject = err;
+    app.locals.notifyErrorMessageReqXhr = req.xhr;
+    app.locals.notifyErrorMessageReferer = req.headers['referer'];
     
     console.log('DEV ERROR (code|status|name|message|xhr): ', err.code,  ' :: ', err.status, ' :: ', err.name, ' :: ', req.xhr);
     console.log('DEV ERR: ', err);
@@ -272,13 +264,14 @@ if (app.get('env') === 'development') {
 
       }else{
 
-        // res.redirect('/notifyexceptionerror');
+        res.redirect('/notifyerror');
 
+        /*
         res.render('notifyError', {
           message: app.locals.notifyMessage,
           type: app.locals.notifyMessageType
         });
-
+        */
 
       }
 
