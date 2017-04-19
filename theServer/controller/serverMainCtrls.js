@@ -96,6 +96,7 @@ module.exports.getLogout = function(req, res, next){
 
 module.exports.getIndex = function(req, res, next){
 
+  var newExceptionError;
   var requestOptions, path;
   path = '/api/index';
 
@@ -127,7 +128,9 @@ module.exports.getIndex = function(req, res, next){
 
     }else{
 
-      handleError(req, res, 400);
+      newExceptionError = new Error('Bad Request');
+      newExceptionError.status = 400;
+      return next(newExceptionError);
 
     }
 
@@ -342,6 +345,7 @@ module.exports.getSignup = function(req, res, next) {
 
 module.exports.getUserProfile = function(req, res, next) {
 
+  var newExceptionError;
   var requestOptions, path;
   path = '/api/userprofile/' + res.locals.currentUser.id;
 
@@ -367,7 +371,9 @@ module.exports.getUserProfile = function(req, res, next) {
 
     }else{
 
-      handleError(req, res, 400);
+      newExceptionError = new Error('Bad Request');
+      newExceptionError.status = 400;
+      return next(newExceptionError);
 
     }
 
