@@ -23,10 +23,10 @@ block content
 
           .panel-body
 
-            if(title != undefined)
+            - if(title != undefined)
               h3= title
 
-            if (message != undefined)
+            - if (message != undefined)
 
               if(type === 'success')
                 .alert.alert-success(role="alert") #{message}
@@ -59,25 +59,44 @@ block content
             hr
             br
 
-            - var appError = `${notifyMessageErr}`
-            - var appErrorName = `${notifyMessageErr.name}`
-            - var appErrorMessage = `${notifyMessageErr.message}`
-            - var appErrorStatus = `${notifyMessageErr.status}`
-            - var appErrorCode = `${notifyMessageErr.code}`
-            - var appErrorStack = `${notifyMessageErr.stack}`
-            
 
-            pre
-              p Error: #{appError}
-              p Name: #{appErrorName}
-              p Message: #{appErrorMessage}
-              p Status: #{appErrorStatus}
-              p Code: #{appErrorCode}
-              p Xhr: #{notifyMessageReqXhr}
-              p Referer: #{notifyMessageReferer}
-              hr
-              br
-              p Stack: #{appErrorStack}
+  
+            p Good for exception & non-exception Errors!!
+
+            - if( notifyErrorMessageObject )
+              p yes object!
+            - else
+              p no object!
+
+
+            - if( notifyErrorMessageObject )
+              - var appError = `${notifyErrorMessageObject}`
+              - var appErrorName = `${notifyErrorMessageObject.name}`
+              - var appErrorMessage = `${notifyErrorMessageObject.appErrorStack}`
+              - var appErrorStatus = `${notifyErrorMessageObject.status}`
+              - var appErrorCode = `${notifyErrorMessageObject.code}`
+              - var appErrorStack = `${notifyErrorMessageObject.stack}`
+
+
+            - if( notifyErrorMessageObject )
+              pre
+                | Error: #{`${notifyErrorMessageObject}`}
+                |
+                | Name: #{`${notifyErrorMessageObject.name}`}
+                |
+                | Message: #{appErrorMessage}
+                |
+                | Status: #{appErrorStatus}
+                |
+                | Code: #{appErrorCode}
+                |
+                | Xhr: #{notifyErrorMessageReqXhr}
+                |
+                | Referer: #{notifyErrorMessageReferer}
+                |
+                | Stack: #{appErrorStack}
+
+
 
 
 

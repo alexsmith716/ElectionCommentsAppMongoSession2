@@ -14,8 +14,6 @@ router.post('/comments/maincomment', auth.ensureAuthenticated, apiControllers.po
 router.post('/comments/subcomment/:subcommentid', auth.ensureAuthenticated, apiControllers.postSubCommentResponse);
 
 
-router.get('/userprofile/:userid', auth.ensureAuthenticated, apiControllers.getUserProfileResponse);
-router.put('/login/:userid', apiControllers.updateUserResponse);
 router.get('/:commentid', auth.ensureAuthenticated, apiControllers.getOneCommentResponse);
 
 
@@ -30,7 +28,5 @@ router.put('/evaluateuserprofile', auth.ensureAuthenticated, csrfProtection, api
 router.put('/userprofileemailpass', auth.ensureAuthenticated, csrfProtection, apiControllers.ajaxUserProfileEmailPass);
 
 router.post('/evaluateuseremail', csrfProtection, apiControllers.ajaxEvaluateUserEmail);
-
-router.post('/evaluateregistereduser', apiControllers.ajaxEvaluateRegisteredUser);
 
 module.exports = router;
