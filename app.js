@@ -241,7 +241,7 @@ if (app.get('env') === 'development') {
 
  	app.use(function (err, req, res, next) {
 
- 	  console.log('################################ DEVELOPMENT ############################');
+ 	console.log('################################ DEVELOPMENT ############################');
 
     res.status(err.status || 500);
 
@@ -265,13 +265,6 @@ if (app.get('env') === 'development') {
       }else{
 
         res.redirect('/notifyerror');
-
-        /*
-        res.render('notifyError', {
-          message: app.locals.notifyMessage,
-          type: app.locals.notifyMessageType
-        });
-        */
 
       }
 

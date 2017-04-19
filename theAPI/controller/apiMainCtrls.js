@@ -351,8 +351,8 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
         console.log('BBBBBBBBbbbbbbbbbb: ', p, ' :: ', req.body[p])
         //sendJSONresponse(res, 400, exceptionError);
         newExceptionError = new Error('Bad Request');
-        err.status = 400;
-        return next(err);
+        newExceptionError.status = 400;
+        return next(newExceptionError);
 
       }
       console.log('TTTTTTTTTttttttttttttt: ', template);
@@ -364,8 +364,8 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 
     //sendJSONresponse(res, 400, exceptionError);
     newExceptionError = new Error('Bad Request');
-    err.status = 400;
-    return next(err);
+    newExceptionError.status = 400;
+    return next(newExceptionError);
 
   }
 
@@ -484,8 +484,8 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
         //sendJSONresponse(res, 400, exceptionError);
         newExceptionError = new Error('Bad Request');
-        err.status = 400;
-        return next(err);
+        newExceptionError.status = 400;
+        return next(newExceptionError);
 
       }
 
@@ -495,8 +495,8 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
     //sendJSONresponse(res, 400, exceptionError);
     newExceptionError = new Error('Bad Request');
-    err.status = 400;
-    return next(err);
+    newExceptionError.status = 400;
+    return next(newExceptionError);
 
   }
 
