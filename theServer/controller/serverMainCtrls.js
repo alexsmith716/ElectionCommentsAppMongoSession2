@@ -109,7 +109,7 @@ module.exports.getIndex = function(req, res, next){
 
   request(requestOptions, function(err, response) {
 
-    return next(createError(400, 'Bad Request.'));
+    //return next(createError(400, 'Bad Request.'));
 
     if(res.app.locals.foober === true){
       //res.app.locals.foober = false;
@@ -313,6 +313,8 @@ module.exports.getLogin = function(req, res, next) {
 
     }else{
 
+      console.log('######### SERVER ########### getLogin ++++');
+
       res.render('login', {
         csrfToken: req.csrfToken()
       });
@@ -411,6 +413,8 @@ module.exports.getMembersOnly = function(req, res) {
 
 module.exports.renderNotifyError = function(req, res) {
 
+  console.log('######### SERVER ########### renderNotifyError ++++');
+
   var notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
   var notifyMessageType = 'danger';
 
@@ -447,6 +451,9 @@ module.exports.getNotifyError = function(req, res, next) {
 
 
 module.exports.getLoginOrSignup = function(req, res) {
+
+  console.log('######### SERVER ########### getLoginOrSignup ++++');
+
   res.render('loginorsignup', {
     /* +++++++= */
   });

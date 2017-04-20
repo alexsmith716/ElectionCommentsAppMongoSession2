@@ -137,13 +137,28 @@ app.use(passport.session());
 
 app.use(function(req, res, next){
 
-  console.log('REQ.METHOD :: REQ.URL: ', req.method, ' :: ', req.url)
-  console.log('REQ.HEADERS.referer +++: ', req.headers['referer']);
-  console.log('REQ.HEADERS.user-agent +++: ', req.headers['user-agent']);
-  console.log('REQ.SESSIONID +++: ', req.sessionID);
-  console.log('REQ.USER +++: ', req.user);
-  console.log('REQ.BODY +++: ', req.body);
-
+  console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+  console.log('REQ.baseUrl ++: ', req.baseUrl);
+  console.log('REQ.cookies ++: ', req.cookies);
+  console.log('REQ.signedCookies ++: ', req.signedCookies);
+  console.log('REQ.secure ++: ', req.secure);
+  console.log('REQ.fresh ++: ', req.fresh);
+  console.log('REQ.stale ++: ', req.stale);
+  console.log('REQ.protocol ++: ', req.protocol)
+  console.log('REQ.path ++: ', req.path)
+  console.log('REQ.route ++: ', req.route)
+  console.log('REQ.method ++: ', req.method)
+  console.log('REQ.url ++: ', req.url)
+  console.log('REQ.originalUrl ++: ', req.originalUrl)
+  console.log('REQ.headers.referer ++: ', req.headers['referer']);
+  console.log('REQ.headers.user-agent ++: ', req.headers['user-agent']);
+  console.log('REQ.session ++: ', req.session);
+  console.log('REQ.sessionID ++: ', req.sessionID);
+  console.log('REQ.user ++: ', req.user);
+  console.log('REQ.query ++: ', req.query);
+  console.log('REQ.body ++: ', req.body);
+  console.log('REQ.params ++: ', req.params);
+ 	console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 
   var reqBody = sanitize(req.body);
   var reqQuery = sanitize(req.query);
@@ -168,13 +183,10 @@ app.use(function(req, res, next){
 
 app.use(function(req, res, next){
 
-  console.log('aaaaaaaaaaaaaaa11111111111')
-  //app.locals.foober = 'voo1';
-
+	console.log('######### Going through App Now #########');
   res.locals.currentUser = req.user;
   res.locals.reqUrl = req.url;
   res.locals.currentURL = req.url;
-  res.locals.resLocalsFoober = 'resLocalsFoober!!';
 
   //if(res.locals.currentUser){
     //req.session.paginateFrom = res.locals.sortDocsFrom;
@@ -186,12 +198,12 @@ app.use(function(req, res, next){
 
   if((s.test(req.headers['user-agent'])) && (!c.test(req.headers['user-agent']))){
 
-    console.log('SAFARI +++++++++++++++++++++++++++++++')
   	res.locals.isSafari = true;
+
   }else{
 
-    console.log('NOT SAFARI +++++++++++++++++++++++++++++++')
   	res.locals.isSafari = false;
+
   }
 
   next();
@@ -272,6 +284,7 @@ if (app.get('env') === 'development') {
 
 			}else{
 
+				console.log('######### DEVELOPMENT ########### REDIRECT ++++');
 			  res.redirect('/notifyerror');
 
 			}

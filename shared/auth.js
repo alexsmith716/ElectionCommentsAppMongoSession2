@@ -15,7 +15,7 @@ module.exports.ensureNotAuthenticated = function(req, res, next){
     console.log('####### > ensureNotAuthenticated > YES +++++')
     return next();
   } else {
-    onsole.log('####### > ensureNotAuthenticated > NO +++++')
+    console.log('####### > ensureNotAuthenticated > NO +++++')
     res.redirect('/');
   }
 };
