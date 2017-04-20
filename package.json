@@ -36,6 +36,8 @@
     "serve-static": "^1.12.1"
   },
   "devDependencies": {
-    "nodemon": "1.11.0"
+    "eslint": "^3.19.0",
+    "nodemon": "1.11.0",
+    "standard": "^10.0.2"
   }
 }
