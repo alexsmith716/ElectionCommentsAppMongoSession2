@@ -593,6 +593,9 @@ var validateMaxLengthUserInput = function (val,maxlen) {
 
 module.exports.ajaxLoginUser = function(req, res, next){
 
+  //res.app.locals.foober = true;
+
+
   var template = {email: 'required',
                   password: 'required', 
                   expectedResponse: 'true'};
