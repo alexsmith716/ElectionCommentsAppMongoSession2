@@ -23,13 +23,17 @@ block content
 
           .panel-body
 
-            h3= title
+            h3= header
 
             br
+
+            - if ( resLocalsBasicView )
+              p #{resLocalsBasicView}
+              p= resLocalsBasicView
+              
 
             p !{(content).replace(/\n/g, '<br/>')}
 
-            br
 
             p Please
               |&nbsp;
@@ -40,7 +44,6 @@ block content
               a.highlight(href='/signup') Sign Up
               |&nbsp;to use Election App 2017.
 
-            br
 
             p Contact
               | 

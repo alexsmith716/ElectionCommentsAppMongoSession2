@@ -60,15 +60,6 @@ block content
             br
 
 
-  
-            p Good for exception & non-exception Errors!!
-
-            - if( notifyErrorMessageObject )
-              p yes object!
-            - else
-              p no object!
-
-
             - if( notifyErrorMessageObject )
               - var appError = `${notifyErrorMessageObject}`
               - var appErrorName = `${notifyErrorMessageObject.name}`

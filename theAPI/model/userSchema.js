@@ -103,6 +103,7 @@ userSchema.methods.checkPassword = function(password, callback) {
 };
 
 userSchema.methods.name = function() {
+    console.log('+++++++++++++++ userSchema.methods.name ++++++++++++++')
     return this.displayname || this.email;
 };
 

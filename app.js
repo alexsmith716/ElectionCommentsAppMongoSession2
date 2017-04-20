@@ -168,9 +168,13 @@ app.use(function(req, res, next){
 
 app.use(function(req, res, next){
 
+  console.log('aaaaaaaaaaaaaaa11111111111')
+  //app.locals.foober = 'voo1';
+
   res.locals.currentUser = req.user;
   res.locals.reqUrl = req.url;
   res.locals.currentURL = req.url;
+  res.locals.resLocalsFoober = 'resLocalsFoober!!';
 
   //if(res.locals.currentUser){
     //req.session.paginateFrom = res.locals.sortDocsFrom;
@@ -241,44 +245,38 @@ if (app.get('env') === 'development') {
 
  	app.use(function (err, req, res, next) {
 
- 	console.log('################################ DEVELOPMENT ############################');
+		console.log('######### DEVELOPMENT ###########');
 
-    res.status(err.status || 500);
+		res.status(err.status || 500);
 
-    res.locals.notifyErrorMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
-    res.locals.notifyErrorMessageType = 'danger';
-    app.locals.notifyErrorMessageObject = err;
-    app.locals.notifyErrorMessageReqXhr = req.xhr;
-    app.locals.notifyErrorMessageReferer = req.headers['referer'];
-    
-    console.log('DEV ERROR (code|status|name|message|xhr): ', err.code,  ' :: ', err.status, ' :: ', err.name, ' :: ', req.xhr);
-    console.log('DEV ERR: ', err);
+		// res.locals.message = err.message;
+		app.locals.notifyErrorMessageObject = err;
+		app.locals.notifyErrorMessageReqXhr = req.xhr;
+		app.locals.notifyErrorMessageReferer = req.headers['referer'];
+		res.locals.resLocalsBasicView = 'ResLocalsBasicView!!';
+		
+		// console.log('DEV ERROR code: ', err.code);
+		// console.log('DEV ERROR status: ', err.status);
+		// console.log('DEV ERROR name: ', err.name);
+		// console.log('DEV ERROR message: ', err.message);
+		// console.log('DEV ERROR xhr: ', req.xhr);
+		// console.log('DEV ERR: ', err);
 
-    req.logout();
+		req.logout();
 
-    req.session.destroy(function(err) {
+		req.session.destroy(function(err) {
 
-      if (req.xhr) {
+			if (req.xhr) {
 
-        res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'});
+			  res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'});
 
-      }else{
+			}else{
 
-        res.redirect('/notifyerror');
+			  res.redirect('/notifyerror');
 
-      }
+			}
 
-    });
-
-    /*
-	res.render('error', {
-	  message: 'Foooo',
-	  error: err,
-	  errHeaders: req.headers['referer'],
-	  reqXhr: req.xhr,
-	  type: 'danger'
-	});
-	*/
+		});
 
  	});
 };
@@ -287,7 +285,7 @@ if (app.get('env') === 'development') {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-
+/*
 // production
 app.use(function(err, req, res, next) {
 
@@ -316,7 +314,7 @@ app.use(function(err, req, res, next) {
 
     });
 });
-
+*/
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
