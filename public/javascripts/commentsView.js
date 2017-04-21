@@ -1,4 +1,4 @@
-
+/* global $ */
 var requestLoader = $('<div class="modal-backdrop fade in"><img src="/images/request-loader.gif" style="position: fixed; top: 45%; left: 49%;"></div>');
 
 $('#sidebar').affix({

@@ -1,4 +1,6 @@
-
+/* global $ */
+/* global isSafari */
+/* global location */
 var helper = {
 
     init: function() {

@@ -1,5 +1,4 @@
-
-/* Chrome */
+/* global $ */
 var helper = {
 
     init: function() {
@@ -230,18 +229,18 @@ var helper = {
         var thisElementValue = thisElement.val();
 
         if(thisElementValue !== ''){
-            if(is_safari){
+            if(isSafari){
                 $('#'+elementID+'Error').text('');
                 $('#'+elementID+'Error').removeClass('show').addClass('hide');
             }
-            !is_safari ? thisElement.get(0).setCustomValidity('') : null;
+            !isSafari ? thisElement.get(0).setCustomValidity('') : null;
 
         }else{
-            if(is_safari){
+            if(isSafari){
                 $('#'+elementID+'Error').text('Please select an option. '+$('#'+elementID).attr('title'));
                 $('#'+elementID+'Error').removeClass('hide').addClass('show');
             }
-            !is_safari ? thisElement.get(0).setCustomValidity('Please select an item in the list.') : null;
+            !isSafari ? thisElement.get(0).setCustomValidity('Please select an item in the list.') : null;
         }
     },
 
@@ -273,17 +272,17 @@ var helper = {
         var title = $('#'+elementID).attr('title');
 
         if (helper.validateEmailValue(thisElementValue)) {
-            is_safari ? thisErrorElement.text('') : null;
-            is_safari ? thisErrorElement.removeClass('show').addClass('hide') : null;
+            isSafari ? thisErrorElement.text('') : null;
+            isSafari ? thisErrorElement.removeClass('show').addClass('hide') : null;
             $('#'+elementID).off('input');
 
         }else if(thisElementValue === ''){
-            is_safari ? thisErrorElement.text('Please fill out this field. ' + title) : null;
-            is_safari ? thisErrorElement.removeClass('hide').addClass('show') : null;
+            isSafari ? thisErrorElement.text('Please fill out this field. ' + title) : null;
+            isSafari ? thisErrorElement.removeClass('hide').addClass('show') : null;
 
         }else{
-            is_safari ? thisErrorElement.text('Please enter an email address. ' + title) : null;
-            is_safari ? thisErrorElement.removeClass('hide').addClass('show') : null;
+            isSafari ? thisErrorElement.text('Please enter an email address. ' + title) : null;
+            isSafari ? thisErrorElement.removeClass('hide').addClass('show') : null;
         }
     },
 
@@ -341,7 +340,7 @@ var helper = {
 
             if (property1.value !== property2.value) {
 
-                if (is_safari) {
+                if (isSafari) {
                     if (str2 === 'email') {
                         $('#' + str1 + 'Match').removeClass('hide').addClass('show');
                     } else {
@@ -354,7 +353,7 @@ var helper = {
 
             } else {
 
-                if (is_safari) {
+                if (isSafari) {
 
                     if (str2 === 'email') {
                         $('#' + str1 + 'Match').removeClass('show').addClass('hide');
@@ -377,18 +376,18 @@ var helper = {
 
         if (helper.validateEmailValue(elementVal)) {
 
-            is_safari ? $('#'+thisField+'Improper').removeClass('show').addClass('hide') : null;
+            isSafari ? $('#'+thisField+'Improper').removeClass('show').addClass('hide') : null;
             $('#'+thisField).get(0).setCustomValidity(''); 
             $('#'+thisField).off('input');
 
             helper.validateEmailService(elementVal, function(alreadyRegistered) {
 
                 if(alreadyRegistered){
-                    is_safari ? $('#emailRegistered').removeClass('hide').addClass('show') : null;
+                    isSafari ? $('#emailRegistered').removeClass('hide').addClass('show') : null;
                     $('#'+thisField).get(0).setCustomValidity('This email address is already in our system. Sign in, or enter a new email address');
 
                 } else {
-                    is_safari ? $('#emailRegistered').removeClass('show').addClass('hide') : null;
+                    isSafari ? $('#emailRegistered').removeClass('show').addClass('hide') : null;
                     helper.validateParams(thisField, comparedField);
                 }
 
@@ -396,7 +395,7 @@ var helper = {
 
         } else{
 
-            is_safari ? $('#'+thisField+'Improper').removeClass('hide').addClass('show') : null; 
+            isSafari ? $('#'+thisField+'Improper').removeClass('hide').addClass('show') : null; 
             $('#'+thisField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + ' is in improper format'); 
         }
     },
@@ -410,14 +409,14 @@ var helper = {
 
         if(thisElementValue){
 
-            is_safari ? $('#'+thisField+'Error').text('') : null;
-            is_safari ? $('#'+thisField+'Error').removeClass('show').addClass('hide') : null;
+            isSafari ? $('#'+thisField+'Error').text('') : null;
+            isSafari ? $('#'+thisField+'Error').removeClass('show').addClass('hide') : null;
             $('#'+thisField).get(0).setCustomValidity('')
 
         }else{
 
-            is_safari ? $('#'+thisField+'Error').text('Please fill out this field. ' + property1.title) : null;
-            is_safari ? $('#'+thisField+'Error').removeClass('hide').addClass('show') : null;
+            isSafari ? $('#'+thisField+'Error').text('Please fill out this field. ' + property1.title) : null;
+            isSafari ? $('#'+thisField+'Error').removeClass('hide').addClass('show') : null;
 
         }
     },
@@ -460,8 +459,8 @@ var helper = {
                 console.log('handleErrorResponse HAS error?: ', data[errorObject].hasOwnProperty('error'));// true
                 console.log('handleErrorResponse IS empty?: ', data[errorObject]['error']);// empty
                 if(data[errorObject].hasOwnProperty('error') && data[errorObject]['error'] === 'empty'){
-                    is_safari ? $('#'+errorObject+'Error').text('Please select an option. Please select a '+errorObject.toUpperCase()) : null;
-                    is_safari ? $('#'+errorObject+'Error').removeClass('hide').addClass('show') : null; 
+                    isSafari ? $('#'+errorObject+'Error').text('Please select an option. Please select a '+errorObject.toUpperCase()) : null;
+                    isSafari ? $('#'+errorObject+'Error').removeClass('hide').addClass('show') : null; 
                 }
             }
             if(element.prop('nodeName') === 'INPUT'){

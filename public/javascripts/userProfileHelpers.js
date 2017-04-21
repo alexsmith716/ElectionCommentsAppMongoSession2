@@ -1,4 +1,6 @@
-
+/* global $ */
+/* global isSafari */
+/* global location */
 var helper = {
 
     init: function() {
@@ -132,7 +134,7 @@ var helper = {
 
             var constrainedFormElements = document.getElementById('editProfileForm').querySelectorAll('[required]');
 
-            if(is_safari){
+            if(isSafari){
 
                 var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout');
 
@@ -230,7 +232,7 @@ var helper = {
 
             var constrainedFormElements = document.getElementById('changeEmailPassForm').querySelectorAll('[required]');
 
-            if(is_safari){
+            if(isSafari){
 
                 var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout');
 
@@ -334,7 +336,7 @@ var helper = {
 
         // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-        if(is_safari){
+        if(isSafari){
 
             $('#editProfileForm').on('focusin', '#required-fields .form-control', function() {
 
@@ -422,10 +424,10 @@ var helper = {
 
             if(!patternTestValue){
 
-                is_safari ? $('#'+elementID+'Error').text('Invalid input. '+$('#'+elementID).attr('title')) : null;
-                err1 !== undefined && !is_safari ? $('#'+elementID+'Error').text('Please match the requested format. '+ title) : null;
+                isSafari ? $('#'+elementID+'Error').text('Invalid input. '+$('#'+elementID).attr('title')) : null;
+                err1 !== undefined && !isSafari ? $('#'+elementID+'Error').text('Please match the requested format. '+ title) : null;
     
-                if((err1 !== undefined && !is_safari) ||  is_safari){
+                if((err1 !== undefined && !isSafari) ||  isSafari){
 
                     $('#'+elementID+'Error').removeClass('hide').addClass('show');
 
@@ -439,18 +441,18 @@ var helper = {
 
             }else{
 
-                is_safari ? $('#'+elementID+'Error').text('') : null;
-                is_safari ? $('#'+elementID+'Error').removeClass('show').addClass('hide') : null;
+                isSafari ? $('#'+elementID+'Error').text('') : null;
+                isSafari ? $('#'+elementID+'Error').removeClass('show').addClass('hide') : null;
                 $('#'+elementID).get(0).setCustomValidity('')
 
             }
 
         }else{
 
-            is_safari ? $('#'+elementID+'Error').text('Please fill out this field. ' + $('#'+elementID).attr('title')) : null;
-            err1 !== undefined && !is_safari ? $('#'+elementID+'Error').text('Please fill out this field.') : null;
+            isSafari ? $('#'+elementID+'Error').text('Please fill out this field. ' + $('#'+elementID).attr('title')) : null;
+            err1 !== undefined && !isSafari ? $('#'+elementID+'Error').text('Please fill out this field.') : null;
 
-            if((err1 !== undefined && !is_safari) ||  is_safari){
+            if((err1 !== undefined && !isSafari) ||  isSafari){
 
                 $('#'+elementID+'Error').removeClass('hide').addClass('show')
 
@@ -476,15 +478,15 @@ var helper = {
             $('#'+elementID+'Error').text('');
             $('#'+elementID+'Error').removeClass('show').addClass('hide');
 
-            !is_safari ? $('#'+elementID).get(0).setCustomValidity('') : null;
+            !isSafari ? $('#'+elementID).get(0).setCustomValidity('') : null;
 
         }else{
 
-            is_safari ? $('#'+elementID+'Error').text('Please select an option. ' + $('#'+elementID).attr('title')) : null;
+            isSafari ? $('#'+elementID+'Error').text('Please select an option. ' + $('#'+elementID).attr('title')) : null;
 
-            err1 !== undefined && !is_safari ? $('#'+elementID+'Error').text('Please select an item in the list.') : null;
+            err1 !== undefined && !isSafari ? $('#'+elementID+'Error').text('Please select an item in the list.') : null;
 
-            if((err1 !== undefined && !is_safari) ||  is_safari){
+            if((err1 !== undefined && !isSafari) ||  isSafari){
 
                 $('#'+elementID+'Error').removeClass('hide').addClass('show')
 

@@ -19,8 +19,7 @@ html(lang="en-US")
     link(href='/css/main1.css', rel='stylesheet')
     block links
 
-    script(src='/javascripts/jquery-min-3.1.1.js')
-    script(src='/bootstrap/js/bootstrap.min.js')
+    script(type='text/javascript', src='./javascripts/jquery-min-3.2.1.js')
     block headScripts
 
   body
@@ -85,7 +84,7 @@ html(lang="en-US")
       .view
 
         script.
-          var is_safari = (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1)
+          var isSafari = #{isSafari}
 
         block content
 
