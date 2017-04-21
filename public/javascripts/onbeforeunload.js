@@ -1,6 +1,4 @@
-
-console.log('####### > onbeforeunload.js');
-
+/* global $ */
 window.onbeforeunload = function() { 
 	//$('.clrFavForm').trigger('click');
 	var addNewCommentViewFormID = document.getElementById("addNewCommentViewFormID");

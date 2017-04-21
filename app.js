@@ -169,10 +169,11 @@ app.use(function (req, res, next) {
   var c = /Chrome/
 
   if ((s.test(req.headers['user-agent'])) && (!c.test(req.headers['user-agent']))) {
-    res.locals.isSafari = true
+    app.locals.isSafari = true
   } else {
-    res.locals.isSafari = false
+    app.locals.isSafari = false
   }
+  
   next()
 })
 
@@ -221,12 +222,12 @@ if (app.get('env') === 'development') {
     app.locals.notifyErrorMessageReferer = req.headers['referer']
     res.locals.resLocalsBasicView = 'ResLocalsBasicView!!'
 
-    // console.log('DEV ERROR code: ', err.code)
-    // console.log('DEV ERROR status: ', err.status)
-    // console.log('DEV ERROR name: ', err.name)
-    // console.log('DEV ERROR message: ', err.message)
-    // console.log('DEV ERROR xhr: ', req.xhr)
-    // console.log('DEV ERR: ', err)
+    console.log('DEV ERROR code: ', err.code)
+    console.log('DEV ERROR status: ', err.status)
+    console.log('DEV ERROR name: ', err.name)
+    console.log('DEV ERROR message: ', err.message)
+    console.log('DEV ERROR xhr: ', req.xhr)
+    console.log('DEV ERR: ', err)
 
     req.logout()
 
