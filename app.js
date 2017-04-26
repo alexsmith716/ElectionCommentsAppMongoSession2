@@ -45,6 +45,16 @@ var options = {
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 setUpAuthentication()
 
@@ -115,7 +125,7 @@ app.use(passport.session())
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 app.use(function (req, res, next) {
-  // console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+  console.log('++++++++++++++++++++++++++++ APP.js +++++++++++++++++++++++++++++++++')
   // console.log('REQ.baseUrl ++: ', req.baseUrl)
   // console.log('REQ.cookies ++: ', req.cookies)
   // console.log('REQ.signedCookies ++: ', req.signedCookies)
@@ -130,13 +140,17 @@ app.use(function (req, res, next) {
   // console.log('REQ.originalUrl ++: ', req.originalUrl)
   // console.log('REQ.headers.referer ++: ', req.headers['referer'])
   // console.log('REQ.headers.user-agent ++: ', req.headers['user-agent'])
+  // console.log('REQ.headers ++: ', req.headers)
+  // console.log('REQ.query ++: ', req.query)
+  //console.log('REQ.query.token ++: ', req.query.token)
   // console.log('REQ.session ++: ', req.session)
   // console.log('REQ.sessionID ++: ', req.sessionID)
   // console.log('REQ.user ++: ', req.user)
+  // req.user ? console.log('REQ.user._id: ', req.user._id) : null
   // console.log('REQ.query ++: ', req.query)
   // console.log('REQ.body ++: ', req.body)
   // console.log('REQ.params ++: ', req.params)
-  // console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+  console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 
   var reqBody = sanitize(req.body)
   var reqQuery = sanitize(req.query)
