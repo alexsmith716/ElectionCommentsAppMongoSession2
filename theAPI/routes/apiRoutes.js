@@ -16,7 +16,7 @@ router.post('/comments/maincomment', auth.ensureAuthenticated, apiControllers.po
 router.post('/comments/subcomment/:subcommentid', auth.ensureAuthenticated, apiControllers.postSubCommentResponse);
 router.get('/:commentid', auth.ensureAuthenticated, apiControllers.getOneCommentResponse);
 
-router.get('/userprofile/:userid', auth.ensureAuthenticated, apiControllers.getUserProfileResponse);
+router.get('/userprofile/:userid', apiControllers.getUserProfileResponse);
 
 
 router.post('/loginuser', csrfProtection, apiControllers.ajaxLoginUser);
