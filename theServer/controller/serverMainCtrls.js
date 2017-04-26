@@ -93,9 +93,18 @@ module.exports.getLogout = function(req, res, next){
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-
 module.exports.getIndex = function(req, res, next){
-
+  var htitle = 'Election App 2016!';
+  var stitle = 'Log In or Sign Up to join the discussion';
+  res.render('indexView', {
+    pageHeader: {
+      title: htitle
+    },
+    subtitle: stitle
+  })
+};
+/*
+module.exports.getIndex = function(req, res, next){
   var newExceptionError;
   var requestOptions, path;
   path = '/api/index';
@@ -108,7 +117,6 @@ module.exports.getIndex = function(req, res, next){
   };
 
   request(requestOptions, function(err, response) {
-
     //return next(createError(400, 'Bad Request.'));
 
     if(res.app.locals.foober === true){
@@ -116,13 +124,10 @@ module.exports.getIndex = function(req, res, next){
       //return next(createError(400, 'Bad Request.'));
     }
 
-
     if(err){
-
       return next(err);
 
     }else if (response.statusCode === 200) {
-
       var htitle = 'Election App 2016!';
       var stitle = 'Log In or Sign Up to join the discussion';
       res.render('indexView', {
@@ -133,16 +138,14 @@ module.exports.getIndex = function(req, res, next){
       })
 
     }else{
-
       newExceptionError = new Error('Bad Request');
       newExceptionError.status = 400;
       return next(newExceptionError);
 
     }
-
   });
 };
-
+*/
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -154,10 +157,8 @@ module.exports.getUserHome = function(req, res){
 
 };
 
-
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
 
 module.exports.getComments = function(req, res){
 
@@ -196,12 +197,8 @@ module.exports.getComments = function(req, res){
   });
 };
 
-
-
-
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
 
 module.exports.postMainComment = function(req, res){
   var requestOptions, path, postdata;
@@ -357,10 +354,13 @@ module.exports.getUserProfile = function(req, res, next) {
   var requestOptions, path;
   path = '/api/userprofile/' + res.locals.currentUser.id;
 
+  console.log('####### > SERVER > getUserProfile > auth: ', res.locals.currentUser.email, ' :: ', res.locals.currentUser.datecreated.toISOString())
+
   requestOptions = {
     rejectUnauthorized: false,
     url : apiOptions.server + path,
     method : 'GET',
+    auth : { 'username': res.locals.currentUser.email, 'password': res.locals.currentUser.datecreated.toISOString()},
     json : {}
   };
 

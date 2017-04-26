@@ -5,13 +5,13 @@ var paginate = require('mongoose-range-paginate');
 var pugCompiler = require('../../shared/pugCompiler');
 var nodemailer = require('nodemailer');
 var passport = require('passport');
-var mongoose    = require('mongoose');
+var mongoose = require('mongoose');
 var serverSideValidation = require('../../shared/serverSideValidation.js');
 var evaluateUserEmail = require('../../shared/evaluateUserEmail.js');
 var stateNamer = require('../../shared/stateNamer.js');
-
-var createError   = require('http-errors');
-
+var createError = require('http-errors');
+var http = require('http')
+var auth = require('basic-auth');
 var sortKey = 'time'
 var sort = '-' + sortKey
 var sortDocsFrom = 0;
@@ -211,6 +211,8 @@ module.exports.deleteOneComment = function(req, res) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.getUserProfileResponse = function(req, res) {
+  var newExceptionError;
+  var credentials = auth(req)
 
   if (req.params && req.params.userid) {
 
@@ -221,25 +223,31 @@ module.exports.getUserProfileResponse = function(req, res) {
       } 
 
       if (!user) {
-
-        sendJSONresponse(res, 404, { "response": "userid not found" });
-
-        return;
-
+        newExceptionError = new Error('Bad Request');
+        newExceptionError.status = 400;
+        return next(newExceptionError);
       }
+    
+      if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
+    
+        newExceptionError = new Error('Bad Request');
+        newExceptionError.status = 400;
+        return next(newExceptionError);
 
-      sendJSONresponse(res, 200, user);
+      }else{
 
+        sendJSONresponse(res, 200, user);
+      }
     });
 
   } else {
-    sendJSONresponse(res, 404, { "response": "No userid in request" });
+    newExceptionError = new Error('Bad Request');
+    newExceptionError.status = 400;
+    return next(newExceptionError);
   }
-
 };
 
 module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
-
   var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'};
   var newExceptionError;
   var reqBodyProp;
@@ -252,8 +260,7 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 
   if(Object.keys(req.body).length == 4){
 
-    delete req.body['_csrf'];
-
+    //delete req.body['_csrf'];
     //req.body = {firstnameXX:'Freddncsdlcscnsdcijdcsd'}
 
     for (var p in req.body){
@@ -346,255 +353,111 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
         */
 
       }else{
-
         //sendJSONresponse(res, 400, exceptionError);
         newExceptionError = new Error('Bad Request');
         newExceptionError.status = 400;
         return next(newExceptionError);
-
       }
-
       sendJSONresponse(res, 201, { 'response': 'success' });
-
     }
-
   }else{
-
     //sendJSONresponse(res, 400, exceptionError);
     newExceptionError = new Error('Bad Request');
     newExceptionError.status = 400;
     return next(newExceptionError);
-
   }
-
 };
 
 module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
-  var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
-  var reqBody = req.body;
-  var reqBodyProp;
-  var reqBodyValue;
-  var template = {};
-  var templateMain = {email: 'required',
-                        confirmEmail: 'required', 
-                        password: 'required', 
-                        confirmPassword: 'required',
-                        firstname: 'required', 
+  var hAuth = req.headers['authorization']
+  console.log('+++++++++++++ API ajaxEvaluateUserProfile ++++++++++++++++++++++++++++++++++++++ hAuth: ', hAuth)
+
+  var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'}
+  var reqBody = req.body
+  var reqBodyProp
+  var reqBodyValue
+  var template = {}
+  var templateMain = {firstname: 'required', 
                         lastname: 'required', 
                         city: 'required', 
-                        state: 'required'};
+                        state: 'required'}
 
   if(Object.keys(req.body).length == 2){
-
     for (var p in reqBody){
-
       if(p !== '_csrf') {
-
         reqBodyProp = p;
-        reqBodyValue = reqBody[reqBodyProp];
+        reqBodyValue = reqBody[reqBodyProp]
 
         if(reqBodyProp in templateMain){
-
-          template[reqBodyProp] = 'required';
-          template['expectedResponse'] = 'false';
+          template[reqBodyProp] = 'required'
+          template['expectedResponse'] = 'false'
 
           serverSideValidation(req, res, template, function(validatedResponse) {
-
-            var validationErrors = false;
+            var validationErrors = false
 
             console.log('####### > ajaxEvaluateUserProfile > validatedResponse: ', validatedResponse)
 
-
             if(validatedResponse.status === 'err') {
-
-              return next(validatedResponse.message);
+              return next(validatedResponse.message)
 
             }else{
-
               for(var prop in validatedResponse) {
-
                 console.log('####### > ajaxEvaluateUserProfile > validatedResponse[prop]: ', validatedResponse[prop])
 
-                // needs to be tested 
-                //validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'
-                if(validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid'){
-
-                  validationErrors = true;
-                  break;
+                if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
+                  validationErrors = true
+                  break
 
                 }
               }
             }
 
             if(!validationErrors){
-
                 User.findById(res.locals.currentUser.id).exec(function(err, user) {
-
                   if(err){
-
-                    return next(err);
+                    return next(err)
 
                   }
 
                   if(!user){
-
-                    sendJSONresponse(res, 201, { 'response': 'error' });
-                    return;
+                    sendJSONresponse(res, 201, { 'response': 'error' })
+                    return
 
                   }
 
                   if(reqBodyProp === 'state'){
-
-                    var stateInit = stateNamer(req, res, reqBodyValue);
+                    var stateInit = stateNamer(req, res, reqBodyValue)
 
                     reqBodyValue = {
                       full: reqBodyValue,
                       initials: stateInit
                     };
-
                   }
 
-                  user[reqBodyProp] = reqBodyValue;
+                  user[reqBodyProp] = reqBodyValue
 
                   user.save(function(err) {
-                  
                     if (err) {
-                    
                       return next(err);
-                    
                     } else {
-                    
-                      sendJSONresponse(res, 201, { 'response': 'success' });
-                    
+                      sendJSONresponse(res, 201, { 'response': 'success' })
                     }
-                  
-                  });
-          
-                });
-              
+                  })
+                })
             }else{
-
-              sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
-
+              sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
             }
-  
-          });
-
+          })
         }
       }
-      break;
+      break
     }
-
   }else{
-
-    sendJSONresponse(res, 400, errResponse);
+    sendJSONresponse(res, 400, errResponse)
 
   }
-};
-
-/*
-module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
-  var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'};
-  var newExceptionError;
-  var reqBodyProp;
-  var reqBodyValue;
-  var template = {};
-  var templateMain = {firstname: 'required', 
-                        lastname: 'required', 
-                        city: 'required', 
-                        state: 'required'};
-     
-  if(Object.keys(req.body).length == 2){
-    delete req.body['_csrf'];
-
-    for (var p in req.body){
-      reqBodyProp = p;
-      reqBodyValue = req.body[reqBodyProp];
-
-      if(reqBodyProp in templateMain){
-        template[reqBodyProp] = 'required';
-        template['expectedResponse'] = 'false';
-
-        serverSideValidation(req, res, template, function(validatedResponse) {
-          var validationErrors = false;
-
-          if(validatedResponse.status === 'err') {
-            return next(validatedResponse.message);
-
-          }else{
-            for(var prop in validatedResponse) {
-              if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
-
-                validationErrors = true;
-                break;
-
-              }
-            }
-          }
-
-          if(!validationErrors){
-            User.findById(res.locals.currentUser.id).exec(function(err, user) {
-
-              if(err){
-                return next(err);
-
-              }
-
-              if(!user){
-                sendJSONresponse(res, 201, { 'response': 'error' });
-                return;
-
-              }
-
-              if(reqBodyProp === 'state'){
-                var stateFull = stateNamer(req, res, reqBodyValue);
-
-                reqBodyValue = {
-                  full: stateFull,
-                  initials: reqBodyValue
-                };
-
-              }
-
-              user[reqBodyProp] = reqBodyValue;
-              user.save(function(err) {
-              
-                if (err) {
-                  return next(err);
-                
-                } else {
-                  sendJSONresponse(res, 201, { 'response': 'success' });
-                
-                }
-              });
-            });
-            
-          }else{
-            sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
-
-          }
-        });
-
-      }else{
-        //sendJSONresponse(res, 400, exceptionError);
-        newExceptionError = new Error('Bad Request');
-        newExceptionError.status = 400;
-        return next(newExceptionError);
-
-      }
-    }
-
-  }else{
-    //sendJSONresponse(res, 400, exceptionError);
-    newExceptionError = new Error('Bad Request');
-    newExceptionError.status = 400;
-    return next(newExceptionError);
-
-  }
-};
-*/
-
+}
 
 module.exports.ajaxEvaluateUserEmail = function(req, res) {
 
@@ -611,7 +474,6 @@ module.exports.ajaxEvaluateUserEmail = function(req, res) {
     }
   });
 };
-
 
 // will include nodemailer for ForgotPassword later/last
 // for client, only testing if email is invalid, otherwise indicating instructions sent to reset password
