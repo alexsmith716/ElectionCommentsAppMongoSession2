@@ -70,25 +70,6 @@ module.exports.getCommentsResponse = function(req, res) {
   })
 };
 
-
-module.exports.getUserProfileResponse = function(req, res) {
-  if (req.params && req.params.userid) {
-    User.findById(req.params.userid).exec(function(err, user) {
-        if (!user) {
-          sendJSONresponse(res, 404, { "response": "userid not found" });
-          return;
-        } else if (err) {
-          sendJSONresponse(res, 404, err);
-          return;
-        }
-        sendJSONresponse(res, 200, user);
-      });
-  } else {
-    sendJSONresponse(res, 404, { "response": "No userid in request" });
-  }
-};
-
-
 var doAddComment = function(req, res, location, author) {
   if (!location) {
     sendJSONresponse(res, 404, "locationid not found");
@@ -224,18 +205,40 @@ module.exports.deleteOneComment = function(req, res) {
   }
 };
 
-
-
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+module.exports.getUserProfileResponse = function(req, res) {
+
+  if (req.params && req.params.userid) {
+
+    User.findById(req.params.userid).exec(function(err, user) {
+
+      if(err){
+        return next(err);
+      } 
+
+      if (!user) {
+
+        sendJSONresponse(res, 404, { "response": "userid not found" });
+
+        return;
+
+      }
+
+      sendJSONresponse(res, 200, user);
+
+    });
+
+  } else {
+    sendJSONresponse(res, 404, { "response": "No userid in request" });
+  }
+
+};
 
 module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
-
-  console.log('####### > ajaxUserProfileEmailPass > req.body 1:', req.body)
-  console.log('####### > ajaxUserProfileEmailPass > Object.keys(req.body).length:', Object.keys(req.body).length)
 
   var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'};
   var newExceptionError;
@@ -255,14 +258,10 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 
     for (var p in req.body){
 
-      console.log('PPPPPPPPPpppppppp: ', p, ' :: ', req.body)
-
       reqBodyProp = p;
       reqBodyValue = req.body[reqBodyProp];
 
       if(reqBodyProp in templateMain){
-
-        console.log('AAAAAAAAAAaaaaaaaaaaaaaa: ', reqBodyProp, ' :: ', reqBodyValue)
 
         template[reqBodyProp] = 'required';
         //template['expectedResponse'] = 'false';
@@ -348,14 +347,13 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 
       }else{
 
-        console.log('BBBBBBBBbbbbbbbbbb: ', p, ' :: ', req.body[p])
         //sendJSONresponse(res, 400, exceptionError);
         newExceptionError = new Error('Bad Request');
         newExceptionError.status = 400;
         return next(newExceptionError);
 
       }
-      console.log('TTTTTTTTTttttttttttttt: ', template);
+
       sendJSONresponse(res, 201, { 'response': 'success' });
 
     }
@@ -371,52 +369,161 @@ module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
 
 };
 
-
-
-// AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
 module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
 
-  console.log('####### > API > ajaxEvaluateUserProfile > req.body 1:', req.body)
-  console.log('####### > API > ajaxEvaluateUserProfile > Object.keys(req.body).length:', Object.keys(req.body).length)
+  var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
+  var reqBody = req.body;
+  var reqBodyProp;
+  var reqBodyValue;
+  var template = {};
+  var templateMain = {email: 'required',
+                        confirmEmail: 'required', 
+                        password: 'required', 
+                        confirmPassword: 'required',
+                        firstname: 'required', 
+                        lastname: 'required', 
+                        city: 'required', 
+                        state: 'required'};
 
-	var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'};
+  if(Object.keys(req.body).length == 2){
+
+    for (var p in reqBody){
+
+      if(p !== '_csrf') {
+
+        reqBodyProp = p;
+        reqBodyValue = reqBody[reqBodyProp];
+
+        if(reqBodyProp in templateMain){
+
+          template[reqBodyProp] = 'required';
+          template['expectedResponse'] = 'false';
+
+          serverSideValidation(req, res, template, function(validatedResponse) {
+
+            var validationErrors = false;
+
+            console.log('####### > ajaxEvaluateUserProfile > validatedResponse: ', validatedResponse)
+
+
+            if(validatedResponse.status === 'err') {
+
+              return next(validatedResponse.message);
+
+            }else{
+
+              for(var prop in validatedResponse) {
+
+                console.log('####### > ajaxEvaluateUserProfile > validatedResponse[prop]: ', validatedResponse[prop])
+
+                // needs to be tested 
+                //validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'
+                if(validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid'){
+
+                  validationErrors = true;
+                  break;
+
+                }
+              }
+            }
+
+            if(!validationErrors){
+
+                User.findById(res.locals.currentUser.id).exec(function(err, user) {
+
+                  if(err){
+
+                    return next(err);
+
+                  }
+
+                  if(!user){
+
+                    sendJSONresponse(res, 201, { 'response': 'error' });
+                    return;
+
+                  }
+
+                  if(reqBodyProp === 'state'){
+
+                    var stateInit = stateNamer(req, res, reqBodyValue);
+
+                    reqBodyValue = {
+                      full: reqBodyValue,
+                      initials: stateInit
+                    };
+
+                  }
+
+                  user[reqBodyProp] = reqBodyValue;
+
+                  user.save(function(err) {
+                  
+                    if (err) {
+                    
+                      return next(err);
+                    
+                    } else {
+                    
+                      sendJSONresponse(res, 201, { 'response': 'success' });
+                    
+                    }
+                  
+                  });
+          
+                });
+              
+            }else{
+
+              sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
+
+            }
+  
+          });
+
+        }
+      }
+      break;
+    }
+
+  }else{
+
+    sendJSONresponse(res, 400, errResponse);
+
+  }
+};
+
+/*
+module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
+  var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'};
   var newExceptionError;
   var reqBodyProp;
   var reqBodyValue;
-	var template = {};
-	var templateMain = {firstname: 'required', 
-	                      lastname: 'required', 
-	                      city: 'required', 
-	                      state: 'required'};
+  var template = {};
+  var templateMain = {firstname: 'required', 
+                        lastname: 'required', 
+                        city: 'required', 
+                        state: 'required'};
      
   if(Object.keys(req.body).length == 2){
-
     delete req.body['_csrf'];
 
-    //req.body = {firstnameXX:'Freddncsdlcscnsdcijdcsd'}
-
     for (var p in req.body){
-
       reqBodyProp = p;
       reqBodyValue = req.body[reqBodyProp];
 
       if(reqBodyProp in templateMain){
-
         template[reqBodyProp] = 'required';
         template['expectedResponse'] = 'false';
 
         serverSideValidation(req, res, template, function(validatedResponse) {
-
           var validationErrors = false;
 
           if(validatedResponse.status === 'err') {
-
             return next(validatedResponse.message);
 
           }else{
-
             for(var prop in validatedResponse) {
-
               if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
 
                 validationErrors = true;
@@ -427,24 +534,20 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
           }
 
           if(!validationErrors){
-
             User.findById(res.locals.currentUser.id).exec(function(err, user) {
 
               if(err){
-
                 return next(err);
 
               }
 
               if(!user){
-
                 sendJSONresponse(res, 201, { 'response': 'error' });
                 return;
 
               }
 
               if(reqBodyProp === 'state'){
-
                 var stateFull = stateNamer(req, res, reqBodyValue);
 
                 reqBodyValue = {
@@ -455,54 +558,42 @@ module.exports.ajaxEvaluateUserProfile = function(req, res, next) {
               }
 
               user[reqBodyProp] = reqBodyValue;
-
               user.save(function(err) {
               
                 if (err) {
-                
                   return next(err);
                 
                 } else {
-                
                   sendJSONresponse(res, 201, { 'response': 'success' });
                 
                 }
-              
               });
-
             });
             
           }else{
-
             sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
 
           }
-          
         });
 
       }else{
-
         //sendJSONresponse(res, 400, exceptionError);
         newExceptionError = new Error('Bad Request');
         newExceptionError.status = 400;
         return next(newExceptionError);
 
       }
-
     }
 
   }else{
-
     //sendJSONresponse(res, 400, exceptionError);
     newExceptionError = new Error('Bad Request');
     newExceptionError.status = 400;
     return next(newExceptionError);
 
   }
-
 };
-
-
+*/
 
 
 module.exports.ajaxEvaluateUserEmail = function(req, res) {
@@ -518,11 +609,8 @@ module.exports.ajaxEvaluateUserEmail = function(req, res) {
       sendJSONresponse(res, response.status, { 'response': response.response });
 
     }
-
   });
-  
 };
-
 
 
 // will include nodemailer for ForgotPassword later/last
