@@ -10,7 +10,6 @@ var serverSideValidation = require('../../shared/serverSideValidation.js');
 var evaluateUserEmail = require('../../shared/evaluateUserEmail.js');
 var stateNamer = require('../../shared/stateNamer.js');
 var createError = require('http-errors');
-var http = require('http')
 var auth = require('basic-auth');
 var sortKey = 'time'
 var sort = '-' + sortKey
@@ -21,12 +20,10 @@ var sendJSONresponse = function(res, status, content) {
   res.json(content);
 };
 
-
 module.exports.getIndexResponse = function(req, res) {
   console.log('################ module.exports.getIndexResponse ++++++++++++++++++++')
   sendJSONresponse(res, 200), { "response": "getIndexResponse Response!!!" };
 };
-
 
 module.exports.getUserHomeResponse = function(req, res) {
   sendJSONresponse(res, 200), { "response": "getUserHomeResponse Response!!!" };
@@ -211,7 +208,7 @@ module.exports.deleteOneComment = function(req, res) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.getUserProfileResponse = function(req, res) {
-  var newExceptionError;
+  var newExceptionError
   var credentials = auth(req)
 
   if (req.params && req.params.userid) {
@@ -219,33 +216,31 @@ module.exports.getUserProfileResponse = function(req, res) {
     User.findById(req.params.userid).exec(function(err, user) {
 
       if(err){
-        return next(err);
+        return next(err)
       } 
 
       if (!user) {
-        newExceptionError = new Error('Bad Request');
-        newExceptionError.status = 400;
-        return next(newExceptionError);
+        newExceptionError = new Error('Bad Request')
+        newExceptionError.status = 400
+        return next(newExceptionError)
       }
     
       if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
-    
-        newExceptionError = new Error('Bad Request');
-        newExceptionError.status = 400;
-        return next(newExceptionError);
+        newExceptionError = new Error('Bad Request')
+        newExceptionError.status = 400
+        return next(newExceptionError)
 
       }else{
-
-        sendJSONresponse(res, 200, user);
+        sendJSONresponse(res, 200, user)
       }
-    });
+    })
 
   } else {
-    newExceptionError = new Error('Bad Request');
-    newExceptionError.status = 400;
-    return next(newExceptionError);
+    newExceptionError = new Error('Bad Request')
+    newExceptionError.status = 400
+    return next(newExceptionError)
   }
-};
+}
 
 module.exports.ajaxUserProfileEmailPass = function(req, res, next) {
   var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'};
@@ -530,105 +525,78 @@ module.exports.ajaxForgotPassword = function(req, res, next) {
   });
 };
 
-
-
 var validateMaxLengthUserInput = function (val,maxlen) {
-  var newVal = (val.length) - maxlen;
-  newVal = (val.length) - newVal;
-  newVal = val.slice(0,newVal);
-  return newVal;
-};
+  var newVal = (val.length) - maxlen
+  newVal = (val.length) - newVal
+  newVal = val.slice(0,newVal)
+  return newVal
+}
 
-
-
-module.exports.ajaxLoginUser = function(req, res, next){
-
-  //res.app.locals.foober = true;
-
-
+module.exports.ajaxLoginUser = function (req, res, next) {
+  //res.app.locals.foober = true
   var template = {email: 'required',
                   password: 'required', 
-                  expectedResponse: 'true'};
+                  expectedResponse: 'true'}
 
   var testerJOB = {email: 'aaa1@aa a.com',
-                    password: '  pppp   '};
-
-  // req.body = testerJOB;
+                    password: '  pppp   '}
+  // req.body = testerJOB
 
   serverSideValidation(req, res, template, function(validatedResponse) {
+    var validationErrors = false
 
-    var validationErrors = false;
+    if (validatedResponse.status === 'err') {
+      return next(validatedResponse.message)
 
-    if(validatedResponse.status === 'err') {
-
-      return next(validatedResponse.message);
-
-    }else{
-
-      for(var prop in validatedResponse) {
-
-        if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
-
-          validationErrors = true;
-          break;
+    } else {
+      for (var prop in validatedResponse) {
+        if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+          validationErrors = true
+          break
 
         }
       }
     }
 
-    if(!validationErrors){
-
-      passport.authenticate('local', function(err, user, info){
-
+    if (!validationErrors) {
+      passport.authenticate('local', function(err, user, info) {
         if (err) {
-
-          return next(err);
+          return next(err)
 
         }
 
         if (!user) {
-
-          sendJSONresponse(res, 201, { 'response': 'error' });
-          return;
+          sendJSONresponse(res, 201, { 'response': 'error' })
+          return
 
         }
 
         req.logIn(user, function(err) {
-          
           if (err) { 
+            return next(err)
 
-            return next(err);
+          } else {
+            user.previouslogin = user.lastlogin
+            user.lastlogin = new Date()
 
-          }else{
-
-            user.previouslogin = user.lastlogin;
-            user.lastlogin = new Date();
-
-            user.save(function(err, success) {
-
+            user.save(function (err, success) {
               if (err) {
-
-                return next(err);
+                return next(err)
 
               } else {
-
-                sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' });
+                sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
 
               }
-
-            });
-
+            })
           }
-        });
-      })(req, res);
-
-    }else{
-      
-      sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
+        })
+      })(req, res)
+    } else {
+      sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
 
     }
-  });
-};
+  })
+}
 
 
 module.exports.ajaxSignUpUser = function(req, res, next){

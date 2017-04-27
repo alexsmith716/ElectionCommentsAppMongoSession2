@@ -1,30 +1,32 @@
     
 module.exports = function (returnArray, obj) {
-
-  for (var k in obj){
+  for (var k in obj) {
     if (typeof obj[k] === 'object' && obj[k] !== null) {
-      this(obj[k]);
-    }else{
-      return obj[k];
+      this(obj[k])
+    } else {
+      return obj[k]
     }
   }
 }
 
-function removeProps(obj,keys){
-	if(obj instanceof Array){
-		obj.forEach(function(item){
+function removeProps(obj,keys) {
+	if (obj instanceof Array) {
+		obj.forEach(function(item) {
 			removeProps(item,keys)
-		});
-	}else if(typeof obj === 'object'){
-		Object.getOwnPropertyNames(obj).forEach(function(key){
-			if(keys.indexOf(key) !== -1)delete obj[key];
-			else removeProps(obj[key],keys);
-		});
+		})
+	} else if(typeof obj === 'object') {
+		Object.getOwnPropertyNames(obj).forEach(function(key) {
+			if(keys.indexOf(key) !== -1){
+				delete obj[key]
+			} else {
+				removeProps(obj[key],keys)
+			}
+		})
 	}
 }
 
-removeProps(obj,['$meta']);
-document.body.innerHTML = '<pre>' + JSON.stringify(obj,null,4) + '</pre>';
+removeProps(obj,['$meta'])
+document.body.innerHTML = '<pre>' + JSON.stringify(obj,null,4) + '</pre>'
 var obj = {
 "part_one": {
 "name": "My Name",
@@ -51,4 +53,4 @@ var obj = {
 "one": 1,
 "two": 2
 }
-};
+}

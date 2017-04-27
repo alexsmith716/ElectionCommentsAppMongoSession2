@@ -1,5 +1,5 @@
 
-var cookieParser = require('cookie-parser');
+var cookieParser = require('cookie-parser')
 var csrf = require('csurf')
 var bodyParser = require('body-parser')
 var express = require('express')
@@ -9,9 +9,8 @@ var auth = require('../../shared/auth')
 var csrfProtection = csrf({ cookie: true })
 
 router.use(function (req, res, next) {
-  console.log('+++++++++++++ SERVER ROUTES ++++++++++++')
   if (req.isAuthenticated()) {
-    console.log('+++++++++++++ SERVER ROUTES > isAuthenticated !!!! ++++++++++++')
+    console.log('+++++++++++++ SERVER ROUTES > req.isAuthenticated ++++++++++++')
 	}
   next()
 })
@@ -40,20 +39,15 @@ router.get('/notifyerror', serverControllers.getNotifyError)
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 router.get('/userhome', auth.ensureAuthenticated, serverControllers.getUserHome)
-
 router.get('/membersonly', auth.ensureAuthenticated, serverControllers.getMembersOnly)
-
-router.get('/comments', csrfProtection, auth.ensureAuthenticated, serverControllers.getComments)
-
-router.post('/comments/maincomment', csrfProtection, auth.ensureAuthenticated, serverControllers.postMainComment)
-
-router.post('/comments/subcomment/:subcommentid', csrfProtection, auth.ensureAuthenticated, serverControllers.postSubComment)
-
 router.get('/userprofile', csrfProtection, auth.ensureAuthenticated, serverControllers.getUserProfile)
-
 router.get('/logout', auth.ensureAuthenticated, serverControllers.getLogout)
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-module.exports = router
+// holding off on updating comments for next project version +++++++++++++++++++++++++++++++
+router.get('/comments', csrfProtection, auth.ensureAuthenticated, serverControllers.getComments)
+router.post('/comments/maincomment', csrfProtection, auth.ensureAuthenticated, serverControllers.postMainComment)
+router.post('/comments/subcomment/:subcommentid', csrfProtection, auth.ensureAuthenticated, serverControllers.postSubComment)
 
+module.exports = router

@@ -1,9 +1,8 @@
-var nodemailer = require('nodemailer');
 
-var EMAIL_ACCOUNT_USER = 'your@email.address';
+var nodemailer = require('nodemailer')
+var EMAIL_ACCOUNT_USER = 'your@email.address'
 var EMAIL_ACCOUNT_PASSWORD = 'your-password'
-var YOUR_NAME = 'Your Name';
-
+var YOUR_NAME = 'Your Name'
 
 var smtpTransport = nodemailer.createTransport({
   service: 'Gmail',
@@ -11,26 +10,24 @@ var smtpTransport = nodemailer.createTransport({
     user: EMAIL_ACCOUNT_USER,
     pass: EMAIL_ACCOUNT_PASSWORD
   }
-});
+})
 
-
-exports.sendMail = function(fromAddress, toAddress, subject, content, next){
-  var success = true;
+exports.sendMail = function (fromAddress, toAddress, subject, content, next) {
+  var success = true
   var mailOptions = {    from: YOUR_NAME + ' <' + fromAddress + '>',
     to: toAddress,
     replyTo: fromAddress,
     subject: subject,
     html: content
-  };
+  }
 
-  smtpTransport.sendMail(mailOptions, function(err, response){
-    if(err){
-      console.log('[err] Message NOT sent: ', err);
-      success = false;
+  smtpTransport.sendMail(mailOptions, function (err, response) {
+    if (err) {
+      console.log('[err] Message NOT sent: ', err)
+      success = false
+    } else {
+      console.log('[INFO] Message Sent: ' + response.message)
     }
-    else {
-      console.log('[INFO] Message Sent: ' + response.message);
-    }
-    next(err, success);
-  });
-};
+    next(err, success)
+  })
+}

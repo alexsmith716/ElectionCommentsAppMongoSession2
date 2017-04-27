@@ -1,18 +1,18 @@
 
 var sendJSONresponse = function(res, status, content) {
-  res.status(status);
-  res.json(content);
-};
+  res.status(status)
+  res.json(content)
+}
 
-var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'};
+var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'}
 
 module.exports.ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
     return next()
   } else {
-    var newExceptionError = new Error('Bad Request');
-    newExceptionError.status = 400;
-    return next(newExceptionError);
+    var newExceptionError = new Error('Bad Request')
+    newExceptionError.status = 400
+    return next(newExceptionError)
   }
 }
 
@@ -21,7 +21,7 @@ module.exports.ensureAuthenticatedAPI = function (req, res, next) {
   var expr = /Basic/
   if (hAuth !== undefined && expr.test(hAuth)) {
     return next()
-  }else{
+  } else {
     sendJSONresponse(res, 400, exceptionError)
   }
 }

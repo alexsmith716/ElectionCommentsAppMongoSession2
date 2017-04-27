@@ -7,25 +7,28 @@ var auth = require('../../shared/auth')
 var csrf = require('csurf')
 var csrfProtection = csrf({ cookie: true })
 
-// router.get('/index', csrfProtection, apiControllers.getIndexResponse)
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-router.get('/comments', csrfProtection, apiControllers.getCommentsResponse)
-router.post('/comments/maincomment', csrfProtection, apiControllers.postMainCommentResponse)
-router.post('/comments/subcomment/:subcommentid', csrfProtection, apiControllers.postSubCommentResponse)
-router.get('/:commentid', csrfProtection, apiControllers.getOneCommentResponse)
+router.post('/loginuser', csrfProtection, apiControllers.ajaxLoginUser)
+router.post('/signupuser', csrfProtection, apiControllers.ajaxSignUpUser)
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+router.post('/forgotpassword', csrfProtection, apiControllers.ajaxForgotPassword)
+router.put('/evaluateuserprofile', csrfProtection, apiControllers.ajaxEvaluateUserProfile)
+router.put('/userprofileemailpass', csrfProtection, apiControllers.ajaxUserProfileEmailPass)
+router.post('/evaluateuseremail', csrfProtection, apiControllers.ajaxEvaluateUserEmail)
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 router.get('/userprofile/:userid', csrfProtection, auth.ensureAuthenticatedAPI, apiControllers.getUserProfileResponse)
 
-router.post('/loginuser', csrfProtection, apiControllers.ajaxLoginUser)
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-router.post('/forgotpassword', csrfProtection, auth.ensureAuthenticatedAPI, apiControllers.ajaxForgotPassword)
-
-router.post('/signupuser', csrfProtection, apiControllers.ajaxSignUpUser)
-
-router.put('/evaluateuserprofile', csrfProtection, apiControllers.ajaxEvaluateUserProfile)
-
-router.put('/userprofileemailpass', csrfProtection, apiControllers.ajaxUserProfileEmailPass)
-
-router.post('/evaluateuseremail', csrfProtection, apiControllers.ajaxEvaluateUserEmail)
+// holding off on updating comments for next project version +++++++++++++++++++++++++++++++
+router.get('/comments', csrfProtection, auth.ensureAuthenticatedAPI, apiControllers.getCommentsResponse)
+router.post('/comments/maincomment', csrfProtection, auth.ensureAuthenticatedAPI, apiControllers.postMainCommentResponse)
+router.post('/comments/subcomment/:subcommentid', csrfProtection, auth.ensureAuthenticatedAPI, apiControllers.postSubCommentResponse)
+router.get('/:commentid', csrfProtection, auth.ensureAuthenticatedAPI, apiControllers.getOneCommentResponse)
 
 module.exports = router

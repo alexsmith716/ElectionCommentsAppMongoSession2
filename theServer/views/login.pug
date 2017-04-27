@@ -67,14 +67,11 @@ block content
 
             h3 Please sign in.
 
-
             p.small CSRF token: <br> #{csrfToken}
             if isSafari
               p.small user-agent: safari
             if !isSafari
               p.small user-agent: chrome
-
-
 
             if (message != undefined)
 
