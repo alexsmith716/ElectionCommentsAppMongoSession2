@@ -182,7 +182,10 @@ block content
           .row
             .col-xs-12
               p.small CSRF token: <br> #{csrfToken}
-              p.small user profile!
+              if isSafari
+                p.small user-agent: safari
+              if !isSafari
+                p.small user-agent: chrome
 
               - if (error != undefined)
                 .alert.alert-danger(role="alert") #{error}

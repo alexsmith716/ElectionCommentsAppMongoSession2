@@ -85,7 +85,7 @@ html(lang="en-US")
       .view
 
         script.
-          var isSafari = #{isSafari}
+          var isSafari = (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1)
 
         block content
 

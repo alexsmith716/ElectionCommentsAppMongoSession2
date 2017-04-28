@@ -173,11 +173,10 @@ app.use(function (req, res, next) {
   var c = /Chrome/
 
   if ((s.test(req.headers['user-agent'])) && (!c.test(req.headers['user-agent']))) {
-    app.locals.isSafari = true
+    app.locals.isSafariX = true
   } else {
-    app.locals.isSafari = false
+    app.locals.isSafariX = false
   }
-  
   next()
 })
 
