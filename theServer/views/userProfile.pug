@@ -182,10 +182,8 @@ block content
           .row
             .col-xs-12
               p.small CSRF token: <br> #{csrfToken}
-              if isSafari
-                p.small user-agent: safari
-              if !isSafari
-                p.small user-agent: chrome
+              script.
+                console.log('pug > isSafari: ', isSafari)
 
               - if (error != undefined)
                 .alert.alert-danger(role="alert") #{error}

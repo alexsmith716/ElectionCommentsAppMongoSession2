@@ -159,24 +159,17 @@ app.use(function (req, res, next) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 app.use(function (req, res, next) {
-  console.log('######### Going through App Now #########')
   res.locals.currentUser = req.user
   res.locals.reqUrl = req.url
   res.locals.currentURL = req.url
+
+  console.log('######### Going through App Now #########')
 
   // if(res.locals.currentUser){
     // req.session.paginateFrom = res.locals.sortDocsFrom;
     // req.session.lastPageVisited = '/indexView';
   // }
 
-  var s = /Safari/
-  var c = /Chrome/
-
-  if ((s.test(req.headers['user-agent'])) && (!c.test(req.headers['user-agent']))) {
-    app.locals.isSafariX = true
-  } else {
-    app.locals.isSafariX = false
-  }
   next()
 })
 
