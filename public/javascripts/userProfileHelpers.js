@@ -205,7 +205,6 @@ var helper = {
     });
 
 
-
     $('#changeEmailPassForm').on('submit', function(e) {
 
       console.log('#changeEmailPassForm > SUBMIT +++');
@@ -314,12 +313,13 @@ var helper = {
         helper.doEditProfileModal(this);
     });
 
+    
     $('.editFormEmailPassElement').click(function(){
         helper.doEditProfileEmailPassModal(this);
     });
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    
+
     if(isSafari){
       $('#editProfileForm').on('focusin', '#required-fields .form-control', function() {
         var ve = $('#signUpForm').data('validateElement');
@@ -355,7 +355,6 @@ var helper = {
     });
 
   },
-
 
 
 
@@ -746,7 +745,7 @@ var helper = {
 
   validateEmailField: function (elementVal, thisField, comparedField, err1) {
     console.log('/////////// validateEmailField 1 +++++++++++++++++++ 1/2/3: ', elementVal, ' :: ', thisField, ' :: ', comparedField)
-    console.log('/////////// validateEmailField 2 +++++++++++++++++++ err1: ', err1)
+    console.log('/////////// validateEmailField 2 +++++++++++++++++++ isSafari: ', isSafari)
     if (err1 !== undefined) {
             // console.log('#validateEmailField > err1: ', thisField, ' :: ', err1)
     } else {
@@ -790,7 +789,6 @@ var helper = {
 
         // EMAIL IS NOT VALID +++++++++++++++++++
     } else if ((err1 !== undefined && err1.error === 'invalid') || (err1 === undefined && !isEmailValid)) {
-      console.log('/////////// EMAIL IS NOT VALID +++++++++++++++++++')
       if (err1 !== undefined || isSafari) {
         $('#' + thisField + 'Registered').removeClass('show').addClass('hide')
         $('#' + thisField + 'Improper').removeClass('hide').addClass('show')
@@ -964,6 +962,7 @@ var helper = {
     var dataID = editBtnClickedParentElem.data('id');
     var labelText = helper.makeTitleFromElementID(dataID);
     dataID === 'email' ? labelText = labelText + ' Address' : null;
+    dataID === 'email' ? $('#confirmEmailPassMatch').html('Emails don\'t match') : $('#confirmEmailPassMatch').html('Passwords don\'t match');
     $('#changeEmailPassForm').data('elementID', dataID);
 
     console.log('doEditProfileEmailPassModal > dataID: ', dataID);
