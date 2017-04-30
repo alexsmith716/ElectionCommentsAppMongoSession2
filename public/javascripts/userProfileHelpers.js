@@ -4,20 +4,13 @@
 var helper = {
 
   init: function() {
-
-    window.showLoading = function() {
-        $('.modal-backdrop').show();
-    };
-    window.hideLoading = function() {
-        $('.modal-backdrop').hide();
-    };
+    helper.showLoading()
 
     $('#state').attr('required', false);
 
-    showLoading(); 
+    setTimeout(function () { helper.hideLoading() }, 500)
 
-    setTimeout(function() { hideLoading(); }, 500);
-
+    console.log('helpers > isSafari: ', isSafari)
     helper.initializeJqueryEvents();
   },
 
@@ -248,7 +241,6 @@ var helper = {
 
       data['_csrf'] = $('meta[name="csrf-token"]').attr('content');
 
-      /*
       $.ajax({
 
           rejectUnauthorized: false,
@@ -298,7 +290,7 @@ var helper = {
 
           }
       });
-      */
+
     });
 
 
@@ -327,7 +319,7 @@ var helper = {
     });
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+    
     if(isSafari){
       $('#editProfileForm').on('focusin', '#required-fields .form-control', function() {
         var ve = $('#signUpForm').data('validateElement');
@@ -418,15 +410,20 @@ var helper = {
 // =================================================================================================================================
 
 
-
-
-
   pattern: {
     displayname: /^[A-Za-z0-9_]{4,21}$/,
     email: /^\S+@\S+\.\S+/,
     password: /^\S{4,}$/,
     password2: /^[\S]{4,}$/,
     basictext: /^(?=\s*\S)(.{1,35})$/
+  },
+
+  showLoading: function () {
+    $('.modal-backdrop').show()
+  },
+
+  hideLoading: function () {
+    $('.modal-backdrop').hide()
   },
 
   displaynameElementValidation: function (elementID) {
