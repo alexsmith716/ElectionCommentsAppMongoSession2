@@ -204,7 +204,7 @@ var helper = {
 
   passwordElementValidation: function (elementID, confirmElementID, eType) {
     if (eType === 'change') {
-      if (helper.validateParams('password', 'confirmPassword')) {
+      if (helper.validateParams(elementID, confirmElementID)) {
         isSafari ? $('#' + confirmElementID).off('input') : null
       }
     }

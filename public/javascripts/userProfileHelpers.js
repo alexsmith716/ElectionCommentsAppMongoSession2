@@ -75,7 +75,7 @@ var helper = {
     });
 
     $('#editProfileEmailPassModal').on('shown.bs.modal', function() {
-      $(this).find('[autofocus]').focus();
+      //$(this).find('[autofocus]').focus();
     });
 
     $('#editProfileEmailPassModal').on('hidden.bs.modal', function () {
@@ -321,8 +321,11 @@ var helper = {
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     if(isSafari){
+
+      console.log('SAFARII ! > focusout !!',)
+
       $('#editProfileForm').on('focusin', '#required-fields .form-control', function() {
-        var ve = $('#signUpForm').data('validateElement');
+        var ve = $('#editProfileForm').data('validateElement');
         if(ve === undefined){
           $('#editProfileForm').data('validateElement', $(document.activeElement).attr('id'));
         }else{
@@ -332,7 +335,7 @@ var helper = {
       })
 
       $('#changeEmailPassForm').on('focusin', '#required-fields .form-control', function() {
-        var ve = $('#signUpForm').data('validateElement');
+        var ve = $('#changeEmailPassForm').data('validateElement');
         if(ve === undefined){
           $('#changeEmailPassForm').data('validateElement', $(document.activeElement).attr('id'));
         }else{
@@ -425,16 +428,6 @@ var helper = {
     $('.modal-backdrop').hide()
   },
 
-  displaynameElementValidation: function (elementID) {
-    var pattern = helper.pattern.displayname
-
-    $('#' + elementID).on('input', function () {
-      helper.testUserInput(elementID, pattern)
-    })
-
-    helper.testUserInput(elementID, pattern)
-  },
-
   emailElementValidation: function (elementID, confirmElementID, eType, elementVal) {
     if (eType === 'change') {
       helper.validateEmailField(elementVal, elementID, confirmElementID)
@@ -450,13 +443,16 @@ var helper = {
   },
 
   passwordElementValidation: function (elementID, confirmElementID, eType) {
+    console.log('/////////// passwordElementValidation 1 +++++++++++++++++++ 1/2/3: ', elementID, ' :: ', confirmElementID, ' :: ', eType)
+    console.log('/////////// passwordElementValidation 2 +++++++++++++++++++ isSafari: ', isSafari)
     if (eType === 'change') {
-      if (helper.validateParams('password', 'confirmPassword')) {
+      if (helper.validateParams(elementID, confirmElementID)) {
         isSafari ? $('#' + confirmElementID).off('input') : null
       }
     }
 
     if (eType === 'focusout') {
+      console.log('/////////// passwordElementValidation 2 +++++++++++++++++++ focusout')
       var pattern = helper.pattern.password
 
       $('#' + elementID).on('input', function () {
@@ -487,7 +483,7 @@ var helper = {
     if (err1 !== undefined) {
             // console.log('textElementValidation > err1: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue, ' || ', err1)
     } else {
-            // console.log('textElementValidation > no err1: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue)
+            console.log('textElementValidation > no err1: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue)
     }
 
     if (thisElementValue !== '') {
@@ -525,7 +521,7 @@ var helper = {
     if (err1 !== undefined) {
             // console.log('#selectElementValidation > err1:', elementID, ' :: ', err1, ' :: ', thisElementValue);
     } else {
-            // console.log('#selectElementValidation > no err1:', elementID, ' :: ', thisElementValue);
+            console.log('#selectElementValidation > no err1:', elementID, ' :: ', thisElementValue);
     }
 
     if (thisElementValue !== '') {
@@ -557,10 +553,11 @@ var helper = {
   },
 
   testUserInput: function (elementID, pattern, err1) {
+    console.log('#testUserInput > no err1: ', elementID, ' :: ', pattern);
     if (err1 !== undefined) {
             // console.log('#testUserInput > err1: ', elementID, ' :: ', pattern, ' :: ', err1);
     } else {
-            // console.log('#testUserInput > no err1: ', elementID, ' :: ', pattern);
+            console.log('#testUserInput > no err1: ', elementID, ' :: ', pattern);
     }
 
     var thisElementValue = $('#' + elementID).val()
@@ -626,12 +623,17 @@ var helper = {
     if (err1 !== undefined) {
             // console.log('## validateParams > err1: ', str1, ' || ', str2, ' || ', err1)
     } else {
-            // console.log('## validateParams > no err1: ', str1, ' || ', str2)
+            console.log('## validateParams > no err1: ', str1, ' || ', str2)
     }
 
     if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + str2).val() !== '') {
       var property1 = document.getElementsByName(str1)[0]
       var property2 = document.getElementsByName(str2)[0]
+
+      console.log('## validateParams > str1: ', str1)
+      console.log('## validateParams > str2: ', str2)
+      console.log('## validateParams > property1: ', property1)
+      console.log('## validateParams > property2: ', property2)
 
       if ((err1 !== undefined && err1.error === 'nomatch') || property1.value !== property2.value) {
         if (isSafari) {
@@ -744,12 +746,11 @@ var helper = {
   },
 
   validateEmailField: function (elementVal, thisField, comparedField, err1) {
-    console.log('/////////// validateEmailField 1 +++++++++++++++++++ 1/2/3: ', elementVal, ' :: ', thisField, ' :: ', comparedField)
-    console.log('/////////// validateEmailField 2 +++++++++++++++++++ isSafari: ', isSafari)
+
     if (err1 !== undefined) {
             // console.log('#validateEmailField > err1: ', thisField, ' :: ', err1)
     } else {
-            // console.log('#validateEmailField > no err1: ', thisField)
+            console.log('#validateEmailField > no err1: ', thisField)
     }
 
     var isEmailValid
@@ -758,7 +759,6 @@ var helper = {
 
         // EMAIL IS VALID +++++++++++++++++++
     if ((err1 !== undefined && (err1.error !== 'invalid' && err1.error !== 'empty')) || isEmailValid) {
-      console.log('/////////// EMAIL IS VALID +++++++++++++++++++ isEmailValid: ', isEmailValid)
       err1 !== undefined || isSafari ? $('#' + thisField + 'Improper').removeClass('show').addClass('hide') : null
       !isSafari ? $('#' + thisField).get(0).setCustomValidity('') : null
       $('#' + thisField).off('input')
@@ -795,43 +795,21 @@ var helper = {
       } else {
         $('#' + thisField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + ' is in improper format')
       }
+
       $('#' + thisField).focus()
+
       err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
     } else if (err1 !== undefined && err1.error === 'empty') {
       helper.testUserInputEmail(thisField, err1)
     }
   },
 
-  postData: function () {
-    var data = {
-      displayname: $('#displayname').val(),
-      email: $('#email').val(),
-      confirmEmail: $('#confirmEmail').val(),
-      password: $('#password').val(),
-      confirmPassword: $('#confirmPassword').val(),
-      firstname: $('#firstname').val(),
-      lastname: $('#lastname').val(),
-      city: $('#city').val(),
-      state: $('#state').val()
-    }
-    return data
-  },
 
-
-
-
-
-
- 
 // =================================================================================================================================
 // =================================================================================================================================
 // =================================================================================================================================
 // =================================================================================================================================
 // =================================================================================================================================
-
-
-
-
 
 
   toggleEditBtn: function(whichTabs,displayTab) {
