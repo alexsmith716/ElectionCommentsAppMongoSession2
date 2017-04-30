@@ -122,11 +122,11 @@ block content
 
                 label.control-label(id="newEmailPassLabel", style="margin-top:6px;")
 
-                input.form-control.input-md(id="newEmailPass", name="newEmailPass", tabindex="2")
+                input.form-control.input-md(type="text", id="newEmailPass", name="newEmailPass", tabindex="2")
 
-                span.hide.text-danger(id="newEmailPassImproper")
-                span.hide.error(id="newEmailPassRegistered")
-                span.hide.error(id="newEmailPassError")
+                span.hide.text-danger(id="newEmailPassImproper") Email is in improper format
+                span.hide.error(id="newEmailPassRegistered") This email address is already in our system. Sign in, or enter a new email address
+                span.hide.error(id="newEmailPassError") Please fill out this field.
 
 
 
@@ -135,12 +135,12 @@ block content
 
                 label.control-label(id="confirmEmailPassLabel", style="margin-top:6px;")
 
-                input.form-control.input-md(id="confirmEmailPass", name="confirmEmailPass", tabindex="3")
+                input.form-control.input-md(type="text", id="confirmEmailPass", name="confirmEmailPass", tabindex="3")
 
-                span.hide.text-danger(id="confirmEmailPassImproper")
-                span.hide.error(id="confirmEmailPassRegistered")
+                span.hide.text-danger(id="confirmEmailPassImproper") Confirm Email is in improper format
+                span.hide.error(id="confirmEmailPassRegistered") This email address is already in our system. Sign in, or enter a new email address
                 span.hide.text-danger(id="confirmEmailPassMatch")
-                span.hide.error(id="confirmEmailPassError")
+                span.hide.error(id="confirmEmailPassError") Please fill out this field.
 
 
 
@@ -361,6 +361,6 @@ block content
                   div
                     button(id="accountInfoUpdate" class="btn btn-success btn-md nav-toggle") Update Account info
 
-    br
-    br
+  .modal-backdrop
+     img(src="/images/ajax-loader.gif" style="position: fixed; top: 45%; left: 49%;")
 
