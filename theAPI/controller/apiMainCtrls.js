@@ -256,6 +256,16 @@ module.exports.ajaxUserProfileEmailPass = function (req, res, next) {
     password: 'required', 
     confirmPassword: 'required'}
 
+  // =============================================================================================
+
+  reqBody[objName] = reqBody[objName].trim();
+  isDataValid = emailPattern.test(reqBody[objName]);
+
+  evaluateUserEmail(objValue, validateTemplate.expectedResponse, function(response) {
+
+
+  })
+
   // first, validate user's current Email/Passsword
 
 

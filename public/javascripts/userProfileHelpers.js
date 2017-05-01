@@ -6,135 +6,125 @@ var helper = {
   init: function() {
     helper.showLoading()
 
-    $('#state').attr('required', false);
+    $('#state').attr('required', false)
 
     setTimeout(function () { helper.hideLoading() }, 500)
 
     console.log('helpers > isSafari: ', isSafari)
-    helper.initializeJqueryEvents();
+    helper.initializeJqueryEvents()
   },
 
   testFormValidity: function (theForm, eventListener) {
 
-    var boundEventTypes;
-    var formElement;
-    var checkConstraints;
-    var formValid = null;
-    var resp = {};
+    var boundEventTypes
+    var formElement
+    var checkConstraints
+    var formValid = null
+    var resp = {}
 
     for( var i = 0; i < theForm.length; i++ ) {
 
-      formElement = $(theForm[i]);
-      checkConstraints = formElement.get(0).checkValidity();
+      formElement = $(theForm[i])
+      checkConstraints = formElement.get(0).checkValidity()
       
       if(!checkConstraints && formValid === null){
-          formValid = false;
-          resp.formValid = false;
-          resp.focusFirstElement = formElement;
+        formValid = false
+        resp.formValid = false
+        resp.focusFirstElement = formElement
       }
 
       if(eventListener === 'change'){
-          boundEventTypes = $._data( formElement[0], 'events' );
-          for (var eType in boundEventTypes){
-            helper.handleFormEvents(formElement.attr('id'), eType, formElement.val());
-          }
+        boundEventTypes = $._data( formElement[0], 'events' );
+        for (var eType in boundEventTypes){
+          helper.handleFormEvents(formElement.attr('id'), eType, formElement.val())
+        }
       }
       
       if(eventListener === 'focusout'){
-          formElement.on('focusout', function(e) {
-              helper.handleFormEvents(formElement.attr('id'), 'focusout', formElement.val());
-          })
-          formElement.trigger('focusout');
+        formElement.on('focusout', function(e) {
+          helper.handleFormEvents(formElement.attr('id'), 'focusout', formElement.val());
+        })
+        formElement.trigger('focusout')
       }
-
     }
-    return resp;
+    return resp
+
   },
 
   initializeJqueryEvents:  function(){
 
     $('#editProfileFormModal').on('shown.bs.modal', function() {
-      var activeElementID = $('#editProfileForm').data('elementID');
-      $('#'+activeElementID).focus();
-    });
+      var activeElementID = $('#editProfileForm').data('elementID')
+      $('#'+activeElementID).focus()
+    })
 
     $('#editProfileFormModal').on('hidden.bs.modal', function () {
-
-      var activeElementID = $('#editProfileForm').data('elementID');
-
-      $('#editProfileForm').get(0).reset();
-
-      $('#'+activeElementID+'Error').removeClass('show').html('');
-      $('#'+activeElementID).removeClass('has-error');
-
-      $('.modalAlertSuccess').hide();
-      $('.modalAlertDanger').hide();
-      $('.modalOkayBtn').hide();
-      $('.modalCancelSubmitBtns').show();
-
-    });
+      var activeElementID = $('#editProfileForm').data('elementID')
+      $('#editProfileForm').get(0).reset()
+      $('#editProfileForm').find('.error').removeClass('show ').addClass('hide')
+      $('#'+activeElementID+'Error').removeClass('show').html('')
+      $('#'+activeElementID).removeClass('has-error')
+      $('.modalAlertSuccess').hide()
+      $('.modalAlertDanger').hide()
+      $('.modalOkayBtn').hide()
+      $('.modalCancelSubmitBtns').show()
+    })
 
     $('#editProfileEmailPassModal').on('shown.bs.modal', function() {
       //$(this).find('[autofocus]').focus();
-    });
+    })
 
     $('#editProfileEmailPassModal').on('hidden.bs.modal', function () {
-
-      $('#changeEmailPassForm').get(0).reset();
-
-      $('#currentEmailPassError').removeClass('show').html('');
-      $('#newEmailPassImproper').removeClass('show').html('');
-      $('#newEmailPassRegistered').removeClass('show').html('');
-      $('#newEmailPassRegistered').removeClass('show').html('');
-      $('#confirmEmailPassImproper').removeClass('show').html('');
-      $('#confirmEmailPassRegistered').removeClass('show').html('');
-      $('#confirmEmailPassMatch').removeClass('show').html('');
-      $('#confirmEmailPassImproper').removeClass('show').html('');
-
-      $('#currentEmailPass').removeClass('has-error');
-      $('#newEmailPass').removeClass('has-error');
-      $('#confirmEmailPass').removeClass('has-error');
-
-      $('.modalAlertSuccess').hide();
-      $('.modalAlertDanger').hide();
-      $('.modalOkayBtn').hide();
-      $('.modalCancelSubmitBtns').show();
-
-    });
+      $('#changeEmailPassForm').get(0).reset()
+      $('#changeEmailPassForm').find('.error').removeClass('show ').addClass('hide')
+      $('#currentEmailPassError').removeClass('show').html('')
+      $('#newEmailPassImproper').removeClass('show').html('')
+      $('#newEmailPassRegistered').removeClass('show').html('')
+      $('#newEmailPassRegistered').removeClass('show').html('')
+      $('#confirmEmailPassImproper').removeClass('show').html('')
+      $('#confirmEmailPassRegistered').removeClass('show').html('')
+      $('#confirmEmailPassMatch').removeClass('show').html('')
+      $('#confirmEmailPassImproper').removeClass('show').html('')
+      $('#currentEmailPass').removeClass('has-error')
+      $('#newEmailPass').removeClass('has-error')
+      $('#confirmEmailPass').removeClass('has-error')
+      $('.modalAlertSuccess').hide()
+      $('.modalAlertDanger').hide()
+      $('.modalOkayBtn').hide()
+      $('.modalCancelSubmitBtns').show()
+    })
 
 
     $('#editProfileForm').on('submit', function(e) {
 
-      console.log('#editProfileForm > SUBMIT +++');
+      console.log('#editProfileForm > SUBMIT +++')
 
-      e.preventDefault();
-      $('.loading').show();
+      e.preventDefault()
+      $('.loading').show()
 
-      $('#editProfileForm .formerror').removeClass('show').addClass('hide');
+      $('#editProfileForm .formerror').removeClass('show').addClass('hide')
 
-      var elementID = $('#editProfileForm').data('elementID');
-      var whichformdataid = $('#editProfileForm').data('whichformdataid');
-      var labelText = helper.makeTitleFromElementID(whichformdataid);
+      var elementID = $('#editProfileForm').data('elementID')
+      var whichformdataid = $('#editProfileForm').data('whichformdataid')
+      var labelText = helper.makeTitleFromElementID(whichformdataid)
       var newVal;
-      var s = document.getElementById(elementID);
-      elementID === 'state' ? newVal = s.options[s.selectedIndex].text : newVal = $('#'+elementID).val();
-      newVal = newVal.trim();
+      var s = document.getElementById(elementID)
+      elementID === 'state' ? newVal = s.options[s.selectedIndex].text : newVal = $('#'+elementID).val()
+      newVal = newVal.trim()
 
-      var data = {};
-      var serviceUrl = $(this).attr('action');
-      var constrainedFormElements = document.getElementById('editProfileForm').querySelectorAll('[required]');
+      var data = {}
+      var serviceUrl = $(this).attr('action')
+      var constrainedFormElements = document.getElementById('editProfileForm').querySelectorAll('[required]')
 
       if(isSafari){
 
-          var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout');
+          var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
 
           if (testFocusout.formValid !== undefined){
-
-              console.log('+++++++++++ BAD FORM !!!!!!!!!!!');
-              testFocusout.focusFirstElement.focus();
-              $('.loading').hide();
-              return false;
-
+              console.log('+++++++++++ BAD FORM !!!!!!!!!!!')
+              testFocusout.focusFirstElement.focus()
+              $('.loading').hide()
+              return false
           }
       }
 
@@ -144,9 +134,9 @@ var helper = {
       // console.log('#editProfileForm > GOOD FORM> ID TEXT: ', $('#'+elementID).val());
       // console.log('#editProfileForm > GOOD FORM> whichformdataid: ', whichformdataid);
 
-      data[elementID] = $('#'+elementID).val();
+      data[elementID] = $('#'+elementID).val()
 
-      data['_csrf'] = $('meta[name="csrf-token"]').attr('content');
+      data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
       $.ajax({
 
@@ -162,84 +152,95 @@ var helper = {
 
             if (data.response === 'success') {
 
-                console.log('#editProfileForm > ajax > SUCCESS > SUCCESS: ');
+                console.log('#editProfileForm > ajax > SUCCESS > SUCCESS: ')
 
-                $('.loading').hide();
-                $('#editProfileFormModal').modal('hide');
-                $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re '+labelText+' has been successfully edited!');
-                $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show');
-                $('#editProfileModalAlert').modal('show');
-                $('.'+whichformdataid).text(newVal);
+                $('.loading').hide()
+                $('#editProfileFormModal').modal('hide')
+                $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re '+labelText+' has been successfully edited!')
+                $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show')
+                $('#editProfileModalAlert').modal('show')
+                $('.'+whichformdataid).text(newVal)
 
             } else {
 
                 if(data.validatedData){
 
-                    console.log('#editProfileForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData);
-                    helper.handleErrorResponse(data.validatedData);
+                    console.log('#editProfileForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData)
+                    helper.handleErrorResponse(data.validatedData)
 
                 }else{
 
-                    console.log('#editProfileForm > ajax > SUCCESS > ERROR');
-                    $('#editProfileForm .formerror').removeClass('hide').addClass('show');
+                    console.log('#editProfileForm > ajax > SUCCESS > ERROR')
+                    $('#editProfileForm .formerror').removeClass('hide').addClass('show')
 
                 }
 
-                $('.loading').hide();
-                return false;
+                $('.loading').hide()
+                return false
             }
 
         },
+
         error: function(xhr, status, error) {
 
-            console.log('#editProfileForm > ajax > ERROR > ERROR: ', xhr);
+            console.log('#editProfileForm > ajax > ERROR > ERROR: ', xhr)
 
-            var parsedXHR = JSON.parse(xhr.responseText);
+            var parsedXHR = JSON.parse(xhr.responseText)
 
-            location.href = parsedXHR.redirect;
+            location.href = parsedXHR.redirect
 
-            return false;
+            return false
 
         }
-      });
-    });
+      })
+    })
 
 
     $('#changeEmailPassForm').on('submit', function(e) {
 
-      console.log('#changeEmailPassForm > SUBMIT +++');
+      console.log('#changeEmailPassForm > SUBMIT 1+++', $(this).data('elementID'))
+      console.log('#changeEmailPassForm > SUBMIT 2+++', $('#currentEmailPass').val())
+      console.log('#changeEmailPassForm > SUBMIT 3+++', $('#newEmailPass').val())
+      console.log('#changeEmailPassForm > SUBMIT 4+++', $('#confirmEmailPass').val())
 
-      e.preventDefault();
-      $('.loading').show();
+      // required & regex pattern will handle client validation for currentEmailPass  ( pattern="\\s*(?=\\s*\\S)(.{1,35})\\s*" )
+      // ++++++++++++++++++++++++++++++++++++++++++
+      // EMAIL: required, type = email & script will handle client validation for newEmailPass
+      // EMAIL: required, type = email & script will handle client validation for confirmEmailPass
+      // ++++++++++++++++++++++++++++++++++++++++++
+      // PASSWORD: required, regex pattern & script will handle client validation for newEmailPass     ( pattern="[\\S]{4,}" )
+      // PASSWORD: required, regex pattern & script will handle client validation for confirmEmailPass ( pattern="[\\S]{4,}" )
 
-      $('#changeEmailPassForm .formerror').removeClass('show').addClass('hide');
+      e.preventDefault()
+      $('.loading').show()
 
-      var data = {};
-      var serviceUrl = $(this).attr('action');
-      var constrainedFormElements = document.getElementById('changeEmailPassForm').querySelectorAll('[required]');
+      $('#changeEmailPassForm .formerror').removeClass('show').addClass('hide')
+
+      var elementID = $('#editProfileForm').data('elementID')
+
+      var data = {}
+      var serviceUrl = $(this).attr('action')
+      var constrainedFormElements = document.getElementById('changeEmailPassForm').querySelectorAll('[required]')
 
       if(isSafari){
-
-          var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout');
-
-          if (testFocusout.formValid !== undefined){
-
-              console.log('+++++++++++ BAD FORM !!!!!!!!!!!');
-              testFocusout.focusFirstElement.focus();
-              $('.loading').hide();
-              return false;
-
-          }
+        var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
+        if (testFocusout.formValid !== undefined){
+          console.log('+++++++++++ BAD FORM !!!!!!!!!!!')
+          testFocusout.focusFirstElement.focus()
+          $('.loading').hide()
+          return false
+        }
       }
 
       var data = {
-          displayname: $('#currentEmailPass').val(),
-          email: $('#email').val(),
-          confirmEmail: $('#confirmEmail').val()
-      };
+        displayname: $('#currentEmailPass').val(),
+        email: $('#newEmailPass').val(),
+        confirmEmail: $('#confirmEmailPass').val()
+      }
 
-      data['_csrf'] = $('meta[name="csrf-token"]').attr('content');
+      data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
+      /*
       $.ajax({
 
           rejectUnauthorized: false,
@@ -254,69 +255,69 @@ var helper = {
 
               if (data.response === 'success') {
 
-                  console.log('#changeEmailPassForm > ajax > SUCCESS > SUCCESS: ', data);
+                  console.log('#changeEmailPassForm > ajax > SUCCESS > SUCCESS: ', data)
 
-                  $('.loading').hide();
+                  $('.loading').hide()
 
               } else {
 
                   if(data.validatedData){
 
-                      console.log('#changeEmailPassForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData);
-                      helper.handleErrorResponse(data.validatedData);
+                      console.log('#changeEmailPassForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData)
+                      helper.handleErrorResponse(data.validatedData)
 
                   }else{
 
-                      console.log('#changeEmailPassForm > ajax > SUCCESS > ERROR');
-                      $('#changeEmailPassForm .formerror').removeClass('hide').addClass('show');
+                      console.log('#changeEmailPassForm > ajax > SUCCESS > ERROR')
+                      $('#changeEmailPassForm .formerror').removeClass('hide').addClass('show')
 
                   }
 
-                  $('.loading').hide();
-                  return false;
+                  $('.loading').hide()
+                  return false
               }
 
           },
+
           error: function(xhr, status, error) {
 
-              console.log('#changeEmailPassForm > ajax > ERROR > ERROR: ', xhr);
+              console.log('#changeEmailPassForm > ajax > ERROR > ERROR: ', xhr)
 
-              var parsedXHR = JSON.parse(xhr.responseText);
+              var parsedXHR = JSON.parse(xhr.responseText)
 
-              location.href = parsedXHR.redirect;
+              location.href = parsedXHR.redirect
 
-              return false;
+              return false
 
           }
-      });
-
-    });
+      })
+      */
+    })
 
 
     $('#personalInfoToggle').click(function(){
         helper.toggleEditBtn('personalInfo', true);
-    });
+    })
 
     $('#personalInfoUpdate').click(function(){
         helper.toggleEditBtn('personalInfo', false);
-    });
+    })
 
     $('#accountInfoToggle').click(function(){
         helper.toggleEditBtn('accountInfo', true);
-    });
+    })
 
     $('#accountInfoUpdate').click(function(){
         helper.toggleEditBtn('accountInfo', false);
-    });
+    })
 
     $('.editFormElement').click(function(){
         helper.doEditProfileModal(this);
-    });
+    })
 
-    
     $('.editFormEmailPassElement').click(function(){
         helper.doEditProfileEmailPassModal(this);
-    });
+    })
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -324,25 +325,25 @@ var helper = {
 
       console.log('SAFARII ! > focusout !!',)
 
-      $('#editProfileForm').on('focusin', '#required-fields .form-control', function() {
-        var ve = $('#editProfileForm').data('validateElement');
+      $('#editProfileForm').on('focusin', '.required-fields .form-control', function() {
+        var ve = $('#editProfileForm').data('validateElement')
         if(ve === undefined){
-          $('#editProfileForm').data('validateElement', $(document.activeElement).attr('id'));
+          $('#editProfileForm').data('validateElement', $(document.activeElement).attr('id'))
         }else{
-          helper.handleFormEvents(ve, 'focusout', $('#'+ve).val());
-          $('#editProfileForm').data('validateElement', $(document.activeElement).attr('id'));
+          helper.handleFormEvents(ve, 'focusout', $('#'+ve).val())
+          $('#editProfileForm').data('validateElement', $(document.activeElement).attr('id'))
         }
       })
 
-      $('#changeEmailPassForm').on('focusin', '#required-fields .form-control', function() {
-        var ve = $('#changeEmailPassForm').data('validateElement');
+      $('#changeEmailPassForm').on('focusin', '.required-fields .form-control', function() {
+        var ve = $('#changeEmailPassForm').data('validateElement')
         if(ve === undefined){
-          $('#changeEmailPassForm').data('validateElement', $(document.activeElement).attr('id'));
+          $('#changeEmailPassForm').data('validateElement', $(document.activeElement).attr('id'))
         }else{
-          helper.handleFormEvents(ve, 'focusout', $('#'+ve).val());
-          $('#changeEmailPassForm').data('validateElement', $(document.activeElement).attr('id'));
+          helper.handleFormEvents(ve, 'focusout', $('#'+ve).val())
+          $('#changeEmailPassForm').data('validateElement', $(document.activeElement).attr('id'))
         }
-      });
+      })
     }
 
     $('#newEmailPass').on('change', function (e) {
@@ -354,63 +355,49 @@ var helper = {
     })
 
     $('#state').on('change', function(e) {
-      helper.handleFormEvents($(this).attr('id'));
-    });
+      helper.handleFormEvents($(this).attr('id'))
+    })
 
   },
 
-
-
-
 // =================================================================================================================================
 // =================================================================================================================================
 // =================================================================================================================================
 // =================================================================================================================================
 // =================================================================================================================================
-
-
-
-
-
 
   handleFormEvents: function(elementID, eType, elementVal) {
 
     console.log('elementID !!!!!!!!!!!!!!!!!!!: ', elementID, ' :: ', eType, ' :: ', elementVal)
 
     if($('#changeEmailPassForm').data('elementID') === 'email'){
-      elementID === 'newEmailPass' ? helper.emailElementValidation(elementID, 'confirmEmailPass', eType, elementVal) : null;
-      elementID === 'confirmEmailPass' ? helper.emailElementValidation(elementID, 'newEmailPass', eType, elementVal) : null;
-
+      elementID === 'newEmailPass' ? helper.emailElementValidation(elementID, 'confirmEmailPass', eType, elementVal) : null
+      elementID === 'confirmEmailPass' ? helper.emailElementValidation(elementID, 'newEmailPass', eType, elementVal) : null
     }
+
     if($('#changeEmailPassForm').data('elementID') === 'password'){
-      elementID === 'newEmailPass' ? helper.passwordElementValidation(elementID, 'confirmEmailPass', eType) : null;
-      elementID === 'confirmEmailPass' ? helper.passwordElementValidation(elementID, 'newEmailPass', eType) : null;
-
+      elementID === 'newEmailPass' ? helper.passwordElementValidation(elementID, 'confirmEmailPass', eType) : null
+      elementID === 'confirmEmailPass' ? helper.passwordElementValidation(elementID, 'newEmailPass', eType) : null
     }
 
-    elementID === 'currentEmailPass' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null;
-    elementID === 'firstname' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null;
-    elementID === 'lastname' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null;
-    elementID === 'city' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null;
-    elementID === 'state' ? helper.selectElementValidation(elementID) : null;
+    elementID === 'currentEmailPass' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
+    elementID === 'firstname' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
+    elementID === 'lastname' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
+    elementID === 'city' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
+    elementID === 'state' ? helper.selectElementValidation(elementID) : null
   },
 
   makeTitleFromElementID: function(whichID) {
-      whichID = whichID.replace(/-/g, ' ');
-      labelText = whichID.replace(/\b\w/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-      return labelText;
+      whichID = whichID.replace(/-/g, ' ')
+      labelText = whichID.replace(/\b\w/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();})
+      return labelText
   },
 
-
-
-
-
 // =================================================================================================================================
 // =================================================================================================================================
 // =================================================================================================================================
 // =================================================================================================================================
 // =================================================================================================================================
-
 
   pattern: {
     displayname: /^[A-Za-z0-9_]{4,21}$/,
