@@ -28,7 +28,7 @@ block content
 
           .panel-body
 
-            h2.form-title Sign up GOOD
+            h2.form-title ....
 
 
 
@@ -53,7 +53,7 @@ block content
             form(action="https://localhost:3000/api/signupuser", id="signUpForm", name="signUpForm", method="post", enctype="application/x-www-form-urlencoded")
 
 
-              div(id="required-fields")
+              div.required-fields
                 .row
                   .col-md-6.col-sm-6.col-xs-12
                     .form-group
@@ -68,7 +68,7 @@ block content
               .row.hr-form-margin
                 hr
 
-              div(id="required-fields")
+              div.required-fields
                 .row
                   .col-lg-6.col-md-6.col-sm-6.col-xs-12
                     .form-group
@@ -76,7 +76,7 @@ block content
   
                       input.form-control.input-md(type="email", id="email", name="email", tabindex="2", title="Please type a valid Email Address", placeholder="Email Address", required)
   
-                      span.hide.text-danger(id="emailImproper") Email is in improper format
+                      span.hide.error(id="emailImproper") Email is in improper format
                       span.hide.error(id="emailRegistered") This email address is already in our system. Sign in, or enter a new email address
                       span.hide.error(id="emailError") Please fill out this field.
   
@@ -87,15 +87,15 @@ block content
   
                       input.form-control.input-md(type="email", id="confirmEmail", name="confirmEmail", tabindex="3", title="Please type a valid Email Address", placeholder="Confirm Email Address", required)
   
-                      span.hide.text-danger(id="confirmEmailImproper") Confirm Email is in improper format
+                      span.hide.error(id="confirmEmailImproper") Confirm Email is in improper format
                       span.hide.error(id="confirmEmailRegistered") This email address is already in our system. Sign in, or enter a new email address
-                      span.hide.text-danger(id="confirmEmailMatch") Emails don't match
+                      span.hide.error(id="confirmEmailMatch") Emails don't match
                       span.hide.error(id="confirmEmailError") Please fill out this field.
   
               .row.hr-form-margin
                 hr
 
-              div(id="required-fields")
+              div.required-fields
                 .row
                   .col-lg-6.col-md-6.col-sm-6.col-xs-12
                     .form-group
@@ -113,13 +113,13 @@ block content
   
                       input.form-control.input-md(type="password", id="confirmPassword", name="confirmPassword", pattern="[\\S]{4,}", tabindex="5", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Confirm Password", required)
                       
-                      span.hide.text-danger(id="confirmPasswordMatch") Passwords don't match
+                      span.hide.error(id="confirmPasswordMatch") Passwords don't match
                       span.hide.error(id="confirmPasswordError") Please fill out this field.
 
               .row.hr-form-margin
                 hr
 
-              div(id="required-fields")
+              div.required-fields
                 .row
                   .col-lg-6.col-md-6.col-sm-6.col-xs-12
                     .form-group
@@ -141,7 +141,7 @@ block content
               .row.hr-form-margin
                 hr
   
-              div(id="required-fields")
+              div.required-fields
                 .row
                   .col-lg-6.col-md-6.col-sm-6.col-xs-12
                     .form-group

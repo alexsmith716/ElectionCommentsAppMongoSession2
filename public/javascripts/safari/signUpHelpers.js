@@ -114,7 +114,7 @@ var helper = {
     })
 
     if (isSafari) {
-      $('#signUpForm').on('focusin', '#required-fields .form-control', function () {
+      $('#signUpForm').on('focusin', '.required-fields .form-control', function () {
         var ve = $('#signUpForm').data('validateElement')
 
         if (ve === undefined) {
