@@ -323,27 +323,28 @@ var helper = {
 
     if(isSafari){
 
-      console.log('SAFARII ! > focusout !!',)
+      $('#editProfileEmailPassModal').on('click', function(e) {
+        e.stopPropagation()
 
-      $('#editProfileForm').on('focusin', '.required-fields .form-control', function() {
-        var ve = $('#editProfileForm').data('validateElement')
-        if(ve === undefined){
-          $('#editProfileForm').data('validateElement', $(document.activeElement).attr('id'))
-        }else{
-          helper.handleFormEvents(ve, 'focusout', $('#'+ve).val())
-          $('#editProfileForm').data('validateElement', $(document.activeElement).attr('id'))
+        var activeInputElement = $('#editProfileEmailPassModal').data('activeInputElement');
+
+        if('submit' !== e.target.type || 'button' !== e.target.type){
+          helper.handleFormEvents(activeInputElement, 'focusout', $('#'+activeInputElement).val())
         }
       })
 
-      $('#changeEmailPassForm').on('focusin', '.required-fields .form-control', function() {
-        var ve = $('#changeEmailPassForm').data('validateElement')
-        if(ve === undefined){
-          $('#changeEmailPassForm').data('validateElement', $(document.activeElement).attr('id'))
-        }else{
-          helper.handleFormEvents(ve, 'focusout', $('#'+ve).val())
-          $('#changeEmailPassForm').data('validateElement', $(document.activeElement).attr('id'))
-        }
+      $('#currentEmailPass').on('focusout', function(e) {
+        $('#editProfileEmailPassModal').data('activeInputElement', 'currentEmailPass')
       })
+
+      $('#newEmailPass').on('focusout', function(e) {
+        $('#editProfileEmailPassModal').data('activeInputElement', 'newEmailPass')
+      })
+
+      $('#confirmEmailPass').on('focusout', function(e) {
+        $('#editProfileEmailPassModal').data('activeInputElement', 'confirmEmailPass')
+      })
+
     }
 
     $('#newEmailPass').on('change', function (e) {
