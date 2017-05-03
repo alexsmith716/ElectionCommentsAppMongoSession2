@@ -70,11 +70,32 @@ var helper = {
       $('.modalCancelSubmitBtns').show()
     })
 
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     $('#editProfileEmailPassModal').on('shown.bs.modal', function() {
-      //$(this).find('[autofocus]').focus();
+      //$(this).find('[autofocus]').focus()
+      var evts = $._data( $('#currentEmailPass').get(0), 'events' )
+      console.log('#editProfileEmailPassModal > shown.bs.modal evts: ', evts)
+      $.each( evts, function(i,exists) {
+        console.log('#editProfileEmailPassModal > shown.bs.modal evts i: ', i)
+        console.log('#editProfileEmailPassModal > shown.bs.modal evts exists: ', exists)
+      });
     })
 
     $('#editProfileEmailPassModal').on('hidden.bs.modal', function () {
+
+      $('#currentEmailPass').off('focusout')
+      $('#newEmailPass').off('focusout')
+      $('#confirmEmailPass').off('focusout')
+      $('#editProfileEmailPassModal').off('click')
+
+      var evts = $._data( $('#currentEmailPass').get(0), 'events' )
+      console.log('#editProfileEmailPassModal > hidden.bs.modal evts: ', evts)
+      $.each( evts, function(i,exists) {
+        console.log('#editProfileEmailPassModal > hidden.bs.modal evts i: ', i)
+        console.log('#editProfileEmailPassModal > hidden.bs.modal evts exists: ', exists)
+      });
+
       $('#changeEmailPassForm').get(0).reset()
       $('#changeEmailPassForm').find('.error').removeClass('show ').addClass('hide')
       $('#currentEmailPassError').removeClass('show').html('')
@@ -199,9 +220,9 @@ var helper = {
     $('#changeEmailPassForm').on('submit', function(e) {
 
       console.log('#changeEmailPassForm > SUBMIT 1+++', $(this).data('elementID'))
-      console.log('#changeEmailPassForm > SUBMIT 2+++', $('#currentEmailPass').val())
-      console.log('#changeEmailPassForm > SUBMIT 3+++', $('#newEmailPass').val())
-      console.log('#changeEmailPassForm > SUBMIT 4+++', $('#confirmEmailPass').val())
+      //console.log('#changeEmailPassForm > SUBMIT 2+++', $('#currentEmailPass').val())
+      //console.log('#changeEmailPassForm > SUBMIT 3+++', $('#newEmailPass').val())
+      //console.log('#changeEmailPassForm > SUBMIT 4+++', $('#confirmEmailPass').val())
 
       // required & regex pattern will handle client validation for currentEmailPass  ( pattern="\\s*(?=\\s*\\S)(.{1,35})\\s*" )
       // ++++++++++++++++++++++++++++++++++++++++++
@@ -296,30 +317,46 @@ var helper = {
 
 
     $('#personalInfoToggle').click(function(){
-        helper.toggleEditBtn('personalInfo', true);
+      helper.toggleEditBtn('personalInfo', true);
     })
 
     $('#personalInfoUpdate').click(function(){
-        helper.toggleEditBtn('personalInfo', false);
+      helper.toggleEditBtn('personalInfo', false);
     })
 
     $('#accountInfoToggle').click(function(){
-        helper.toggleEditBtn('accountInfo', true);
+      helper.toggleEditBtn('accountInfo', true);
     })
 
     $('#accountInfoUpdate').click(function(){
-        helper.toggleEditBtn('accountInfo', false);
+      helper.toggleEditBtn('accountInfo', false);
     })
 
     $('.editFormElement').click(function(){
-        helper.doEditProfileModal(this);
+      helper.doEditProfileModal(this);
     })
 
     $('.editFormEmailPassElement').click(function(){
-        helper.doEditProfileEmailPassModal(this);
+      helper.doEditProfileEmailPassModal(this);
     })
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    $('#newEmailPass').on('change', function (e) {
+      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
+    })
+
+    $('#confirmEmailPass').on('change', function (e) {
+      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
+    })
+
+    $('#state').on('change', function(e) {
+      helper.handleFormEvents($(this).attr('id'))
+    })
+
+  },
+
+  handleEvents: function(){
 
     if(isSafari){
 
@@ -328,7 +365,7 @@ var helper = {
 
         var activeInputElement = $('#editProfileEmailPassModal').data('activeInputElement');
 
-        if('submit' !== e.target.type || 'button' !== e.target.type){
+        if('text' === e.target.type || 'email' === e.target.type || 'password' === e.target.type){
           helper.handleFormEvents(activeInputElement, 'focusout', $('#'+activeInputElement).val())
         }
       })
@@ -346,18 +383,6 @@ var helper = {
       })
 
     }
-
-    $('#newEmailPass').on('change', function (e) {
-      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
-    })
-
-    $('#confirmEmailPass').on('change', function (e) {
-      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
-    })
-
-    $('#state').on('change', function(e) {
-      helper.handleFormEvents($(this).attr('id'))
-    })
 
   },
 
@@ -830,6 +855,7 @@ var helper = {
 
   doEditProfileModal: function(editBtnClicked) {
 
+    helper.handleEvents()
     var editBtnClickedParentElem = $(editBtnClicked).parent();
     var dataID = editBtnClickedParentElem.data('id');
 
@@ -924,6 +950,7 @@ var helper = {
 
   doEditProfileEmailPassModal: function(editBtnClicked) {
 
+    helper.handleEvents()
     var editBtnClickedParentElem = $(editBtnClicked).parent();
     var dataID = editBtnClickedParentElem.data('id');
     var labelText = helper.makeTitleFromElementID(dataID);
@@ -941,41 +968,42 @@ var helper = {
 
     if(dataID === 'email'){
 
-        $('#currentEmailPass').attr({
-            type: 'text',
-            title: 'Please enter a valid Email Address',
-            placeholder: 'Current Email Address'
-        });
+      $('#currentEmailPass').attr({
+        type: 'text',
+        title: 'Please enter a valid Email Address',
+        placeholder: 'Current Email Address'
+      });
 
-        $('#newEmailPass').attr({
-            title: 'Please type a valid Email Address',
-            placeholder: 'New Email Address'
-        });
-        
-        $('#confirmEmailPass').attr({
-            title: 'Please type a valid Email Address',
-            placeholder: 'Confirm New Email Address'
-        });
+      $('#newEmailPass').attr({
+        type: 'email',
+        title: 'Please type a valid Email Address',
+        placeholder: 'New Email Address'
+      });
+
+      $('#confirmEmailPass').attr({
+        title: 'Please type a valid Email Address',
+        placeholder: 'Confirm New Email Address'
+      });
 
     }else{
 
-        $('#currentEmailPass').attr({ 
-            type: 'password',
-            title: 'Please enter your Password',
-            placeholder: 'Current Password'
-        });
+      $('#currentEmailPass').attr({ 
+        type: 'password',
+        title: 'Please enter your Password',
+        placeholder: 'Current Password'
+      });
 
-        $('#newEmailPass').attr({ 
-            type: 'password',
-            title: 'Password must be at least 4 characters long. No whitespace allowed',
-            placeholder: 'New Password'
-        });
-        
-        $('#confirmEmailPass').attr({ 
-            type: 'password',
-            title: 'Password must be at least 4 characters long. No whitespace allowed',
-            placeholder: 'Confirm New Password'
-        });
+      $('#newEmailPass').attr({ 
+        type: 'password',
+        title: 'Password must be at least 4 characters long. No whitespace allowed',
+        placeholder: 'New Password'
+      });
+
+      $('#confirmEmailPass').attr({ 
+        type: 'password',
+        title: 'Password must be at least 4 characters long. No whitespace allowed',
+        placeholder: 'Confirm New Password'
+      });
 
     }
     /*
