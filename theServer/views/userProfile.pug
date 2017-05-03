@@ -41,40 +41,50 @@ block content
         .modal-footer
 
 
-  .modal.fade(id="editProfileFormModal", name="editProfileFormModal", tabindex="-1")
+  .modal.fade(id="editProfileEmailPassModal", name="editProfileEmailPassModal", tabindex="-1")
     .modal-dialog
       .modal-content
         .modal-header
           button.close(type="button" data-dismiss="modal") &times;
-          h4.modal-title Edit your profile
+          h4.modal-title
 
         .modal-body
 
-          form(action="https://localhost:3000/api/evaluateuserprofile", id="editProfileForm", name="editProfileForm", method="put", enctype="application/x-www-form-urlencoded")
+          form(action="https://localhost:3000/api/userprofileemailpass", id="changeEmailPassForm", name="changeEmailPassForm", method="put", enctype="application/x-www-form-urlencoded")
 
-            div
+            div.required-fields
               .form-group
 
-                label.control-label(id="editProfileFormLabelCurrent")
-                div(class="flex-containerMainCentered")
-                  div(class="flex-containerSubProfile")
-                    div.dont-break-out(id="modalFormElementValueCurrent", style="font-size: 1.0em;")
+                label.control-label(id="currentEmailPassLabel", style="margin-top:1px;")
+
+                input.form-control.input-md(id="currentEmailPass", name="currentEmailPass", tabindex="1")
+
+                span.hide.error(id="currentEmailPassError") Please fill out this field.
 
 
             div.required-fields
               .form-group
 
-                label.control-label(id="editProfileFormLabelUpdated")
+                label.control-label(id="newEmailPassLabel", style="margin-top:6px;")
 
-                div(style="height:40px; width:100%; style=margin-top:10px;")
+                input.form-control.input-md(type="text", id="newEmailPass", name="newEmailPass", tabindex="2")
 
-                  div.hide(id="editProfileInputElementParent", style="position:absolute; width:100%; padding-right: 36px;")
-                    input.form-control.input-md
-              
-                  div.hide(id="editProfileSelectElementParent", style="position:absolute; width:100%; padding-right: 36px;")
-                    +selectStateFormControl()
+                span.hide.error(id="newEmailPassImproper") Email is in improper format
+                span.hide.error(id="newEmailPassRegistered") This email address is already in our system. Sign in, or enter a new email address
+                span.hide.error(id="newEmailPassError") Please fill out this field.
 
-                span.hide.error
+
+            div.required-fields
+              .form-group
+
+                label.control-label(id="confirmEmailPassLabel", style="margin-top:6px;")
+
+                input.form-control.input-md(type="text", id="confirmEmailPass", name="confirmEmailPass", tabindex="3")
+
+                span.hide.error(id="confirmEmailPassImproper") Confirm Email is in improper format
+                span.hide.error(id="confirmEmailPassRegistered") This email address is already in our system. Sign in, or enter a new email address
+                span.hide.error(id="confirmEmailPassMatch")
+                span.hide.error(id="confirmEmailPassError") Please fill out this field.
 
 
             div(style="margin-bottom:8px;")
@@ -83,10 +93,9 @@ block content
 
 
             div(class="modalCancelSubmitBtns")
-              button(class="btn btn-default btn-md" data-dismiss="modal") Cancel
+              button(class="btn btn-default btn-md", data-dismiss="modal") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
               button(type="submit", class="btn btn-primary btn-md", id="submitEditProfileBtn") Submit
-
 
         .modal-footer
           .loading(style="display:none;")

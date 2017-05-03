@@ -9,7 +9,7 @@
     "start": "nodemon app.js"
   },
   "engines": {
-    "node": "~6.3.1",
+    "node": "~7.9.0",
     "npm": "~4.4.4"
   },
   "dependencies": {
