@@ -74,12 +74,18 @@ var helper = {
 
     $('#editProfileEmailPassModal').on('shown.bs.modal', function() {
       //$(this).find('[autofocus]').focus()
+
       var evts = $._data( $('#currentEmailPass').get(0), 'events' )
       console.log('#editProfileEmailPassModal > shown.bs.modal evts: ', evts)
+
       $.each( evts, function(i,exists) {
         console.log('#editProfileEmailPassModal > shown.bs.modal evts i: ', i)
         console.log('#editProfileEmailPassModal > shown.bs.modal evts exists: ', exists)
-      });
+      })
+
+      setTimeout(function() {
+        // ++++++++++++++++++++++++
+      }, 150)
     })
 
     $('#editProfileEmailPassModal').on('hidden.bs.modal', function () {
@@ -88,13 +94,6 @@ var helper = {
       $('#newEmailPass').off('focusout')
       $('#confirmEmailPass').off('focusout')
       $('#editProfileEmailPassModal').off('click')
-
-      var evts = $._data( $('#currentEmailPass').get(0), 'events' )
-      console.log('#editProfileEmailPassModal > hidden.bs.modal evts: ', evts)
-      $.each( evts, function(i,exists) {
-        console.log('#editProfileEmailPassModal > hidden.bs.modal evts i: ', i)
-        console.log('#editProfileEmailPassModal > hidden.bs.modal evts exists: ', exists)
-      });
 
       $('#changeEmailPassForm').get(0).reset()
       $('#changeEmailPassForm').find('.error').removeClass('show ').addClass('hide')
@@ -360,14 +359,19 @@ var helper = {
 
     if(isSafari){
 
+      $('#editProfileEmailPassModal').removeData('activeInputElement');
+
       $('#editProfileEmailPassModal').on('click', function(e) {
-        e.stopPropagation()
+        // e.stopPropagation()
 
         var activeInputElement = $('#editProfileEmailPassModal').data('activeInputElement');
 
-        if('text' === e.target.type || 'email' === e.target.type || 'password' === e.target.type){
+        if(activeInputElement !== undefined && (e.target.type !== 'submit' || e.target.type !== 'button')){
+
           helper.handleFormEvents(activeInputElement, 'focusout', $('#'+activeInputElement).val())
+
         }
+
       })
 
       $('#currentEmailPass').on('focusout', function(e) {
@@ -394,7 +398,7 @@ var helper = {
 
   handleFormEvents: function(elementID, eType, elementVal) {
 
-    console.log('elementID !!!!!!!!!!!!!!!!!!!: ', elementID, ' :: ', eType, ' :: ', elementVal)
+    //console.log('elementID !!!!!!!!!!!!!!!!!!!: ', elementID, ' :: ', eType, ' :: ', elementVal)
 
     if($('#changeEmailPassForm').data('elementID') === 'email'){
       elementID === 'newEmailPass' ? helper.emailElementValidation(elementID, 'confirmEmailPass', eType, elementVal) : null
@@ -826,28 +830,28 @@ var helper = {
 
 
   toggleEditBtn: function(whichTabs,displayTab) {
-    var tabID, i, e;
-    tabID = document.getElementsByClassName(whichTabs);
+    var tabID, i, e
+    tabID = document.getElementsByClassName(whichTabs)
 
     for(i=0; i < tabID.length; i++) {
-        e = tabID[i]; 
+        e = tabID[i]
         if(displayTab){
-            e.style.display = 'none';
+            e.style.display = 'none'
         }else{
             if(e.style.display == 'none') {
-                e.style.display = 'inline';
+                e.style.display = 'inline'
             } else {
-                e.style.display = 'none';
+                e.style.display = 'none'
             }
         }
     }
     if(e.style.display === 'inline'){
-        whichTabs === 'accountInfo' ? $('#updateAccountBtn').text('Done') : null;
-        whichTabs === 'personalInfo' ? $('#updatePersonalBtn').text('Done') : null;
+        whichTabs === 'accountInfo' ? $('#updateAccountBtn').text('Done') : null
+        whichTabs === 'personalInfo' ? $('#updatePersonalBtn').text('Done') : null
     }
     if(e.style.display === 'none'){
-        whichTabs === 'accountInfo' ? $('#updateAccountBtn').text('Update Account info') : null;
-        whichTabs === 'personalInfo' ? $('#updatePersonalBtn').text('Update Personal info') : null;
+        whichTabs === 'accountInfo' ? $('#updateAccountBtn').text('Update Account info') : null
+        whichTabs === 'personalInfo' ? $('#updatePersonalBtn').text('Update Personal info') : null
     }
   },
 
@@ -856,52 +860,52 @@ var helper = {
   doEditProfileModal: function(editBtnClicked) {
 
     helper.handleEvents()
-    var editBtnClickedParentElem = $(editBtnClicked).parent();
-    var dataID = editBtnClickedParentElem.data('id');
+    var editBtnClickedParentElem = $(editBtnClicked).parent()
+    var dataID = editBtnClickedParentElem.data('id')
 
-    console.log('doEditProfileModal > editBtnClicked dataID +++++++: ', dataID);
+    console.log('doEditProfileModal > editBtnClicked dataID +++++++: ', dataID)
 
-    var elementID = dataID.replace(/-/g, '');
-    var previousElementID;
+    var elementID = dataID.replace(/-/g, '')
+    var previousElementID
 
-    $('#editProfileForm').data('elementID', elementID);
-    $('#editProfileForm .form-group .error').attr('id', elementID+'Error');
+    $('#editProfileForm').data('elementID', elementID)
+    $('#editProfileForm .form-group .error').attr('id', elementID+'Error')
 
-    var currentFormType = editBtnClickedParentElem.data('formelementtype');
-    var labelText = helper.makeTitleFromElementID(dataID);
-    var currentFormValue = $('.'+dataID).text();
-    currentFormValue = currentFormValue.trim();
+    var currentFormType = editBtnClickedParentElem.data('formelementtype')
+    var labelText = helper.makeTitleFromElementID(dataID)
+    var currentFormValue = $('.'+dataID).text()
+    currentFormValue = currentFormValue.trim()
 
-    console.log('doEditProfileModal > dataID: ', dataID);
-    console.log('doEditProfileModal > currentFormType: ', currentFormType);
-    console.log('doEditProfileModal > labelText: ', labelText);
-    console.log('doEditProfileModal > currentFormValue: ', currentFormValue);
+    console.log('doEditProfileModal > dataID: ', dataID)
+    console.log('doEditProfileModal > currentFormType: ', currentFormType)
+    console.log('doEditProfileModal > labelText: ', labelText)
+    console.log('doEditProfileModal > currentFormValue: ', currentFormValue)
 
-    $('#editProfileInputElementParent').removeClass('show').addClass('hide');
-    $('#editProfileSelectElementParent').removeClass('show').addClass('hide');
+    $('#editProfileInputElementParent').removeClass('show').addClass('hide')
+    $('#editProfileSelectElementParent').removeClass('show').addClass('hide')
 
-    var previousElementID = $('#editProfileForm').data('previousElementID');
+    var previousElementID = $('#editProfileForm').data('previousElementID')
 
     if(elementID === 'state'){
 
-        $('#editProfileForm .form-group select').attr('id', elementID);
-        $('#editProfileSelectElementParent').removeClass('hide').addClass('show');
-        $('#state').find('[option]').focus();
+        $('#editProfileForm .form-group select').attr('id', elementID)
+        $('#editProfileSelectElementParent').removeClass('hide').addClass('show')
+        $('#state').find('[option]').focus()
 
-        $('#'+elementID).attr('required', true);
-        previousElementID !== undefined && previousElementID !== elementID ? $('#'+previousElementID).attr('required', false) : null;
+        $('#'+elementID).attr('required', true)
+        previousElementID !== undefined && previousElementID !== elementID ? $('#'+previousElementID).attr('required', false) : null
 
-        console.log('doEditProfileModal > STATE > elementID: ', $('#'+elementID));
+        console.log('doEditProfileModal > STATE > elementID: ', $('#'+elementID))
 
     }else{
 
-        $('#editProfileForm .form-group input').attr('id', elementID);
-        $('#editProfileInputElementParent').removeClass('hide').addClass('show');
+        $('#editProfileForm .form-group input').attr('id', elementID)
+        $('#editProfileInputElementParent').removeClass('hide').addClass('show')
 
-        $('#'+elementID).attr('required', true);
-        previousElementID !== undefined && previousElementID !== elementID ? $('#'+previousElementID).attr('required', false) : null;
+        $('#'+elementID).attr('required', true)
+        previousElementID !== undefined && previousElementID !== elementID ? $('#'+previousElementID).attr('required', false) : null
 
-        console.log('doEditProfileModal > INPUT elementID: ', $('#'+elementID));
+        console.log('doEditProfileModal > INPUT elementID: ', $('#'+elementID))
 
         switch (dataID) {
 
@@ -911,8 +915,8 @@ var helper = {
                     pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                     title: 'Please type a valid First Name. Maximum 35 characters',
                     placeholder: 'First Name'
-                });
-                break;
+                })
+                break
 
             case 'last-name':
                 $('#lastname').attr({ 
@@ -920,8 +924,8 @@ var helper = {
                     pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                     title: 'Please type a valid Last Name. Maximum 35 characters',
                     placeholder: 'Last Name'
-                });
-                break;
+                })
+                break
 
             case 'city':
                 $('#city').attr({ 
@@ -929,17 +933,17 @@ var helper = {
                     pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                     title: 'Please type a valid City. Maximum 35 characters',
                     placeholder: 'City'
-                });
-                break;
+                })
+                break
 
         }
     }
 
-    $('#editProfileForm').data('previousElementID', elementID);
-    $('#editProfileFormLabelCurrent').html('Current ' + labelText + ':');
-    $('#editProfileFormLabelUpdated').html('Change your ' + labelText + ':');
-    $('#modalFormElementValueCurrent').html(currentFormValue);
-    $('#editProfileForm').data('whichformdataid', dataID);
+    $('#editProfileForm').data('previousElementID', elementID)
+    $('#editProfileFormLabelCurrent').html('Current ' + labelText + ':')
+    $('#editProfileFormLabelUpdated').html('Change your ' + labelText + ':')
+    $('#modalFormElementValueCurrent').html(currentFormValue)
+    $('#editProfileForm').data('whichformdataid', dataID)
     
     $('#editProfileFormModal').modal({
       keyboard: false,
@@ -951,39 +955,37 @@ var helper = {
   doEditProfileEmailPassModal: function(editBtnClicked) {
 
     helper.handleEvents()
-    var editBtnClickedParentElem = $(editBtnClicked).parent();
-    var dataID = editBtnClickedParentElem.data('id');
-    var labelText = helper.makeTitleFromElementID(dataID);
-    dataID === 'email' ? labelText = labelText + ' Address' : null;
-    dataID === 'email' ? $('#confirmEmailPassMatch').html('Emails don\'t match') : $('#confirmEmailPassMatch').html('Passwords don\'t match');
-    $('#changeEmailPassForm').data('elementID', dataID);
+    var editBtnClickedParentElem = $(editBtnClicked).parent()
+    var dataID = editBtnClickedParentElem.data('id')
+    var labelText = helper.makeTitleFromElementID(dataID)
+    dataID === 'email' ? labelText = labelText + ' Address' : null
+    dataID === 'email' ? $('#confirmEmailPassMatch').html('Emails don\'t match') : $('#confirmEmailPassMatch').html('Passwords don\'t match')
+    $('#changeEmailPassForm').data('elementID', dataID)
 
-    console.log('doEditProfileEmailPassModal > dataID: ', dataID);
-    console.log('doEditProfileEmailPassModal > labelText: ', labelText);
+    console.log('doEditProfileEmailPassModal > dataID: ', dataID)
+    console.log('doEditProfileEmailPassModal > labelText: ', labelText)
 
-    $('#editProfileEmailPassModal .modal-title').html('Change your ' + labelText + ':');
-    $('#currentEmailPassLabel').html('Current ' + labelText + ':');
-    $('#newEmailPassLabel').html('New ' + labelText + ':');
-    $('#confirmEmailPassLabel').html('Confirm new ' + labelText + ':');
+    $('#editProfileEmailPassModal .modal-title').html('Change your ' + labelText + ':')
+    $('#currentEmailPassLabel').html('Current ' + labelText + ':')
+    $('#newEmailPassLabel').html('New ' + labelText + ':')
+    $('#confirmEmailPassLabel').html('Confirm new ' + labelText + ':')
 
     if(dataID === 'email'){
 
       $('#currentEmailPass').attr({
-        type: 'text',
         title: 'Please enter a valid Email Address',
         placeholder: 'Current Email Address'
-      });
+      })
 
       $('#newEmailPass').attr({
-        type: 'email',
         title: 'Please type a valid Email Address',
         placeholder: 'New Email Address'
-      });
+      })
 
       $('#confirmEmailPass').attr({
         title: 'Please type a valid Email Address',
         placeholder: 'Confirm New Email Address'
-      });
+      })
 
     }else{
 
@@ -991,19 +993,19 @@ var helper = {
         type: 'password',
         title: 'Please enter your Password',
         placeholder: 'Current Password'
-      });
+      })
 
       $('#newEmailPass').attr({ 
         type: 'password',
         title: 'Password must be at least 4 characters long. No whitespace allowed',
         placeholder: 'New Password'
-      });
+      })
 
       $('#confirmEmailPass').attr({ 
         type: 'password',
         title: 'Password must be at least 4 characters long. No whitespace allowed',
         placeholder: 'Confirm New Password'
-      });
+      })
 
     }
     /*
@@ -1013,19 +1015,19 @@ var helper = {
             type: 'text',
             title: 'Please enter a valid Email Address',
             placeholder: 'Current Email Address'
-        });
+        })
 
         $('#newEmailPass').attr({
             type: 'email',
             title: 'Please type a valid Email Address',
             placeholder: 'New Email Address'
-        });
+        })
         
         $('#confirmEmailPass').attr({
             type: 'email',
             title: 'Please type a valid Email Address',
             placeholder: 'Confirm New Email Address'
-        });
+        })
 
     }else{
 
@@ -1033,26 +1035,26 @@ var helper = {
             type: 'password',
             title: 'Please enter your Password',
             placeholder: 'Current Password'
-        });
+        })
 
         $('#newEmailPass').attr({ 
             type: 'password',
             pattern: '[\\S]{4,}',
             title: 'Password must be at least 4 characters long. No whitespace allowed',
             placeholder: 'New Password'
-        });
+        })
         
         $('#confirmEmailPass').attr({ 
             type: 'password',
             pattern: '[\\S]{4,}',
             title: 'Password must be at least 4 characters long. No whitespace allowed',
             placeholder: 'Confirm New Password'
-        });
+        })
 
     }
     */
 
-    $(":input").each(function (i) { $(this).attr('tabindex', i + 1); });
+    $(":input").each(function (i) { $(this).attr('tabindex', i + 1); })
 
     $('#editProfileEmailPassModal').modal({
       keyboard: false,
@@ -1067,39 +1069,38 @@ var helper = {
         switch (p) {
             
             case 'email':
-                console.log('### handleErrorResponse: ', p, ' :: ', data[p]);
-                break;
+                console.log('### handleErrorResponse: ', p, ' :: ', data[p])
+                break
 
             case 'confirmEmail':
-                console.log('### handleErrorResponse: ', p, ' :: ', data[p]);
-                break;
+                console.log('### handleErrorResponse: ', p, ' :: ', data[p])
+                break
     
             case 'password':
-                console.log('### handleErrorResponse: ', p, ' :: ', data[p]);
-                break;
+                console.log('### handleErrorResponse: ', p, ' :: ', data[p])
+                break
 
             case 'confirmPassword':
-                console.log('### handleErrorResponse: ', p, ' :: ', data[p]);
-                break;
+                console.log('### handleErrorResponse: ', p, ' :: ', data[p])
+                break
     
             case 'firstname':
             case 'lastname':
             case 'city':
-                console.log('### handleErrorResponse: ', p, ' :: ', data[p]);
-                helper.textElementValidation(p, helper.pattern.basictext, data[p]);
-                break;
+                console.log('### handleErrorResponse: ', p, ' :: ', data[p])
+                helper.textElementValidation(p, helper.pattern.basictext, data[p])
+                break
 
             case 'state':
-                console.log('### handleErrorResponse: ', p, ' :: ', data[p]);
-                helper.selectElementValidation(p, data[p]);
-                break;
+                console.log('### handleErrorResponse: ', p, ' :: ', data[p])
+                helper.selectElementValidation(p, data[p])
+                break
         }
-    });
+    })
   },
 
 }
 
 $(function () {
-    helper.init();
-});
-
+    helper.init()
+})
