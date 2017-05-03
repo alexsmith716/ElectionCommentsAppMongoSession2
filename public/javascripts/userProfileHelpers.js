@@ -74,13 +74,11 @@ var helper = {
 
     $('#editProfileEmailPassModal').on('shown.bs.modal', function() {
       //$(this).find('[autofocus]').focus()
-
       var evts = $._data( $('#currentEmailPass').get(0), 'events' )
-      console.log('#editProfileEmailPassModal > shown.bs.modal evts: ', evts)
-
+      // console.log('#editProfileEmailPassModal > shown.bs.modal evts: ', evts)
       $.each( evts, function(i,exists) {
-        console.log('#editProfileEmailPassModal > shown.bs.modal evts i: ', i)
-        console.log('#editProfileEmailPassModal > shown.bs.modal evts exists: ', exists)
+        // console.log('#editProfileEmailPassModal > shown.bs.modal evts i: ', i)
+        // console.log('#editProfileEmailPassModal > shown.bs.modal evts exists: ', exists)
       })
 
       setTimeout(function() {
@@ -236,7 +234,7 @@ var helper = {
 
       $('#changeEmailPassForm .formerror').removeClass('show').addClass('hide')
 
-      var elementID = $('#editProfileForm').data('elementID')
+      var elementID = $('#changeEmailPassForm').data('elementID')
 
       var data = {}
       var serviceUrl = $(this).attr('action')
@@ -398,7 +396,7 @@ var helper = {
 
   handleFormEvents: function(elementID, eType, elementVal) {
 
-    //console.log('elementID !!!!!!!!!!!!!!!!!!!: ', elementID, ' :: ', eType, ' :: ', elementVal)
+    console.log('##### handleFormEvents ######: ', elementID, ' :: ', eType, ' :: ', elementVal)
 
     if($('#changeEmailPassForm').data('elementID') === 'email'){
       elementID === 'newEmailPass' ? helper.emailElementValidation(elementID, 'confirmEmailPass', eType, elementVal) : null
@@ -636,21 +634,32 @@ var helper = {
     return pattern.test(email)
   },
 
+
   validateParams: function (str1, str2, err1) {
+
+    // 'formConfirmType' will give 'email' or 'password'
+    var formConfirmType = $('body').data('formConfirmType')
+    var str2TypeEmail
+    var c = /confirm/
+    var str2Lowercase = str2.toLowerCase()
+    var str2IsItConfirm = c.test(str2Lowercase)
+
+    formConfirmType === 'email' ? str2TypeEmail = true : null
+
+    console.log('##>>>>>>>>> validateParams > formConfirmType: ', formConfirmType)
+    console.log('##>>>>>>>>> validateParams > str2Lowercase: ', str2Lowercase)
+    console.log('##>>>>>>>>> validateParams > str2IsItConfirm: ', str2IsItConfirm)
+
+
     if (err1 !== undefined) {
             // console.log('## validateParams > err1: ', str1, ' || ', str2, ' || ', err1)
     } else {
-            console.log('## validateParams > no err1: ', str1, ' || ', str2)
+            // console.log('## validateParams > no err1: ', str1, ' || ', str2)
     }
 
     if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + str2).val() !== '') {
       var property1 = document.getElementsByName(str1)[0]
       var property2 = document.getElementsByName(str2)[0]
-
-      console.log('## validateParams > str1: ', str1)
-      console.log('## validateParams > str2: ', str2)
-      console.log('## validateParams > property1: ', property1)
-      console.log('## validateParams > property2: ', property2)
 
       if ((err1 !== undefined && err1.error === 'nomatch') || property1.value !== property2.value) {
         if (isSafari) {
@@ -700,6 +709,10 @@ var helper = {
       }
     }
   },
+
+
+
+
 
   testUserInputEmail: function (elementID, err1) {
     var thisElementValue = $('#' + elementID).val()
@@ -767,7 +780,7 @@ var helper = {
     if (err1 !== undefined) {
             // console.log('#validateEmailField > err1: ', thisField, ' :: ', err1)
     } else {
-            console.log('#validateEmailField > no err1: ', thisField)
+            console.log('#validateEmailField > no err1: ', elementVal, ' :: ', thisField, ' :: ', comparedField)
     }
 
     var isEmailValid
@@ -961,9 +974,10 @@ var helper = {
     dataID === 'email' ? labelText = labelText + ' Address' : null
     dataID === 'email' ? $('#confirmEmailPassMatch').html('Emails don\'t match') : $('#confirmEmailPassMatch').html('Passwords don\'t match')
     $('#changeEmailPassForm').data('elementID', dataID)
+    $('body').data('formConfirmType', dataID)
 
-    console.log('doEditProfileEmailPassModal > dataID: ', dataID)
-    console.log('doEditProfileEmailPassModal > labelText: ', labelText)
+    console.log('doEditProfileEmailPassModal > dataID +++++++++++++++++++ : ', dataID)
+    console.log('doEditProfileEmailPassModal > labelText +++++++++++++++++: ', labelText)
 
     $('#editProfileEmailPassModal .modal-title').html('Change your ' + labelText + ':')
     $('#currentEmailPassLabel').html('Current ' + labelText + ':')
@@ -973,16 +987,19 @@ var helper = {
     if(dataID === 'email'){
 
       $('#currentEmailPass').attr({
+        type: 'text',
         title: 'Please enter a valid Email Address',
         placeholder: 'Current Email Address'
       })
 
       $('#newEmailPass').attr({
+        type: 'text',
         title: 'Please type a valid Email Address',
         placeholder: 'New Email Address'
       })
 
       $('#confirmEmailPass').attr({
+        type: 'text',
         title: 'Please type a valid Email Address',
         placeholder: 'Confirm New Email Address'
       })
