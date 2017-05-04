@@ -217,9 +217,9 @@ var helper = {
     $('#changeEmailPassForm').on('submit', function(e) {
 
       console.log('#changeEmailPassForm > SUBMIT 1+++', $('body').data('elementID'))
-      //console.log('#changeEmailPassForm > SUBMIT 2+++', $('#currentEmailPass').val())
-      //console.log('#changeEmailPassForm > SUBMIT 3+++', $('#newEmailPass').val())
-      //console.log('#changeEmailPassForm > SUBMIT 4+++', $('#confirmEmailPass').val())
+      console.log('#changeEmailPassForm > SUBMIT 2+++', $('#currentEmailPass').val())
+      console.log('#changeEmailPassForm > SUBMIT 3+++', $('#newEmailPass').val())
+      console.log('#changeEmailPassForm > SUBMIT 4+++', $('#confirmEmailPass').val())
 
       // required & regex pattern will handle client validation for currentEmailPass  ( pattern="\\s*(?=\\s*\\S)(.{1,35})\\s*" )
       // ++++++++++++++++++++++++++++++++++++++++++
@@ -258,7 +258,6 @@ var helper = {
 
       data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
-      /*
       $.ajax({
 
           rejectUnauthorized: false,
@@ -309,9 +308,7 @@ var helper = {
 
           }
       })
-      */
     })
-
 
     $('#personalInfoToggle').click(function(){
       helper.toggleEditBtn('personalInfo', true);
@@ -362,8 +359,8 @@ var helper = {
 
       var activeInputElement = $('#editProfileEmailPassModal').data('activeInputElement');
 
-      if(activeInputElement !== undefined && (e.target.type !== 'submit' || e.target.type !== 'button')){
-
+      if(activeInputElement !== undefined && (e.target.nodeName === 'INPUT')){
+        
         helper.handleFormEvents(activeInputElement, 'focusout', $('#'+activeInputElement).val())
 
       }
@@ -391,8 +388,6 @@ var helper = {
 // =================================================================================================================================
 
   handleFormEvents: function(elementID, eType, elementVal) {
-
-    console.log('##### handleFormEvents ######: ', elementID, ' :: ', eType, ' :: ', elementVal)
 
     if($('body').data('elementID') === 'email'){
       elementID === 'newEmailPass' ? helper.emailElementValidation(elementID, 'confirmEmailPass', eType, elementVal) : null
@@ -442,10 +437,12 @@ var helper = {
   emailElementValidation: function (elementID, confirmElementID, eType, elementVal) {
 
     if (eType === 'change') {
+
       helper.validateEmailField(elementVal, elementID, confirmElementID)
     }
 
     if (eType === 'focusout') {
+
       $('#' + elementID).on('input', function () {
         helper.testUserInputEmail(elementID)
       })
@@ -463,8 +460,6 @@ var helper = {
     !c.test(comparedElementID) ? newElement = comparedElementID : newElement = elementID
 
     if (eType === 'change') {
-
-      console.log('PPPPpppppPPPPPPP >>: ', newElement, ' :: ', confirmNewElement)
 
       if (helper.validateParams(newElement, confirmNewElement)) {
 
@@ -549,9 +544,7 @@ var helper = {
 
     if (thisElementValue !== '') {
       if (isSafari) {
-
-                // ++++
-
+        // ++++
       }
 
       $('#' + elementID + 'Error').text('')
@@ -639,9 +632,9 @@ var helper = {
 
   validateEmailValue: function (email) {
     var pattern = helper.pattern.email
+    console.log('validateEmailValue >>: ', email, ' :: ', pattern.test(email))
     return pattern.test(email)
   },
-
 
   validateParams: function (thisField, comparedField, err1) {
 
@@ -717,9 +710,6 @@ var helper = {
       }
     }
   },
-
-
-
 
   testUserInputEmail: function (elementID, err1) {
     var thisElementValue = $('#' + elementID).val()
@@ -1013,19 +1003,19 @@ var helper = {
     }else{
 
       $('#currentEmailPass').attr({ 
-        type: 'password',
+        type: 'text',
         title: 'Please enter your Password',
         placeholder: 'Current Password'
       })
 
       $('#newEmailPass').attr({ 
-        type: 'password',
+        type: 'text',
         title: 'Password must be at least 4 characters long. No whitespace allowed',
         placeholder: 'New Password'
       })
 
       $('#confirmEmailPass').attr({ 
-        type: 'password',
+        type: 'text',
         title: 'Password must be at least 4 characters long. No whitespace allowed',
         placeholder: 'Confirm New Password'
       })
