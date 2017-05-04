@@ -92,7 +92,7 @@ var helper = {
             location.href = data.redirect
           } else {
             if (data.validatedData) {
-              $('#signUpForm').data('validatedData', data.validatedData)
+              $('body').data('validatedData', data.validatedData)
               helper.handleErrorResponse(data.validatedData)
             } else {
               $('#signUpForm .formerror').removeClass('hide').addClass('show')
@@ -189,6 +189,7 @@ var helper = {
   },
 
   emailElementValidation: function (elementID, confirmElementID, eType, elementVal) {
+    $('body').data('elementID', 'email')
     if (eType === 'change') {
       helper.validateEmailField(elementVal, elementID, confirmElementID)
     }
@@ -202,14 +203,27 @@ var helper = {
     }
   },
 
-  passwordElementValidation: function (elementID, confirmElementID, eType) {
+  passwordElementValidation: function (elementID, comparedElementID, eType) {
+    $('body').data('elementID', 'password')
+
+    var c = /confirm/
+    var newElement
+    var confirmNewElement
+    c.test(comparedElementID) ? confirmNewElement = comparedElementID : confirmNewElement = elementID
+    !c.test(comparedElementID) ? newElement = comparedElementID : newElement = elementID
+
     if (eType === 'change') {
-      if (helper.validateParams(elementID, confirmElementID)) {
-        isSafari ? $('#' + confirmElementID).off('input') : null
+
+      if (helper.validateParams(newElement, confirmNewElement)) {
+
+        isSafari ? $('#' + comparedElementID).off('input') : null
+
       }
+
     }
 
     if (eType === 'focusout') {
+
       var pattern = helper.pattern.password
 
       $('#' + elementID).on('input', function () {
@@ -375,6 +389,100 @@ var helper = {
     return pattern.test(email)
   },
 
+
+  validateParams: function (thisField, comparedField, err1) {
+
+    var formConfirmType = $('body').data('elementID')
+    var comparedFieldTypeEmail = false
+    var c = /confirm/
+    var comparedFieldLowercase = comparedField.toLowerCase()
+    var comparedFieldIsItConfirm = c.test(comparedFieldLowercase)
+
+    formConfirmType === 'email' ? comparedFieldTypeEmail = true : null
+
+    console.log('##>>>>>>>>> validateParams > thisField: ', thisField, ' > comparedField: ', comparedField)
+    console.log('##>>>>>>>>> validateParams > formConfirmType: ', formConfirmType)
+    console.log('##>>>>>>>>> validateParams > comparedFieldLowercase: ', comparedFieldLowercase)
+    console.log('##>>>>>>>>> validateParams > comparedFieldIsItConfirm: ', comparedFieldIsItConfirm)
+    console.log('##>>>>>>>>> validateParams > comparedFieldTypeEmail: ', comparedFieldTypeEmail)
+
+    if (err1 !== undefined) {
+            // console.log('## validateParams > err1: ', thisField, ' || ', comparedField, ' || ', err1)
+    } else {
+            // console.log('## validateParams > no err1: ', thisField, ' || ', comparedField)
+    }
+
+    if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + comparedField).val() !== '') {
+      var property1 = document.getElementsByName(thisField)[0]
+      var property2 = document.getElementsByName(comparedField)[0]
+
+      console.log('## validateParams 11111: ', property1.value, ' :: ', property2.value)
+
+
+      if ((err1 !== undefined && err1.error === 'nomatch') || property1.value !== property2.value) {
+
+        console.log('## validateParams 22222222')
+        if (isSafari) {
+
+          console.log('## validateParams 333333333')
+
+          if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
+            console.log('## validateParams 44444444')
+            $('#' + thisField + 'Match').removeClass('hide').addClass('show')
+          } else {
+            console.log('## validateParams 55555555: ', comparedField)
+            $('#' + comparedField + 'Match').removeClass('hide').addClass('show')
+          }
+
+        } else {
+          console.log('## validateParams 6666666')
+          if (err1 !== undefined) {
+            $('#' + comparedField + 'Match').removeClass('hide').addClass('show')
+          } else {
+            $('#' + comparedField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + 's don\'t match')
+          }
+        }
+
+
+
+
+      } else {
+
+        if (isSafari) {
+          if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
+            $('#' + thisField + 'Match').removeClass('show').addClass('hide')
+          } else {
+            $('#' + comparedField + 'Match').removeClass('show').addClass('hide')
+          }
+        } else {
+          if (err1 === undefined) {
+            $('#' + thisField).get(0).setCustomValidity('')
+            $('#' + comparedField).get(0).setCustomValidity('')
+          } else {
+            $('#' + comparedField + 'Match').removeClass('show').addClass('hide')
+          }
+        }
+        if (comparedFieldTypeEmail) {
+          var valdata = $('body').data('validatedData')
+          var v
+
+          if (valdata) {
+            Object.keys(valdata).forEach(function (p) {
+              if (p !== 'email' || p !== 'confirmEmail') {
+                if (valdata[p].error === 'match' || valdata[p].error === false) {
+                  v = true
+                }
+              }
+            })
+
+            v === true ? $('#signUpForm').submit() : null
+          }
+        }
+      }
+    }
+  },
+
+  /*
   validateParams: function (str1, str2, err1) {
     if (err1 !== undefined) {
             // console.log('## validateParams > err1: ', str1, ' || ', str2, ' || ', err1)
@@ -434,6 +542,7 @@ var helper = {
       }
     }
   },
+  */
 
   testUserInputEmail: function (elementID, err1) {
     var thisElementValue = $('#' + elementID).val()

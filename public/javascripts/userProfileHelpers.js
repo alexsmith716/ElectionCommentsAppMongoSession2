@@ -216,7 +216,7 @@ var helper = {
 
     $('#changeEmailPassForm').on('submit', function(e) {
 
-      console.log('#changeEmailPassForm > SUBMIT 1+++', $(this).data('elementID'))
+      console.log('#changeEmailPassForm > SUBMIT 1+++', $('body').data('elementID'))
       //console.log('#changeEmailPassForm > SUBMIT 2+++', $('#currentEmailPass').val())
       //console.log('#changeEmailPassForm > SUBMIT 3+++', $('#newEmailPass').val())
       //console.log('#changeEmailPassForm > SUBMIT 4+++', $('#confirmEmailPass').val())
@@ -234,7 +234,7 @@ var helper = {
 
       $('#changeEmailPassForm .formerror').removeClass('show').addClass('hide')
 
-      var elementID = $('#changeEmailPassForm').data('elementID')
+      var elementID = $('body').data('elementID')
 
       var data = {}
       var serviceUrl = $(this).attr('action')
@@ -355,36 +355,32 @@ var helper = {
 
   handleEvents: function(){
 
-    if(isSafari){
+    $('#editProfileEmailPassModal').removeData('activeInputElement');
 
-      $('#editProfileEmailPassModal').removeData('activeInputElement');
+    $('#editProfileEmailPassModal').on('click', function(e) {
+      // e.stopPropagation()
 
-      $('#editProfileEmailPassModal').on('click', function(e) {
-        // e.stopPropagation()
+      var activeInputElement = $('#editProfileEmailPassModal').data('activeInputElement');
 
-        var activeInputElement = $('#editProfileEmailPassModal').data('activeInputElement');
+      if(activeInputElement !== undefined && (e.target.type !== 'submit' || e.target.type !== 'button')){
 
-        if(activeInputElement !== undefined && (e.target.type !== 'submit' || e.target.type !== 'button')){
+        helper.handleFormEvents(activeInputElement, 'focusout', $('#'+activeInputElement).val())
 
-          helper.handleFormEvents(activeInputElement, 'focusout', $('#'+activeInputElement).val())
+      }
 
-        }
+    })
 
-      })
+    $('#currentEmailPass').on('focusout', function(e) {
+      $('#editProfileEmailPassModal').data('activeInputElement', 'currentEmailPass')
+    })
 
-      $('#currentEmailPass').on('focusout', function(e) {
-        $('#editProfileEmailPassModal').data('activeInputElement', 'currentEmailPass')
-      })
+    $('#newEmailPass').on('focusout', function(e) {
+      $('#editProfileEmailPassModal').data('activeInputElement', 'newEmailPass')
+    })
 
-      $('#newEmailPass').on('focusout', function(e) {
-        $('#editProfileEmailPassModal').data('activeInputElement', 'newEmailPass')
-      })
-
-      $('#confirmEmailPass').on('focusout', function(e) {
-        $('#editProfileEmailPassModal').data('activeInputElement', 'confirmEmailPass')
-      })
-
-    }
+    $('#confirmEmailPass').on('focusout', function(e) {
+      $('#editProfileEmailPassModal').data('activeInputElement', 'confirmEmailPass')
+    })
 
   },
 
@@ -398,12 +394,12 @@ var helper = {
 
     console.log('##### handleFormEvents ######: ', elementID, ' :: ', eType, ' :: ', elementVal)
 
-    if($('#changeEmailPassForm').data('elementID') === 'email'){
+    if($('body').data('elementID') === 'email'){
       elementID === 'newEmailPass' ? helper.emailElementValidation(elementID, 'confirmEmailPass', eType, elementVal) : null
       elementID === 'confirmEmailPass' ? helper.emailElementValidation(elementID, 'newEmailPass', eType, elementVal) : null
     }
 
-    if($('#changeEmailPassForm').data('elementID') === 'password'){
+    if($('body').data('elementID') === 'password'){
       elementID === 'newEmailPass' ? helper.passwordElementValidation(elementID, 'confirmEmailPass', eType) : null
       elementID === 'confirmEmailPass' ? helper.passwordElementValidation(elementID, 'newEmailPass', eType) : null
     }
@@ -444,6 +440,7 @@ var helper = {
   },
 
   emailElementValidation: function (elementID, confirmElementID, eType, elementVal) {
+
     if (eType === 'change') {
       helper.validateEmailField(elementVal, elementID, confirmElementID)
     }
@@ -457,17 +454,28 @@ var helper = {
     }
   },
 
-  passwordElementValidation: function (elementID, confirmElementID, eType) {
-    console.log('/////////// passwordElementValidation 1 +++++++++++++++++++ 1/2/3: ', elementID, ' :: ', confirmElementID, ' :: ', eType)
-    console.log('/////////// passwordElementValidation 2 +++++++++++++++++++ isSafari: ', isSafari)
+  passwordElementValidation: function (elementID, comparedElementID, eType) {
+
+    var c = /confirm/
+    var newElement
+    var confirmNewElement
+    c.test(comparedElementID) ? confirmNewElement = comparedElementID : confirmNewElement = elementID
+    !c.test(comparedElementID) ? newElement = comparedElementID : newElement = elementID
+
     if (eType === 'change') {
-      if (helper.validateParams(elementID, confirmElementID)) {
-        isSafari ? $('#' + confirmElementID).off('input') : null
+
+      console.log('PPPPpppppPPPPPPP >>: ', newElement, ' :: ', confirmNewElement)
+
+      if (helper.validateParams(newElement, confirmNewElement)) {
+
+        isSafari ? $('#' + comparedElementID).off('input') : null
+
       }
+
     }
 
     if (eType === 'focusout') {
-      console.log('/////////// passwordElementValidation 2 +++++++++++++++++++ focusout')
+
       var pattern = helper.pattern.password
 
       $('#' + elementID).on('input', function () {
@@ -635,63 +643,63 @@ var helper = {
   },
 
 
-  validateParams: function (str1, str2, err1) {
+  validateParams: function (thisField, comparedField, err1) {
 
-    // 'formConfirmType' will give 'email' or 'password'
-    var formConfirmType = $('body').data('formConfirmType')
-    var str2TypeEmail
+    var formConfirmType = $('body').data('elementID')
+    var comparedFieldTypeEmail = false
     var c = /confirm/
-    var str2Lowercase = str2.toLowerCase()
-    var str2IsItConfirm = c.test(str2Lowercase)
+    var comparedFieldLowercase = comparedField.toLowerCase()
+    var comparedFieldIsItConfirm = c.test(comparedFieldLowercase)
 
-    formConfirmType === 'email' ? str2TypeEmail = true : null
+    formConfirmType === 'email' ? comparedFieldTypeEmail = true : null
 
+    console.log('##>>>>>>>>> validateParams > thisField: ', thisField, ' > comparedField: ', comparedField)
     console.log('##>>>>>>>>> validateParams > formConfirmType: ', formConfirmType)
-    console.log('##>>>>>>>>> validateParams > str2Lowercase: ', str2Lowercase)
-    console.log('##>>>>>>>>> validateParams > str2IsItConfirm: ', str2IsItConfirm)
-
+    console.log('##>>>>>>>>> validateParams > comparedFieldLowercase: ', comparedFieldLowercase)
+    console.log('##>>>>>>>>> validateParams > comparedFieldIsItConfirm: ', comparedFieldIsItConfirm)
+    console.log('##>>>>>>>>> validateParams > comparedFieldTypeEmail: ', comparedFieldTypeEmail)
 
     if (err1 !== undefined) {
-            // console.log('## validateParams > err1: ', str1, ' || ', str2, ' || ', err1)
+            // console.log('## validateParams > err1: ', thisField, ' || ', comparedField, ' || ', err1)
     } else {
-            // console.log('## validateParams > no err1: ', str1, ' || ', str2)
+            // console.log('## validateParams > no err1: ', thisField, ' || ', comparedField)
     }
 
-    if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + str2).val() !== '') {
-      var property1 = document.getElementsByName(str1)[0]
-      var property2 = document.getElementsByName(str2)[0]
+    if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + comparedField).val() !== '') {
+      var property1 = document.getElementsByName(thisField)[0]
+      var property2 = document.getElementsByName(comparedField)[0]
 
       if ((err1 !== undefined && err1.error === 'nomatch') || property1.value !== property2.value) {
         if (isSafari) {
-          if (str2 === 'email') {
-            $('#' + str1 + 'Match').removeClass('hide').addClass('show')
+          if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
+            $('#' + thisField + 'Match').removeClass('hide').addClass('show')
           } else {
-            $('#' + str2 + 'Match').removeClass('hide').addClass('show')
+            $('#' + comparedField + 'Match').removeClass('hide').addClass('show')
           }
         } else {
           if (err1 !== undefined) {
-            $('#' + str2 + 'Match').removeClass('hide').addClass('show')
+            $('#' + comparedField + 'Match').removeClass('hide').addClass('show')
           } else {
-            $('#' + str2).get(0).setCustomValidity(helper.elementIDtoTitleCase(str1) + 's don\'t match')
+            $('#' + comparedField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + 's don\'t match')
           }
         }
       } else {
         if (isSafari) {
-          if (str2 === 'email') {
-            $('#' + str1 + 'Match').removeClass('show').addClass('hide')
+          if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
+            $('#' + thisField + 'Match').removeClass('show').addClass('hide')
           } else {
-            $('#' + str2 + 'Match').removeClass('show').addClass('hide')
+            $('#' + comparedField + 'Match').removeClass('show').addClass('hide')
           }
         } else {
           if (err1 === undefined) {
-            $('#' + str1).get(0).setCustomValidity('')
-            $('#' + str2).get(0).setCustomValidity('')
+            $('#' + thisField).get(0).setCustomValidity('')
+            $('#' + comparedField).get(0).setCustomValidity('')
           } else {
-            $('#' + str2 + 'Match').removeClass('show').addClass('hide')
+            $('#' + comparedField + 'Match').removeClass('show').addClass('hide')
           }
         }
-        if (str1 === 'email' || str1 === 'confirmEmail') {
-          var valdata = $('#signUpForm').data('validatedData')
+        if (comparedFieldTypeEmail) {
+          var valdata = $('body').data('validatedData')
           var v
 
           if (valdata) {
@@ -709,7 +717,6 @@ var helper = {
       }
     }
   },
-
 
 
 
@@ -872,7 +879,7 @@ var helper = {
 
   doEditProfileModal: function(editBtnClicked) {
 
-    helper.handleEvents()
+    isSafari ? helper.handleEvents() : null
     var editBtnClickedParentElem = $(editBtnClicked).parent()
     var dataID = editBtnClickedParentElem.data('id')
 
@@ -967,14 +974,13 @@ var helper = {
 
   doEditProfileEmailPassModal: function(editBtnClicked) {
 
-    helper.handleEvents()
+    isSafari ? helper.handleEvents() : null
     var editBtnClickedParentElem = $(editBtnClicked).parent()
     var dataID = editBtnClickedParentElem.data('id')
     var labelText = helper.makeTitleFromElementID(dataID)
     dataID === 'email' ? labelText = labelText + ' Address' : null
     dataID === 'email' ? $('#confirmEmailPassMatch').html('Emails don\'t match') : $('#confirmEmailPassMatch').html('Passwords don\'t match')
-    $('#changeEmailPassForm').data('elementID', dataID)
-    $('body').data('formConfirmType', dataID)
+    $('body').data('elementID', dataID)
 
     console.log('doEditProfileEmailPassModal > dataID +++++++++++++++++++ : ', dataID)
     console.log('doEditProfileEmailPassModal > labelText +++++++++++++++++: ', labelText)
@@ -1071,7 +1077,7 @@ var helper = {
     }
     */
 
-    $(":input").each(function (i) { $(this).attr('tabindex', i + 1); })
+    $(':input').each(function (i) { $(this).attr('tabindex', i + 1); })
 
     $('#editProfileEmailPassModal').modal({
       keyboard: false,
