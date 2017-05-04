@@ -13,6 +13,21 @@ var helper = {
     helper.initializeJqueryEvents()
   },
 
+  /*
+ValidityState
+badInput: false
+customError: false
+patternMismatch: false
+rangeOverflow: false
+rangeUnderflow: false
+stepMismatch: false
+tooLong: false
+tooShort: false
+typeMismatch: false
+valid: true
+valueMissing: false
+*/
+
   testFormValidity: function (theForm, eventListener) {
     var boundEventTypes
     var formElement
@@ -20,6 +35,9 @@ var helper = {
     var formValid = null
     var resp = {}
 
+    // checkValidity method on form element returns true if element has valid data
+    // safari 10.1
+    // webkit 603.1.30
     for (var i = 0; i < theForm.length; i++) {
       formElement = $(theForm[i])
       checkConstraints = formElement.get(0).checkValidity()
@@ -48,15 +66,18 @@ var helper = {
   },
 
   initializeJqueryEvents: function () {
+
     $('#signUpForm').on('submit', function (e) {
+
       e.preventDefault()
       helper.showLoading()
 
       $('#signUpForm .formerror').removeClass('show').addClass('hide')
       var data = helper.postData()
-      var constrainedFormElements = document.getElementById('signUpForm').querySelectorAll('[required]')
       var serviceUrl = $(this).attr('action')
-
+      
+      var constrainedFormElements = document.getElementById('signUpForm').querySelectorAll('[required]')
+      
       if (isSafari) {
         var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
 
@@ -70,6 +91,7 @@ var helper = {
 
       console.log('+++++++++++ GOOD FORM !!!!!!!!!!!')
 
+      /*
       data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
       $.ajax({
@@ -111,6 +133,7 @@ var helper = {
           return false
         }
       })
+      */
     })
 
     if (isSafari) {
@@ -127,18 +150,22 @@ var helper = {
     }
 
     $('#email').on('change', function (e) {
+      $('body').data('elementID', 'email')
       helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
     })
 
     $('#confirmEmail').on('change', function (e) {
+      $('body').data('elementID', 'email')
       helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
     })
 
     $('#password').on('change', function (e) {
+          $('body').data('elementID', 'password')
       helper.handleFormEvents($(this).attr('id'), e.type)
     })
 
     $('#confirmPassword').on('change', function (e) {
+      $('body').data('elementID', 'password')
       helper.handleFormEvents($(this).attr('id'), e.type)
     })
 
@@ -189,7 +216,7 @@ var helper = {
   },
 
   emailElementValidation: function (elementID, confirmElementID, eType, elementVal) {
-    $('body').data('elementID', 'email')
+
     if (eType === 'change') {
       helper.validateEmailField(elementVal, elementID, confirmElementID)
     }
@@ -204,7 +231,6 @@ var helper = {
   },
 
   passwordElementValidation: function (elementID, comparedElementID, eType) {
-    $('body').data('elementID', 'password')
 
     var c = /confirm/
     var newElement
