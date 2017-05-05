@@ -41,6 +41,57 @@ block content
         .modal-footer
 
 
+  .modal.fade(id="editProfileFormModal", name="editProfileFormModal", tabindex="-1")
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type="button" data-dismiss="modal") &times;
+          h4.modal-title Edit your profile
+
+        .modal-body
+
+          form(action="https://localhost:3000/api/evaluateuserprofile", id="editProfileForm", name="editProfileForm", method="put", enctype="application/x-www-form-urlencoded")
+
+            div
+              .form-group
+
+                label.control-label(id="editProfileFormLabelCurrent")
+                div(class="flex-containerMainCentered")
+                  div(class="flex-containerSubProfile")
+                    div.dont-break-out(id="modalFormElementValueCurrent", style="font-size: 1.0em;")
+
+
+            div.required-fields
+              .form-group
+
+                label.control-label(id="editProfileFormLabelUpdated")
+
+                div(style="height:40px; width:100%; style=margin-top:10px;")
+
+                  div.hide(id="editProfileInputElementParent", style="position:absolute; width:100%; padding-right: 36px;")
+                    input.form-control.input-md
+
+                  div.hide(id="editProfileSelectElementParent", style="position:absolute; width:100%; padding-right: 36px;")
+                    +selectStateFormControl()
+
+                span.hide.error
+
+
+            div(style="margin-bottom:8px;")
+              .text-danger.hide.formerror
+                strong Could not update your information!
+
+
+            div(class="modalCancelSubmitBtns")
+              button(class="btn btn-default btn-md" data-dismiss="modal") Cancel
+              | &nbsp;&nbsp;&nbsp;&nbsp;
+              button(type="submit", class="btn btn-primary btn-md", id="submitEditProfileBtn") Submit
+
+
+        .modal-footer
+          .loading(style="display:none;")
+
+
   .modal.fade(id="editProfileEmailPassModal", name="editProfileEmailPassModal", tabindex="-1")
     .modal-dialog
       .modal-content
