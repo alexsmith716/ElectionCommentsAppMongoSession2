@@ -10,7 +10,6 @@ var helper = {
 
     setTimeout(function () { helper.hideLoading() }, 500)
 
-    console.log('helpers > isSafari: ', isSafari)
     helper.initializeJqueryEvents()
   },
 
@@ -22,11 +21,14 @@ var helper = {
     var formValid = null
     var resp = {}
 
+    // checkValidity method on form element returns true if element has valid data
+    // safari 10.1
+    // webkit 603.1.30
     for( var i = 0; i < theForm.length; i++ ) {
 
       formElement = $(theForm[i])
       checkConstraints = formElement.get(0).checkValidity()
-      
+
       if(!checkConstraints && formValid === null){
         formValid = false
         resp.formValid = false
@@ -48,17 +50,19 @@ var helper = {
       }
     }
     return resp
-
   },
 
   initializeJqueryEvents:  function(){
 
+    // $('#aModal').hasClass('in')
     $('#editProfileFormModal').on('shown.bs.modal', function() {
+      $('body').data('modalShown', true)
       var activeElementID = $('#editProfileForm').data('elementID')
       $('#'+activeElementID).focus()
     })
 
     $('#editProfileFormModal').on('hidden.bs.modal', function () {
+      $('body').removeData('modalShown');
       var activeElementID = $('#editProfileForm').data('elementID')
       $('#editProfileForm').get(0).reset()
       $('#editProfileForm').find('.error').removeClass('show ').addClass('hide')
@@ -73,25 +77,25 @@ var helper = {
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     $('#editProfileEmailPassModal').on('shown.bs.modal', function() {
-      //$(this).find('[autofocus]').focus()
+      $('body').data('modalShown', true)
       var evts = $._data( $('#currentEmailPass').get(0), 'events' )
       // console.log('#editProfileEmailPassModal > shown.bs.modal evts: ', evts)
       $.each( evts, function(i,exists) {
-        // console.log('#editProfileEmailPassModal > shown.bs.modal evts i: ', i)
-        // console.log('#editProfileEmailPassModal > shown.bs.modal evts exists: ', exists)
+        // console.log('#editProfileEmailPassModal > shown.bs.modal evts i: ', i, ' :: ', exists)
       })
-
       setTimeout(function() {
-        // ++++++++++++++++++++++++
-      }, 150)
+        isSafari ? helper.handleSpecificEvents() : null
+      }, 150);
     })
 
     $('#editProfileEmailPassModal').on('hidden.bs.modal', function () {
+      console.log('##### editProfileEmailPassModal > ON hidden.bs.modal +++++++++')
 
+      $('body').removeData('modalShown');
       $('#currentEmailPass').off('focusout')
       $('#newEmailPass').off('focusout')
       $('#confirmEmailPass').off('focusout')
-      $('#editProfileEmailPassModal').off('click')
+      $('body').off('click')
 
       $('#changeEmailPassForm').get(0).reset()
       $('#changeEmailPassForm').find('.error').removeClass('show ').addClass('hide')
@@ -216,7 +220,9 @@ var helper = {
 
     $('#changeEmailPassForm').on('submit', function(e) {
 
-      console.log('#changeEmailPassForm > SUBMIT 1+++', $('body').data('elementID'))
+      var elementID = $('body').data('elementID')
+
+      console.log('#changeEmailPassForm > SUBMIT 1+++', elementID)
       console.log('#changeEmailPassForm > SUBMIT 2+++', $('#currentEmailPass').val())
       console.log('#changeEmailPassForm > SUBMIT 3+++', $('#newEmailPass').val())
       console.log('#changeEmailPassForm > SUBMIT 4+++', $('#confirmEmailPass').val())
@@ -231,14 +237,11 @@ var helper = {
 
       e.preventDefault()
       $('.loading').show()
-
       $('#changeEmailPassForm .formerror').removeClass('show').addClass('hide')
-
-      var elementID = $('body').data('elementID')
 
       var data = {}
       var serviceUrl = $(this).attr('action')
-      var constrainedFormElements = document.getElementById('changeEmailPassForm').querySelectorAll('[required]')
+      var constrainedFormElements = document.getElementById('changeEmailPassForm').querySelectorAll('[placeholder]')
 
       if(isSafari){
         var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
@@ -250,64 +253,68 @@ var helper = {
         }
       }
 
+      console.log('+++++++++++ GOOD FORM !!!!!!!!!!!')
+      /*
       var data = {
-        displayname: $('#currentEmailPass').val(),
-        email: $('#newEmailPass').val(),
-        confirmEmail: $('#confirmEmailPass').val()
+        type: elementID,
+        currentEmailPass: $('#currentEmailPass').val(),
+        newEmailPass: $('#newEmailPass').val(),
+        confirmEmailPass: $('#confirmEmailPass').val()
       }
 
       data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
       $.ajax({
 
-          rejectUnauthorized: false,
-          url: serviceUrl,
-          type: 'PUT',
-          data: JSON.stringify(data),
-          dataType: 'json',
-          contentType: 'application/json; charset=utf-8',
-          accepts: 'application/json',
+        rejectUnauthorized: false,
+        url: serviceUrl,
+        type: 'PUT',
+        data: JSON.stringify(data),
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        accepts: 'application/json',
 
-          success: function(data, status, xhr) {
+        success: function(data, status, xhr) {
 
-              if (data.response === 'success') {
+          if (data.response === 'success') {
 
-                  console.log('#changeEmailPassForm > ajax > SUCCESS > SUCCESS: ', data)
+            console.log('#changeEmailPassForm > ajax > SUCCESS > SUCCESS: ', data)
 
-                  $('.loading').hide()
+            $('.loading').hide()
 
-              } else {
+          } else {
 
-                  if(data.validatedData){
+            if(data.validatedData){
 
-                      console.log('#changeEmailPassForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData)
-                      helper.handleErrorResponse(data.validatedData)
+              console.log('#changeEmailPassForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData)
+              helper.handleErrorResponse(data.validatedData)
 
-                  }else{
+            }else{
 
-                      console.log('#changeEmailPassForm > ajax > SUCCESS > ERROR')
-                      $('#changeEmailPassForm .formerror').removeClass('hide').addClass('show')
+              console.log('#changeEmailPassForm > ajax > SUCCESS > ERROR')
+              $('#changeEmailPassForm .formerror').removeClass('hide').addClass('show')
 
-                  }
+            }
 
-                  $('.loading').hide()
-                  return false
-              }
-
-          },
-
-          error: function(xhr, status, error) {
-
-              console.log('#changeEmailPassForm > ajax > ERROR > ERROR: ', xhr)
-
-              var parsedXHR = JSON.parse(xhr.responseText)
-
-              location.href = parsedXHR.redirect
-
-              return false
-
+            $('.loading').hide()
+            return false
           }
+
+        },
+
+        error: function(xhr, status, error) {
+
+          console.log('#changeEmailPassForm > ajax > ERROR > ERROR: ', xhr)
+
+          var parsedXHR = JSON.parse(xhr.responseText)
+
+          location.href = parsedXHR.redirect
+
+          return false
+
+        }
       })
+      */
     })
 
     $('#personalInfoToggle').click(function(){
@@ -336,6 +343,10 @@ var helper = {
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    $('#currentEmailPass').on('change', function (e) {
+      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
+    })
+
     $('#newEmailPass').on('change', function (e) {
       helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
     })
@@ -348,13 +359,17 @@ var helper = {
       helper.handleFormEvents($(this).attr('id'))
     })
 
+    $('#submitChangeEmailPassForm').on('click', function(e) {
+      $('body').off('click')
+    })
+
   },
 
-  handleEvents: function(){
+  handleSpecificEvents: function(){
 
     $('#editProfileEmailPassModal').removeData('activeInputElement');
 
-    $('#editProfileEmailPassModal').on('click', function(e) {
+    $('body').on('click', function(e) {
       // e.stopPropagation()
 
       var activeInputElement = $('#editProfileEmailPassModal').data('activeInputElement');
@@ -388,6 +403,8 @@ var helper = {
 // =================================================================================================================================
 
   handleFormEvents: function(elementID, eType, elementVal) {
+
+    console.log('##### handleFormEvents +++++++++: ', elementID, ' :: ', eType)
 
     if($('body').data('elementID') === 'email'){
       elementID === 'newEmailPass' ? helper.emailElementValidation(elementID, 'confirmEmailPass', eType, elementVal) : null
@@ -499,9 +516,9 @@ var helper = {
     err1 !== undefined && err1.lengthError === 'maxlength' ? patternTestValue = false : null
 
     if (err1 !== undefined) {
-            // console.log('textElementValidation > err1: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue, ' || ', err1)
+      // console.log('textElementValidation > err1: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue, ' || ', err1)
     } else {
-            console.log('textElementValidation > no err1: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue)
+      console.log('textElementValidation > no err1: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue)
     }
 
     if (thisElementValue !== '') {
@@ -537,9 +554,9 @@ var helper = {
     err1 !== undefined && err1.error === 'empty' ? thisElementValue = '' : null
 
     if (err1 !== undefined) {
-            // console.log('#selectElementValidation > err1:', elementID, ' :: ', err1, ' :: ', thisElementValue);
+      // console.log('#selectElementValidation > err1:', elementID, ' :: ', err1, ' :: ', thisElementValue);
     } else {
-            console.log('#selectElementValidation > no err1:', elementID, ' :: ', thisElementValue);
+      console.log('#selectElementValidation > no err1:', elementID, ' :: ', thisElementValue);
     }
 
     if (thisElementValue !== '') {
@@ -571,9 +588,9 @@ var helper = {
   testUserInput: function (elementID, pattern, err1) {
     console.log('#testUserInput > no err1: ', elementID, ' :: ', pattern);
     if (err1 !== undefined) {
-            // console.log('#testUserInput > err1: ', elementID, ' :: ', pattern, ' :: ', err1);
+      // console.log('#testUserInput > err1: ', elementID, ' :: ', pattern, ' :: ', err1);
     } else {
-            console.log('#testUserInput > no err1: ', elementID, ' :: ', pattern);
+      console.log('#testUserInput > no err1: ', elementID, ' :: ', pattern);
     }
 
     var thisElementValue = $('#' + elementID).val()
@@ -653,9 +670,9 @@ var helper = {
     console.log('##>>>>>>>>> validateParams > comparedFieldTypeEmail: ', comparedFieldTypeEmail)
 
     if (err1 !== undefined) {
-            // console.log('## validateParams > err1: ', thisField, ' || ', comparedField, ' || ', err1)
+      // console.log('## validateParams > err1: ', thisField, ' || ', comparedField, ' || ', err1)
     } else {
-            // console.log('## validateParams > no err1: ', thisField, ' || ', comparedField)
+      console.log('## validateParams > no err1: ', thisField, ' || ', comparedField)
     }
 
     if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + comparedField).val() !== '') {
@@ -712,6 +729,13 @@ var helper = {
   },
 
   testUserInputEmail: function (elementID, err1) {
+
+    if (err1 !== undefined) {
+      // console.log('#testUserInputEmail > err1: ', elementID, ' :: ', err1)
+    } else {
+      console.log('#testUserInputEmail > no err1: ', elementID)
+    }
+
     var thisElementValue = $('#' + elementID).val()
     var thisErrorElement = $('#' + elementID + 'Error')
     var title = $('#' + elementID).attr('title')
@@ -739,7 +763,8 @@ var helper = {
     data[pathName] = email
     pathName = 'expectedResponse'
     data[pathName] = 'false'
-    helper.showLoading()
+
+    $('body').data('modalShown') ? null : helper.showLoading()
 
     data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
@@ -761,7 +786,7 @@ var helper = {
           callback(err, false)
         }
 
-        helper.hideLoading()
+        $('body').data('modalShown') ? null : helper.hideLoading()
       },
 
       error: function (xhr, status, error) {
@@ -775,9 +800,9 @@ var helper = {
   validateEmailField: function (elementVal, thisField, comparedField, err1) {
 
     if (err1 !== undefined) {
-            // console.log('#validateEmailField > err1: ', thisField, ' :: ', err1)
+      // console.log('#validateEmailField > err1: ', thisField, ' :: ', err1)
     } else {
-            console.log('#validateEmailField > no err1: ', elementVal, ' :: ', thisField, ' :: ', comparedField)
+      console.log('#validateEmailField > no err1: ', elementVal, ' :: ', thisField, ' :: ', comparedField)
     }
 
     var isEmailValid
@@ -869,7 +894,7 @@ var helper = {
 
   doEditProfileModal: function(editBtnClicked) {
 
-    isSafari ? helper.handleEvents() : null
+    isSafari ? helper.handleSpecificEvents() : null
     var editBtnClickedParentElem = $(editBtnClicked).parent()
     var dataID = editBtnClickedParentElem.data('id')
 
@@ -964,7 +989,7 @@ var helper = {
 
   doEditProfileEmailPassModal: function(editBtnClicked) {
 
-    isSafari ? helper.handleEvents() : null
+    //isSafari ? helper.handleSpecificEvents() : null
     var editBtnClickedParentElem = $(editBtnClicked).parent()
     var dataID = editBtnClickedParentElem.data('id')
     var labelText = helper.makeTitleFromElementID(dataID)

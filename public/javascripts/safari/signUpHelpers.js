@@ -13,22 +13,8 @@ var helper = {
     helper.initializeJqueryEvents()
   },
 
-  /*
-ValidityState
-badInput: false
-customError: false
-patternMismatch: false
-rangeOverflow: false
-rangeUnderflow: false
-stepMismatch: false
-tooLong: false
-tooShort: false
-typeMismatch: false
-valid: true
-valueMissing: false
-*/
-
   testFormValidity: function (theForm, eventListener) {
+
     var boundEventTypes
     var formElement
     var checkConstraints
@@ -38,26 +24,27 @@ valueMissing: false
     // checkValidity method on form element returns true if element has valid data
     // safari 10.1
     // webkit 603.1.30
-    for (var i = 0; i < theForm.length; i++) {
+    for( var i = 0; i < theForm.length; i++ ) {
+
       formElement = $(theForm[i])
       checkConstraints = formElement.get(0).checkValidity()
 
-      if (!checkConstraints && formValid === null) {
+      if(!checkConstraints && formValid === null){
         formValid = false
         resp.formValid = false
         resp.focusFirstElement = formElement
       }
 
-      if (eventListener === 'change') {
-        boundEventTypes = $._data(formElement[0], 'events')
-        for (var eType in boundEventTypes) {
+      if(eventListener === 'change'){
+        boundEventTypes = $._data( formElement[0], 'events' );
+        for (var eType in boundEventTypes){
           helper.handleFormEvents(formElement.attr('id'), eType, formElement.val())
         }
       }
-
-      if (eventListener === 'focusout') {
-        formElement.on('focusout', function (e) {
-          helper.handleFormEvents(formElement.attr('id'), 'focusout', formElement.val())
+      
+      if(eventListener === 'focusout'){
+        formElement.on('focusout', function(e) {
+          helper.handleFormEvents(formElement.attr('id'), 'focusout', formElement.val());
         })
         formElement.trigger('focusout')
       }
@@ -160,7 +147,7 @@ valueMissing: false
     })
 
     $('#password').on('change', function (e) {
-          $('body').data('elementID', 'password')
+      $('body').data('elementID', 'password')
       helper.handleFormEvents($(this).attr('id'), e.type)
     })
 
@@ -469,9 +456,6 @@ valueMissing: false
           }
         }
 
-
-
-
       } else {
 
         if (isSafari) {
@@ -508,67 +492,6 @@ valueMissing: false
     }
   },
 
-  /*
-  validateParams: function (str1, str2, err1) {
-    if (err1 !== undefined) {
-            // console.log('## validateParams > err1: ', str1, ' || ', str2, ' || ', err1)
-    } else {
-            // console.log('## validateParams > no err1: ', str1, ' || ', str2)
-    }
-
-    if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + str2).val() !== '') {
-      var property1 = document.getElementsByName(str1)[0]
-      var property2 = document.getElementsByName(str2)[0]
-
-      if ((err1 !== undefined && err1.error === 'nomatch') || property1.value !== property2.value) {
-        if (isSafari) {
-          if (str2 === 'email') {
-            $('#' + str1 + 'Match').removeClass('hide').addClass('show')
-          } else {
-            $('#' + str2 + 'Match').removeClass('hide').addClass('show')
-          }
-        } else {
-          if (err1 !== undefined) {
-            $('#' + str2 + 'Match').removeClass('hide').addClass('show')
-          } else {
-            $('#' + str2).get(0).setCustomValidity(helper.elementIDtoTitleCase(str1) + 's don\'t match')
-          }
-        }
-      } else {
-        if (isSafari) {
-          if (str2 === 'email') {
-            $('#' + str1 + 'Match').removeClass('show').addClass('hide')
-          } else {
-            $('#' + str2 + 'Match').removeClass('show').addClass('hide')
-          }
-        } else {
-          if (err1 === undefined) {
-            $('#' + str1).get(0).setCustomValidity('')
-            $('#' + str2).get(0).setCustomValidity('')
-          } else {
-            $('#' + str2 + 'Match').removeClass('show').addClass('hide')
-          }
-        }
-        if (str1 === 'email' || str1 === 'confirmEmail') {
-          var valdata = $('#signUpForm').data('validatedData')
-          var v
-
-          if (valdata) {
-            Object.keys(valdata).forEach(function (p) {
-              if (p !== 'email' || p !== 'confirmEmail') {
-                if (valdata[p].error === 'match' || valdata[p].error === false) {
-                  v = true
-                }
-              }
-            })
-
-            v === true ? $('#signUpForm').submit() : null
-          }
-        }
-      }
-    }
-  },
-  */
 
   testUserInputEmail: function (elementID, err1) {
     var thisElementValue = $('#' + elementID).val()
@@ -598,7 +521,8 @@ valueMissing: false
     data[pathName] = email
     pathName = 'expectedResponse'
     data[pathName] = 'false'
-    helper.showLoading()
+
+    $('body').data('modalShown') ? null : helper.showLoading()
 
     data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
@@ -620,7 +544,7 @@ valueMissing: false
           callback(err, false)
         }
 
-        helper.hideLoading()
+        $('body').data('modalShown') ? null : helper.hideLoading()
       },
 
       error: function (xhr, status, error) {

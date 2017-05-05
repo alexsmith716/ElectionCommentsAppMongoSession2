@@ -93,76 +93,9 @@ block content
 
 
             div(class="modalCancelSubmitBtns")
-              button(class="btn btn-default btn-md", data-dismiss="modal") Cancel
+              button(class="cancel btn btn-default btn-md", data-dismiss="modal") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
-              button(type="submit", class="btn btn-primary btn-md", id="submitEditProfileBtn") Submit
-
-        .modal-footer
-          .loading(style="display:none;")
-
-
-
-
-  .modal.fade(id="editProfileEmailPassModal", name="editProfileEmailPassModal", tabindex="-1")
-    .modal-dialog
-      .modal-content
-        .modal-header
-          button.close(type="button" data-dismiss="modal") &times;
-          h4.modal-title
-
-        .modal-body
-
-          form(action="https://localhost:3000/api/userprofileemailpass", id="changeEmailPassForm", name="changeEmailPassForm", method="put", enctype="application/x-www-form-urlencoded")
-            
-
-            div.required-fields
-              .form-group
-
-                label.control-label(id="currentEmailPassLabel", style="margin-top:1px;")
-
-                input.form-control.input-md(id="currentEmailPass", name="currentEmailPass", tabindex="1")
-
-                span.hide.error(id="currentEmailPassError") Please fill out this field.
-
-
-
-            div.required-fields
-              .form-group
-
-                label.control-label(id="newEmailPassLabel", style="margin-top:6px;")
-
-                input.form-control.input-md(type="text", id="newEmailPass", name="newEmailPass", tabindex="2")
-
-                span.hide.error(id="newEmailPassImproper") Email is in improper format
-                span.hide.error(id="newEmailPassRegistered") This email address is already in our system. Sign in, or enter a new email address
-                span.hide.error(id="newEmailPassError") Please fill out this field.
-
-
-
-            div.required-fields
-              .form-group
-
-                label.control-label(id="confirmEmailPassLabel", style="margin-top:6px;")
-
-                input.form-control.input-md(type="text", id="confirmEmailPass", name="confirmEmailPass", tabindex="3")
-
-                span.hide.error(id="confirmEmailPassImproper") Confirm Email is in improper format
-                span.hide.error(id="confirmEmailPassRegistered") This email address is already in our system. Sign in, or enter a new email address
-                span.hide.error(id="confirmEmailPassMatch")
-                span.hide.error(id="confirmEmailPassError") Please fill out this field.
-
-
-
-            div(style="margin-bottom:8px;")
-              .text-danger.hide.formerror
-                strong Could not update your information!
-
-
-            div(class="modalCancelSubmitBtns")
-              button.close(class="btn btn-default btn-md", data-dismiss="modal") Cancel
-              | &nbsp;&nbsp;&nbsp;&nbsp;
-              button(type="submit", class="btn btn-primary btn-md", id="submitEditProfileBtn") Submit
-
+              button(type="submit", class="submit btn btn-primary btn-md", id="submitChangeEmailPassForm") Submit
 
         .modal-footer
           .loading(style="display:none;")
