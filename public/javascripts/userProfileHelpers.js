@@ -21,7 +21,7 @@ var helper = {
     var formValid = null
     var resp = {}
 
-    // checkValidity method on form element returns true if element has valid data
+    // checkValidity method on form element returns true if element has valid data (according to constraint(s))
     // safari 10.1
     // webkit 603.1.30
     for( var i = 0; i < theForm.length; i++ ) {
@@ -989,7 +989,6 @@ var helper = {
 
   doEditProfileEmailPassModal: function(editBtnClicked) {
 
-    //isSafari ? helper.handleSpecificEvents() : null
     var editBtnClickedParentElem = $(editBtnClicked).parent()
     var dataID = editBtnClickedParentElem.data('id')
     var labelText = helper.makeTitleFromElementID(dataID)
