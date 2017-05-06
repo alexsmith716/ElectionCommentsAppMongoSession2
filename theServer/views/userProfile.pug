@@ -92,7 +92,7 @@ block content
           .loading(style="display:none;")
 
 
-  .modal.fade(id="editProfileEmailPassModal", name="editProfileEmailPassModal", tabindex="-1")
+  .modal.fade(id="newUserDataItemModal", name="newUserDataItemModal", tabindex="-1")
     .modal-dialog
       .modal-content
         .modal-header
@@ -101,41 +101,41 @@ block content
 
         .modal-body
 
-          form(action="https://localhost:3000/api/userprofileemailpass", id="changeEmailPassForm", name="changeEmailPassForm", method="put", enctype="application/x-www-form-urlencoded")
+          form(action="https://localhost:3000/api/newuserdataitem", id="newUserDataItemForm", name="newUserDataItemForm", method="put", enctype="application/x-www-form-urlencoded")
 
             div.required-fields
               .form-group
 
-                label.control-label(id="currentEmailPassLabel", style="margin-top:1px;")
+                label.control-label(id="currentUserDataItemLabel", style="margin-top:1px;")
 
-                input.form-control.input-md(id="currentEmailPass", name="currentEmailPass", tabindex="1")
+                input.form-control.input-md(id="currentUserDataItem", name="currentUserDataItem", tabindex="1")
 
-                span.hide.error(id="currentEmailPassError") Please fill out this field.
-
-
-            div.required-fields
-              .form-group
-
-                label.control-label(id="newEmailPassLabel", style="margin-top:6px;")
-
-                input.form-control.input-md(id="newEmailPass", name="newEmailPass", tabindex="2")
-
-                span.hide.error(id="newEmailPassImproper") Email is in improper format
-                span.hide.error(id="newEmailPassRegistered") This email address is already in our system. Sign in, or enter a new email address
-                span.hide.error(id="newEmailPassError") Please fill out this field.
+                span.hide.error(id="currentUserDataItemError") Please fill out this field.
 
 
             div.required-fields
               .form-group
 
-                label.control-label(id="confirmEmailPassLabel", style="margin-top:6px;")
+                label.control-label(id="newUserDataItemLabel", style="margin-top:6px;")
 
-                input.form-control.input-md(id="confirmEmailPass", name="confirmEmailPass", tabindex="3")
+                input.form-control.input-md(id="newUserDataItem", name="newUserDataItem", tabindex="2")
 
-                span.hide.error(id="confirmEmailPassImproper") Confirm Email is in improper format
-                span.hide.error(id="confirmEmailPassRegistered") This email address is already in our system. Sign in, or enter a new email address
-                span.hide.error(id="confirmEmailPassMatch")
-                span.hide.error(id="confirmEmailPassError") Please fill out this field.
+                span.hide.error(id="newUserDataItemImproper") Email is in improper format
+                span.hide.error(id="newUserDataItemRegistered") This email address is already in our system. Sign in, or enter a new email address
+                span.hide.error(id="newUserDataItemError") Please fill out this field.
+
+
+            div.required-fields
+              .form-group
+
+                label.control-label(id="confirmNewUserDataItemLabel", style="margin-top:6px;")
+
+                input.form-control.input-md(id="confirmNewUserDataItem", name="confirmNewUserDataItem", tabindex="3")
+
+                span.hide.error(id="confirmNewUserDataItemImproper") Confirm Email is in improper format
+                span.hide.error(id="confirmNewUserDataItemRegistered") This email address is already in our system. Sign in, or enter a new email address
+                span.hide.error(id="confirmNewUserDataItemMatch")
+                span.hide.error(id="confirmNewUserDataItemError") Please fill out this field.
 
 
             div(style="margin-bottom:8px;")
@@ -146,7 +146,7 @@ block content
             div(class="modalCancelSubmitBtns")
               button(class="cancel btn btn-default btn-md", data-dismiss="modal") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
-              button(type="submit", class="submit btn btn-primary btn-md", id="submitChangeEmailPassForm") Submit
+              button(type="submit", class="submit btn btn-primary btn-md", id="submitNewUserDataItemForm") Submit
 
         .modal-footer
           .loading(style="display:none;")
@@ -174,7 +174,7 @@ block content
 
           .row
             .col-xs-12
-              p.small CSRF token: <br> #{csrfToken}
+              p.small CSRF token (NEW): <br> #{csrfToken}
               script.
                 console.log('pug > isSafari: ', isSafari)
 

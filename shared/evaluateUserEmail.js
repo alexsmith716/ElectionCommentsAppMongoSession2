@@ -1,8 +1,9 @@
 
 var User = require('../theAPI/model/userSchema.js')
 
-module.exports = function (email, expectingARegisteredEmail, callback) {
-  User.findOne( { email: email } ).exec(function (err, user) {
+module.exports = function (email1, expectingARegisteredEmail, callback) {
+  var email2 = email1.trim()
+  User.findOne( { email: email2 } ).exec(function (err, user) {
     if (err) {
       callback({status: 'err', response: 'error', message: err})
 

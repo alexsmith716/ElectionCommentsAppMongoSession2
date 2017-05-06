@@ -246,11 +246,12 @@ module.exports.getUserProfileResponse = function(req, res) {
   }
 }
 
-module.exports.ajaxUserProfileEmailPass = function (req, res, next) {
+module.exports.ajaxNewUserDataItem = function (req, res, next) {
   var newExceptionError
 
-  console.log('####### > API > ajaxUserProfileEmailPass > req.body:', req.body)
+  console.log('####### > API > ajaxNewUserDataItem > req.body:', req.body)
 
+  /*
   var template = {email: 'required',
     confirmEmail: 'required', 
     password: 'required', 
@@ -266,14 +267,13 @@ module.exports.ajaxUserProfileEmailPass = function (req, res, next) {
 
   })
 
-  // first, validate user's current Email/Passsword
-
+  */
 
   /*
   serverSideValidation(req, res, template, function (validatedResponse) {
     var validationErrors = false
 
-    console.log('####### > API > ajaxUserProfileEmailPass > validatedResponse:', validatedResponse)
+    console.log('####### > API > ajaxNewUserDataItem > validatedResponse:', validatedResponse)
 
     if (validatedResponse.status === 'err') {
       return next(validatedResponse.message)
@@ -288,13 +288,13 @@ module.exports.ajaxUserProfileEmailPass = function (req, res, next) {
       }
     }
 
-    console.log('####### > API > ajaxUserProfileEmailPass > validationErrors:', validationErrors)
+    console.log('####### > API > ajaxNewUserDataItem > validationErrors:', validationErrors)
 
     if (!validationErrors) {
-      console.log('####### > API > ajaxUserProfileEmailPass > NO ERRORS!!!')
+      console.log('####### > API > ajaxNewUserDataItem > NO ERRORS!!!')
 
     }else{
-      console.log('####### > API > ajaxUserProfileEmailPass > YES ERRORS!!!')
+      console.log('####### > API > ajaxNewUserDataItem > YES ERRORS!!!')
       //sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
     }
   })

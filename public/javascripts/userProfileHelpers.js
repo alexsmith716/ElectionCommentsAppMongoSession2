@@ -76,40 +76,40 @@ var helper = {
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    $('#editProfileEmailPassModal').on('shown.bs.modal', function() {
+    $('#newUserDataItemModal').on('shown.bs.modal', function() {
       $('body').data('modalShown', true)
-      var evts = $._data( $('#currentEmailPass').get(0), 'events' )
-      // console.log('#editProfileEmailPassModal > shown.bs.modal evts: ', evts)
+      var evts = $._data( $('#currentUserDataItem').get(0), 'events' )
+      // console.log('#newUserDataItemModal > shown.bs.modal evts: ', evts)
       $.each( evts, function(i,exists) {
-        // console.log('#editProfileEmailPassModal > shown.bs.modal evts i: ', i, ' :: ', exists)
+        // console.log('#newUserDataItemModal > shown.bs.modal evts i: ', i, ' :: ', exists)
       })
       setTimeout(function() {
         isSafari ? helper.handleSpecificEvents() : null
       }, 150);
     })
 
-    $('#editProfileEmailPassModal').on('hidden.bs.modal', function () {
-      console.log('##### editProfileEmailPassModal > ON hidden.bs.modal +++++++++')
+    $('#newUserDataItemModal').on('hidden.bs.modal', function () {
+      console.log('##### newUserDataItemModal > ON hidden.bs.modal +++++++++')
 
       $('body').removeData('modalShown');
-      $('#currentEmailPass').off('focusout')
-      $('#newEmailPass').off('focusout')
-      $('#confirmEmailPass').off('focusout')
+      $('#currentUserDataItem').off('focusout')
+      $('#newUserDataItem').off('focusout')
+      $('#confirmNewUserDataItem').off('focusout')
       $('body').off('click')
 
-      $('#changeEmailPassForm').get(0).reset()
-      $('#changeEmailPassForm').find('.error').removeClass('show ').addClass('hide')
-      $('#currentEmailPassError').removeClass('show').html('')
-      $('#newEmailPassImproper').removeClass('show').html('')
-      $('#newEmailPassRegistered').removeClass('show').html('')
-      $('#newEmailPassRegistered').removeClass('show').html('')
-      $('#confirmEmailPassImproper').removeClass('show').html('')
-      $('#confirmEmailPassRegistered').removeClass('show').html('')
-      $('#confirmEmailPassMatch').removeClass('show').html('')
-      $('#confirmEmailPassImproper').removeClass('show').html('')
-      $('#currentEmailPass').removeClass('has-error')
-      $('#newEmailPass').removeClass('has-error')
-      $('#confirmEmailPass').removeClass('has-error')
+      $('#newUserDataItemForm').get(0).reset()
+      $('#newUserDataItemForm').find('.error').removeClass('show ').addClass('hide')
+      $('#currentUserDataItemError').removeClass('show').html('')
+      $('#newUserDataItemImproper').removeClass('show').html('')
+      $('#newUserDataItemRegistered').removeClass('show').html('')
+      $('#newUserDataItemRegistered').removeClass('show').html('')
+      $('#confirmNewUserDataItemImproper').removeClass('show').html('')
+      $('#confirmNewUserDataItemRegistered').removeClass('show').html('')
+      $('#confirmNewUserDataItemMatch').removeClass('show').html('')
+      $('#confirmNewUserDataItemImproper').removeClass('show').html('')
+      $('#currentUserDataItem').removeClass('has-error')
+      $('#newUserDataItem').removeClass('has-error')
+      $('#confirmNewUserDataItem').removeClass('has-error')
       $('.modalAlertSuccess').hide()
       $('.modalAlertDanger').hide()
       $('.modalOkayBtn').hide()
@@ -132,7 +132,7 @@ var helper = {
       var newVal;
       var s = document.getElementById(elementID)
       elementID === 'state' ? newVal = s.options[s.selectedIndex].text : newVal = $('#'+elementID).val()
-      newVal = newVal.trim()
+      newVal = $.trim(newVal)
 
       var data = {}
       var serviceUrl = $(this).attr('action')
@@ -217,31 +217,32 @@ var helper = {
       })
     })
 
-
-    $('#changeEmailPassForm').on('submit', function(e) {
+    // editProfileEmailPassModal
+    // changeEmailPassForm
+    $('#newUserDataItemForm').on('submit', function(e) {
 
       var elementID = $('body').data('elementID')
 
-      console.log('#changeEmailPassForm > SUBMIT 1+++', elementID)
-      console.log('#changeEmailPassForm > SUBMIT 2+++', $('#currentEmailPass').val())
-      console.log('#changeEmailPassForm > SUBMIT 3+++', $('#newEmailPass').val())
-      console.log('#changeEmailPassForm > SUBMIT 4+++', $('#confirmEmailPass').val())
+      console.log('#newUserDataItemForm > SUBMIT 1+++', elementID)
+      console.log('#newUserDataItemForm > SUBMIT 2+++', $('#currentUserDataItem').val())
+      console.log('#newUserDataItemForm > SUBMIT 3+++', $('#newUserDataItem').val())
+      console.log('#newUserDataItemForm > SUBMIT 4+++', $('#confirmNewUserDataItem').val())
 
-      // required & regex pattern will handle client validation for currentEmailPass  ( pattern="\\s*(?=\\s*\\S)(.{1,35})\\s*" )
+      // required & regex pattern will handle client validation for currentUserDataItem  ( pattern="\\s*(?=\\s*\\S)(.{1,35})\\s*" )
       // ++++++++++++++++++++++++++++++++++++++++++
-      // EMAIL: required, type = email & script will handle client validation for newEmailPass
-      // EMAIL: required, type = email & script will handle client validation for confirmEmailPass
+      // EMAIL: required, type = email & script will handle client validation for newUserDataItem
+      // EMAIL: required, type = email & script will handle client validation for confirmNewUserDataItem
       // ++++++++++++++++++++++++++++++++++++++++++
-      // PASSWORD: required, regex pattern & script will handle client validation for newEmailPass     ( pattern="[\\S]{4,}" )
-      // PASSWORD: required, regex pattern & script will handle client validation for confirmEmailPass ( pattern="[\\S]{4,}" )
+      // PASSWORD: required, regex pattern & script will handle client validation for newUserDataItem     ( pattern="[\\S]{4,}" )
+      // PASSWORD: required, regex pattern & script will handle client validation for confirmNewUserDataItem ( pattern="[\\S]{4,}" )
 
       e.preventDefault()
       $('.loading').show()
-      $('#changeEmailPassForm .formerror').removeClass('show').addClass('hide')
+      $('#newUserDataItemForm .formerror').removeClass('show').addClass('hide')
 
       var data = {}
       var serviceUrl = $(this).attr('action')
-      var constrainedFormElements = document.getElementById('changeEmailPassForm').querySelectorAll('[placeholder]')
+      var constrainedFormElements = document.getElementById('newUserDataItemForm').querySelectorAll('[placeholder]')
 
       if(isSafari){
         var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
@@ -254,12 +255,13 @@ var helper = {
       }
 
       console.log('+++++++++++ GOOD FORM !!!!!!!!!!!')
+
       /*
       var data = {
         type: elementID,
-        currentEmailPass: $('#currentEmailPass').val(),
-        newEmailPass: $('#newEmailPass').val(),
-        confirmEmailPass: $('#confirmEmailPass').val()
+        currentUserDataItem: $('#currentUserDataItem').val(),
+        newUserDataItem: $('#newUserDataItem').val(),
+        confirmNewUserDataItem: $('#confirmNewUserDataItem').val()
       }
 
       data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
@@ -278,7 +280,7 @@ var helper = {
 
           if (data.response === 'success') {
 
-            console.log('#changeEmailPassForm > ajax > SUCCESS > SUCCESS: ', data)
+            console.log('#newUserDataItemForm > ajax > SUCCESS > SUCCESS: ', data)
 
             $('.loading').hide()
 
@@ -286,13 +288,13 @@ var helper = {
 
             if(data.validatedData){
 
-              console.log('#changeEmailPassForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData)
+              console.log('#newUserDataItemForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData)
               helper.handleErrorResponse(data.validatedData)
 
             }else{
 
-              console.log('#changeEmailPassForm > ajax > SUCCESS > ERROR')
-              $('#changeEmailPassForm .formerror').removeClass('hide').addClass('show')
+              console.log('#newUserDataItemForm > ajax > SUCCESS > ERROR')
+              $('#newUserDataItemForm .formerror').removeClass('hide').addClass('show')
 
             }
 
@@ -304,7 +306,7 @@ var helper = {
 
         error: function(xhr, status, error) {
 
-          console.log('#changeEmailPassForm > ajax > ERROR > ERROR: ', xhr)
+          console.log('#newUserDataItemForm > ajax > ERROR > ERROR: ', xhr)
 
           var parsedXHR = JSON.parse(xhr.responseText)
 
@@ -338,20 +340,21 @@ var helper = {
     })
 
     $('.editFormEmailPassElement').click(function(){
-      helper.doEditProfileEmailPassModal(this);
+      helper.doNewUserDataItemModal(this);
     })
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    $('#currentEmailPass').on('change', function (e) {
+    $('#currentUserDataItem').on('change', function (e) {
       helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
     })
 
-    $('#newEmailPass').on('change', function (e) {
+    $('#newUserDataItem').on('change', function (e) {
+      console.log('newUserDataItem > ON > CHANGE ++++++++++++++++++++++++++')
       helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
     })
 
-    $('#confirmEmailPass').on('change', function (e) {
+    $('#confirmNewUserDataItem').on('change', function (e) {
       helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
     })
 
@@ -359,7 +362,7 @@ var helper = {
       helper.handleFormEvents($(this).attr('id'))
     })
 
-    $('#submitChangeEmailPassForm').on('click', function(e) {
+    $('#submitNewUserDataItemForm').on('click', function(e) {
       $('body').off('click')
     })
 
@@ -367,12 +370,12 @@ var helper = {
 
   handleSpecificEvents: function(){
 
-    $('#editProfileEmailPassModal').removeData('activeInputElement');
+    $('#newUserDataItemModal').removeData('activeInputElement');
 
     $('body').on('click', function(e) {
       // e.stopPropagation()
 
-      var activeInputElement = $('#editProfileEmailPassModal').data('activeInputElement');
+      var activeInputElement = $('#newUserDataItemModal').data('activeInputElement');
 
       if(activeInputElement !== undefined && (e.target.nodeName === 'INPUT')){
         
@@ -382,16 +385,16 @@ var helper = {
 
     })
 
-    $('#currentEmailPass').on('focusout', function(e) {
-      $('#editProfileEmailPassModal').data('activeInputElement', 'currentEmailPass')
+    $('#currentUserDataItem').on('focusout', function(e) {
+      $('#newUserDataItemModal').data('activeInputElement', 'currentUserDataItem')
     })
 
-    $('#newEmailPass').on('focusout', function(e) {
-      $('#editProfileEmailPassModal').data('activeInputElement', 'newEmailPass')
+    $('#newUserDataItem').on('focusout', function(e) {
+      $('#newUserDataItemModal').data('activeInputElement', 'newUserDataItem')
     })
 
-    $('#confirmEmailPass').on('focusout', function(e) {
-      $('#editProfileEmailPassModal').data('activeInputElement', 'confirmEmailPass')
+    $('#confirmNewUserDataItem').on('focusout', function(e) {
+      $('#newUserDataItemModal').data('activeInputElement', 'confirmNewUserDataItem')
     })
 
   },
@@ -407,16 +410,16 @@ var helper = {
     console.log('##### handleFormEvents +++++++++: ', elementID, ' :: ', eType)
 
     if($('body').data('elementID') === 'email'){
-      elementID === 'newEmailPass' ? helper.emailElementValidation(elementID, 'confirmEmailPass', eType, elementVal) : null
-      elementID === 'confirmEmailPass' ? helper.emailElementValidation(elementID, 'newEmailPass', eType, elementVal) : null
+      elementID === 'newUserDataItem' ? helper.emailElementValidation(elementID, 'confirmNewUserDataItem', eType, elementVal) : null
+      elementID === 'confirmNewUserDataItem' ? helper.emailElementValidation(elementID, 'newUserDataItem', eType, elementVal) : null
     }
 
     if($('body').data('elementID') === 'password'){
-      elementID === 'newEmailPass' ? helper.passwordElementValidation(elementID, 'confirmEmailPass', eType) : null
-      elementID === 'confirmEmailPass' ? helper.passwordElementValidation(elementID, 'newEmailPass', eType) : null
+      elementID === 'newUserDataItem' ? helper.passwordElementValidation(elementID, 'confirmNewUserDataItem', eType) : null
+      elementID === 'confirmNewUserDataItem' ? helper.passwordElementValidation(elementID, 'newUserDataItem', eType) : null
     }
 
-    elementID === 'currentEmailPass' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
+    elementID === 'currentUserDataItem' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
     elementID === 'firstname' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
     elementID === 'lastname' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
     elementID === 'city' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
@@ -500,7 +503,7 @@ var helper = {
 
     // AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
   validateMaxLengthUserInput: function (val, maxlen) {
-    val = val.trim()
+    val = $.trim(val)
     var newVal = (val.length) - maxlen
     newVal = (val.length) - newVal
     newVal = val.slice(0, newVal)
@@ -508,7 +511,7 @@ var helper = {
   },
 
   textElementValidation: function (elementID, pattern, err1) {
-    var thisElementValue = $('#' + elementID).val().trim()
+    var thisElementValue = $.trim($('#' + elementID).val())
     var title = $('#' + elementID).attr('title')
     err1 !== undefined && err1.error === 'empty' ? thisElementValue = '' : null
 
@@ -649,8 +652,8 @@ var helper = {
 
   validateEmailValue: function (email) {
     var pattern = helper.pattern.email
-    console.log('validateEmailValue >>: ', email, ' :: ', pattern.test(email))
-    return pattern.test(email)
+    var email2 = $.trim(email)
+    return pattern.test(email2)
   },
 
   validateParams: function (thisField, comparedField, err1) {
@@ -760,7 +763,7 @@ var helper = {
     var data = {}
     var pathName = 'email'
     var err
-    data[pathName] = email
+    data[pathName] = $.trim(email)
     pathName = 'expectedResponse'
     data[pathName] = 'false'
 
@@ -816,13 +819,17 @@ var helper = {
       $('#' + thisField).off('input')
 
       if (isEmailValid) {
+
         helper.validateEmailService(elementVal, function (err, response) {
+
           if (err) {
+
             isSafari ? $('#' + thisField + 'Registered').removeClass('hide').addClass('show') : null
             !isSafari ? $('#' + thisField).get(0).setCustomValidity('This email address is already in our system. Sign in, or enter a new email address') : null
-
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
+
           } else {
+
             isSafari ? $('#' + thisField + 'Registered').removeClass('show').addClass('hide') : null
 
             helper.validateParams(thisField, comparedField)
@@ -830,6 +837,7 @@ var helper = {
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
           }
         })
+
       } else {
         if (err1 !== undefined && err1.error === 'registered') {
           $('#' + thisField + 'Registered').removeClass('hide').addClass('show')
@@ -909,7 +917,7 @@ var helper = {
     var currentFormType = editBtnClickedParentElem.data('formelementtype')
     var labelText = helper.makeTitleFromElementID(dataID)
     var currentFormValue = $('.'+dataID).text()
-    currentFormValue = currentFormValue.trim()
+    currentFormValue = $.trim(currentFormValue)
 
     console.log('doEditProfileModal > dataID: ', dataID)
     console.log('doEditProfileModal > currentFormType: ', currentFormType)
@@ -987,38 +995,38 @@ var helper = {
   },
 
 
-  doEditProfileEmailPassModal: function(editBtnClicked) {
+  doNewUserDataItemModal: function(editBtnClicked) {
 
     var editBtnClickedParentElem = $(editBtnClicked).parent()
     var dataID = editBtnClickedParentElem.data('id')
     var labelText = helper.makeTitleFromElementID(dataID)
     dataID === 'email' ? labelText = labelText + ' Address' : null
-    dataID === 'email' ? $('#confirmEmailPassMatch').html('Emails don\'t match') : $('#confirmEmailPassMatch').html('Passwords don\'t match')
+    dataID === 'email' ? $('#confirmNewUserDataItemMatch').html('Emails don\'t match') : $('#confirmNewUserDataItemMatch').html('Passwords don\'t match')
     $('body').data('elementID', dataID)
 
-    console.log('doEditProfileEmailPassModal > dataID +++++++++++++++++++ : ', dataID)
-    console.log('doEditProfileEmailPassModal > labelText +++++++++++++++++: ', labelText)
+    console.log('doNewUserDataItemModal > dataID +++++++++++++++++++ : ', dataID)
+    console.log('doNewUserDataItemModal > labelText +++++++++++++++++: ', labelText)
 
-    $('#editProfileEmailPassModal .modal-title').html('Change your ' + labelText + ':')
-    $('#currentEmailPassLabel').html('Current ' + labelText + ':')
-    $('#newEmailPassLabel').html('New ' + labelText + ':')
-    $('#confirmEmailPassLabel').html('Confirm new ' + labelText + ':')
+    $('#newUserDataItemModal .modal-title').html('Change your ' + labelText + ':')
+    $('#currentUserDataItemLabel').html('Current ' + labelText + ':')
+    $('#newUserDataItemLabel').html('New ' + labelText + ':')
+    $('#confirmNewUserDataItemLabel').html('Confirm new ' + labelText + ':')
 
     if(dataID === 'email'){
 
-      $('#currentEmailPass').attr({
+      $('#currentUserDataItem').attr({
         type: 'text',
         title: 'Please enter a valid Email Address',
         placeholder: 'Current Email Address'
       })
 
-      $('#newEmailPass').attr({
+      $('#newUserDataItem').attr({
         type: 'text',
         title: 'Please type a valid Email Address',
         placeholder: 'New Email Address'
       })
 
-      $('#confirmEmailPass').attr({
+      $('#confirmNewUserDataItem').attr({
         type: 'text',
         title: 'Please type a valid Email Address',
         placeholder: 'Confirm New Email Address'
@@ -1026,19 +1034,19 @@ var helper = {
 
     }else{
 
-      $('#currentEmailPass').attr({ 
+      $('#currentUserDataItem').attr({ 
         type: 'text',
         title: 'Please enter your Password',
         placeholder: 'Current Password'
       })
 
-      $('#newEmailPass').attr({ 
+      $('#newUserDataItem').attr({ 
         type: 'text',
         title: 'Password must be at least 4 characters long. No whitespace allowed',
         placeholder: 'New Password'
       })
 
-      $('#confirmEmailPass').attr({ 
+      $('#confirmNewUserDataItem').attr({ 
         type: 'text',
         title: 'Password must be at least 4 characters long. No whitespace allowed',
         placeholder: 'Confirm New Password'
@@ -1048,19 +1056,20 @@ var helper = {
     /*
     if(dataID === 'email'){
 
-        $('#currentEmailPass').attr({
+        $('#currentUserDataItem').attr({
             type: 'text',
+            pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
             title: 'Please enter a valid Email Address',
             placeholder: 'Current Email Address'
         })
 
-        $('#newEmailPass').attr({
+        $('#newUserDataItem').attr({
             type: 'email',
             title: 'Please type a valid Email Address',
             placeholder: 'New Email Address'
         })
         
-        $('#confirmEmailPass').attr({
+        $('#confirmNewUserDataItem').attr({
             type: 'email',
             title: 'Please type a valid Email Address',
             placeholder: 'Confirm New Email Address'
@@ -1068,20 +1077,21 @@ var helper = {
 
     }else{
 
-        $('#currentEmailPass').attr({ 
+        $('#currentUserDataItem').attr({ 
             type: 'password',
+            pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
             title: 'Please enter your Password',
             placeholder: 'Current Password'
         })
 
-        $('#newEmailPass').attr({ 
+        $('#newUserDataItem').attr({ 
             type: 'password',
             pattern: '[\\S]{4,}',
             title: 'Password must be at least 4 characters long. No whitespace allowed',
             placeholder: 'New Password'
         })
         
-        $('#confirmEmailPass').attr({ 
+        $('#confirmNewUserDataItem').attr({ 
             type: 'password',
             pattern: '[\\S]{4,}',
             title: 'Password must be at least 4 characters long. No whitespace allowed',
@@ -1093,7 +1103,7 @@ var helper = {
 
     $(':input').each(function (i) { $(this).attr('tabindex', i + 1); })
 
-    $('#editProfileEmailPassModal').modal({
+    $('#newUserDataItemModal').modal({
       keyboard: false,
       backdrop: 'static'
     })
