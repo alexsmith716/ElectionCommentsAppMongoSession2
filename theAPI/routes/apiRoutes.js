@@ -16,7 +16,7 @@ router.post('/signupuser', csrfProtection, apiControllers.ajaxSignUpUser)
 
 router.post('/forgotpassword', csrfProtection, apiControllers.ajaxForgotPassword)
 router.put('/evaluateuserprofile', csrfProtection, apiControllers.ajaxEvaluateUserProfile)
-router.put('/userprofileemailpass', csrfProtection, apiControllers.ajaxUserProfileEmailPass)
+router.put('/newuserdataitem', csrfProtection, apiControllers.ajaxNewUserDataItem)
 router.post('/evaluateuseremail', csrfProtection, apiControllers.ajaxEvaluateUserEmail)
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

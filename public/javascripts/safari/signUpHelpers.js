@@ -249,7 +249,7 @@ var helper = {
 
     // AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
   validateMaxLengthUserInput: function (val, maxlen) {
-    val = val.trim()
+    val = $.trim(val)
     var newVal = (val.length) - maxlen
     newVal = (val.length) - newVal
     newVal = val.slice(0, newVal)
@@ -257,7 +257,7 @@ var helper = {
   },
 
   textElementValidation: function (elementID, pattern, err1) {
-    var thisElementValue = $('#' + elementID).val().trim()
+    var thisElementValue = $.trim($('#' + elementID).val())
     var title = $('#' + elementID).attr('title')
     err1 !== undefined && err1.error === 'empty' ? thisElementValue = '' : null
 
@@ -518,7 +518,7 @@ var helper = {
     var data = {}
     var pathName = 'email'
     var err
-    data[pathName] = email
+    data[pathName] = $.trim(email)
     pathName = 'expectedResponse'
     data[pathName] = 'false'
 
@@ -556,10 +556,11 @@ var helper = {
   },
 
   validateEmailField: function (elementVal, thisField, comparedField, err1) {
+
     if (err1 !== undefined) {
-            // console.log('#validateEmailField > err1: ', thisField, ' :: ', err1)
+      // console.log('#validateEmailField > err1: ', thisField, ' :: ', err1)
     } else {
-            // console.log('#validateEmailField > no err1: ', thisField)
+      console.log('#validateEmailField > no err1: ', elementVal, ' :: ', thisField, ' :: ', comparedField)
     }
 
     var isEmailValid
@@ -573,13 +574,17 @@ var helper = {
       $('#' + thisField).off('input')
 
       if (isEmailValid) {
+
         helper.validateEmailService(elementVal, function (err, response) {
+
           if (err) {
+
             isSafari ? $('#' + thisField + 'Registered').removeClass('hide').addClass('show') : null
             !isSafari ? $('#' + thisField).get(0).setCustomValidity('This email address is already in our system. Sign in, or enter a new email address') : null
-
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
+
           } else {
+
             isSafari ? $('#' + thisField + 'Registered').removeClass('show').addClass('hide') : null
 
             helper.validateParams(thisField, comparedField)
@@ -587,6 +592,7 @@ var helper = {
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
           }
         })
+
       } else {
         if (err1 !== undefined && err1.error === 'registered') {
           $('#' + thisField + 'Registered').removeClass('hide').addClass('show')
@@ -604,7 +610,9 @@ var helper = {
       } else {
         $('#' + thisField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + ' is in improper format')
       }
+
       $('#' + thisField).focus()
+
       err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
     } else if (err1 !== undefined && err1.error === 'empty') {
       helper.testUserInputEmail(thisField, err1)
