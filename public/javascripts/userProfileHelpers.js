@@ -56,7 +56,7 @@ var helper = {
 
     // $('#aModal').hasClass('in')
     $('#editProfileFormModal').on('shown.bs.modal', function() {
-      $('body').data('modalShown', true)
+      $('body').data('modalShown', '#editProfileFormModal')
       var activeElementID = $('#editProfileForm').data('elementID')
       $('#'+activeElementID).focus()
     })
@@ -77,7 +77,7 @@ var helper = {
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     $('#newUserDataItemModal').on('shown.bs.modal', function() {
-      $('body').data('modalShown', true)
+      $('body').data('modalShown', '#newUserDataItemModal')
       var evts = $._data( $('#currentUserDataItem').get(0), 'events' )
       // console.log('#newUserDataItemModal > shown.bs.modal evts: ', evts)
       $.each( evts, function(i,exists) {
@@ -91,7 +91,8 @@ var helper = {
     $('#newUserDataItemModal').on('hidden.bs.modal', function () {
       console.log('##### newUserDataItemModal > ON hidden.bs.modal +++++++++')
 
-      $('body').removeData('modalShown');
+      $('body').removeData('modalShown')
+      $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
       $('#currentUserDataItem').off('focusout')
       $('#newUserDataItem').off('focusout')
       $('#confirmNewUserDataItem').off('focusout')
@@ -99,7 +100,13 @@ var helper = {
 
       $('#newUserDataItemForm').get(0).reset()
       $('#newUserDataItemForm').find('.error').removeClass('show ').addClass('hide')
-      $('#currentUserDataItemError').removeClass('show').html('')
+      $('#currentUserDataItem').val('')
+
+      $('#hideNewUserData').attr('class', 'hideClass')
+      $('#hideNewUserData').attr('style', 'display:none')
+      
+      $('#currentUserDataItemRegistered').removeClass('show').addClass('hide')
+      $('#currentUserDataItemError').removeClass('show').addClass('hide')
       $('#newUserDataItemImproper').removeClass('show').html('')
       $('#newUserDataItemRegistered').removeClass('show').html('')
       $('#newUserDataItemRegistered').removeClass('show').html('')
@@ -110,6 +117,7 @@ var helper = {
       $('#currentUserDataItem').removeClass('has-error')
       $('#newUserDataItem').removeClass('has-error')
       $('#confirmNewUserDataItem').removeClass('has-error')
+
       $('.modalAlertSuccess').hide()
       $('.modalAlertDanger').hide()
       $('.modalOkayBtn').hide()
@@ -217,8 +225,9 @@ var helper = {
       })
     })
 
-    // editProfileEmailPassModal
-    // changeEmailPassForm
+
+
+
     $('#newUserDataItemForm').on('submit', function(e) {
 
       var elementID = $('body').data('elementID')
@@ -255,7 +264,6 @@ var helper = {
       }
 
       console.log('+++++++++++ GOOD FORM !!!!!!!!!!!')
-
       /*
       var data = {
         type: elementID,
@@ -319,6 +327,10 @@ var helper = {
       */
     })
 
+
+
+
+
     $('#personalInfoToggle').click(function(){
       helper.toggleEditBtn('personalInfo', true);
     })
@@ -345,9 +357,9 @@ var helper = {
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    $('#currentUserDataItem').on('change', function (e) {
-      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
-    })
+    //$('#currentUserDataItem').on('change', function (e) {
+      //helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
+    //})
 
     $('#newUserDataItem').on('change', function (e) {
       console.log('newUserDataItem > ON > CHANGE ++++++++++++++++++++++++++')
@@ -362,20 +374,71 @@ var helper = {
       helper.handleFormEvents($(this).attr('id'))
     })
 
-    $('#submitNewUserDataItemForm').on('click', function(e) {
+
+    $('#nextSubmitNewUserDataItemForm').on('click', function(e) {
+
       $('body').off('click')
+      e.preventDefault()
+      var type = $('body').data('elementID')
+      var currentUserDataItemVerified = $('#newUserDataItemForm').data('currentUserDataItemVerified')
+
+      if (currentUserDataItemVerified) {
+
+
+      } else {
+
+        var data = $('#currentUserDataItem').val()
+        var testData = helper.pattern.basictext.test(data)
+
+
+        if(testData){
+
+          helper.validateDataService(type, data, 'true', 'true', function (err, response) {
+
+
+            if (err) {
+
+              $('#currentUserDataItem').addClass('has-error')
+              $('#currentUserDataItemError').removeClass('show').addClass('hide')
+              $('#currentUserDataItemRegistered').removeClass('hide').addClass('show')
+
+            } else {
+
+              $('#currentUserDataItemRegistered').removeClass('show').addClass('hide')
+              $('#newUserDataItemForm').data('currentUserDataItemVerified', true)
+
+              $('#hideCurrentUserData').addClass('hideClass')
+              $('#hideCurrentUserData').css( 'display', 'none' )
+
+              $('#hideNewUserData').removeClass('hideClass')
+              $('#hideNewUserData').css( 'display', '' )
+
+              $('#nextSubmitNewUserDataItemForm').html('Submit')
+
+
+            }
+          })
+
+        }else{
+
+          $('#currentUserDataItem').addClass('has-error')
+          $('#currentUserDataItemError').removeClass('hide').addClass('show')
+
+        }
+      }
     })
 
   },
 
+
   handleSpecificEvents: function(){
 
-    $('#newUserDataItemModal').removeData('activeInputElement');
+    $('#newUserDataItemModal').removeData('activeInputElement')
 
     $('body').on('click', function(e) {
       // e.stopPropagation()
 
-      var activeInputElement = $('#newUserDataItemModal').data('activeInputElement');
+      var activeInputElement = $('#newUserDataItemModal').data('activeInputElement')
 
       if(activeInputElement !== undefined && (e.target.nodeName === 'INPUT')){
         
@@ -759,21 +822,26 @@ var helper = {
     }
   },
 
-  validateEmailService: function (email, callback) {
-    var data = {}
-    var pathName = 'email'
+
+  validateDataService: function (type, value, resp, testUser, callback) {
+
+    var ms = $('body').data('modalShown')
+    ms ? $(ms + ' .loading').show() : helper.showLoading()
+
     var err
-    data[pathName] = $.trim(email)
-    pathName = 'expectedResponse'
-    data[pathName] = 'false'
+    var data = {}
 
-    $('body').data('modalShown') ? null : helper.showLoading()
-
+    data['type'] = type
+    data['data'] = value
+    data['expectedResponse'] = resp
+    data['testUser'] = testUser
     data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
+
+    console.log('validateDataService > DATA +++++++++++++++++++: ', data)
 
     $.ajax({
       rejectUnauthorized: false,
-      url: 'https://localhost:3000/api/evaluateuseremail',
+      url: 'https://localhost:3000/api/validatedataservice',
       type: 'POST',
       data: JSON.stringify(data),
       dataType: 'json',
@@ -789,7 +857,7 @@ var helper = {
           callback(err, false)
         }
 
-        $('body').data('modalShown') ? null : helper.hideLoading()
+        ms ? $(ms + ' .loading').hide() : helper.hideLoading()
       },
 
       error: function (xhr, status, error) {
@@ -820,7 +888,7 @@ var helper = {
 
       if (isEmailValid) {
 
-        helper.validateEmailService(elementVal, function (err, response) {
+        helper.validateDataService('email', elementVal, 'false', 'false', function (err, response) {
 
           if (err) {
 
@@ -995,7 +1063,84 @@ var helper = {
   },
 
 
+
+// nextSubmitNewUserDataItemForm
   doNewUserDataItemModal: function(editBtnClicked) {
+
+    var editBtnClickedParentElem = $(editBtnClicked).parent()
+    var dataID = editBtnClickedParentElem.data('id')
+    var labelText = helper.makeTitleFromElementID(dataID)
+    dataID === 'email' ? labelText = labelText + ' Address' : null
+    dataID === 'email' ? $('#confirmNewUserDataItemMatch').html('Emails don\'t match') : $('#confirmNewUserDataItemMatch').html('Passwords don\'t match')
+    $('body').data('elementID', dataID)
+    $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
+
+    console.log('doNewUserDataItemModal > dataID +++++++++++++++++++ : ', dataID)
+    console.log('doNewUserDataItemModal > labelText +++++++++++++++++: ', labelText)
+
+    $('#newUserDataItemModal .modal-title').html('Change your ' + labelText + ':')
+    $('#currentUserDataItemLabel').html('Please Enter Your Current ' + labelText + ':')
+    $('#newUserDataItemLabel').html('Enter Your New ' + labelText + ':')
+    $('#confirmNewUserDataItemLabel').html('Confirm The New ' + labelText + ':')
+
+    if(dataID === 'email'){
+
+      $('#currentUserDataItem').attr({
+        type: 'text',
+        title: 'Please enter a valid Email Address',
+        placeholder: 'Current Email Address'
+      })
+
+      $('#newUserDataItem').attr({
+        type: 'text',
+        title: 'Please type a valid Email Address',
+        placeholder: 'New Email Address'
+      })
+
+      $('#confirmNewUserDataItem').attr({
+        type: 'text',
+        title: 'Please type a valid Email Address',
+        placeholder: 'Confirm New Email Address'
+      })
+
+    }else{
+
+      $('#currentUserDataItem').attr({ 
+        type: 'text',
+        title: 'Please enter your Password',
+        placeholder: 'Current Password'
+      })
+
+      $('#newUserDataItem').attr({ 
+        type: 'text',
+        title: 'Password must be at least 4 characters long. No whitespace allowed',
+        placeholder: 'New Password'
+      })
+
+      $('#confirmNewUserDataItem').attr({ 
+        type: 'text',
+        title: 'Password must be at least 4 characters long. No whitespace allowed',
+        placeholder: 'Confirm New Password'
+      })
+
+    }
+
+    // $(':input').each(function (i) { $(this).attr('tabindex', i + 1); })
+
+    $('#hideNewUserData').addClass('hideClass')
+    $('#hideNewUserData').css( 'display', 'none' )
+
+    $('#nextSubmitNewUserDataItemForm').html('Next')
+
+    $('#newUserDataItemModal').modal({
+      keyboard: false,
+      backdrop: 'static'
+    })
+  },
+
+
+
+  doNewUserDataItemModalXXXX: function(editBtnClicked) {
 
     var editBtnClickedParentElem = $(editBtnClicked).parent()
     var dataID = editBtnClickedParentElem.data('id')
@@ -1008,9 +1153,9 @@ var helper = {
     console.log('doNewUserDataItemModal > labelText +++++++++++++++++: ', labelText)
 
     $('#newUserDataItemModal .modal-title').html('Change your ' + labelText + ':')
-    $('#currentUserDataItemLabel').html('Current ' + labelText + ':')
-    $('#newUserDataItemLabel').html('New ' + labelText + ':')
-    $('#confirmNewUserDataItemLabel').html('Confirm new ' + labelText + ':')
+    $('#currentUserDataItemLabel').html('Please Enter Your Current ' + labelText + ':')
+    $('#newUserDataItemLabel').html('Enter Your New ' + labelText + ':')
+    $('#confirmNewUserDataItemLabel').html('Confirm The New ' + labelText + ':')
 
     if(dataID === 'email'){
 

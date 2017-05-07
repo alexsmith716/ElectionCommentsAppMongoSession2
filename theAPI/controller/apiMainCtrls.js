@@ -7,7 +7,13 @@ var nodemailer = require('nodemailer')
 var passport = require('passport')
 var mongoose = require('mongoose')
 var serverSideValidation = require('../../shared/serverSideValidation.js')
+
 var evaluateUserEmail = require('../../shared/evaluateUserEmail.js')
+
+var evaluateUserEmail2 = require('../../shared/evaluateUserEmail2.js')
+var evaluateUserPassword = require('../../shared/evaluateUserPassword.js')
+var evaluateUserEmailPassword = require('../../shared/evaluateUserEmailPassword.js')
+
 var stateNamer = require('../../shared/stateNamer.js')
 var createError = require('http-errors')
 var auth = require('basic-auth')
@@ -404,6 +410,64 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
     return next(newExceptionError)
   }
 }
+
+
+
+module.exports.ajaxValidateDataService = function (req, res) {
+
+  console.log('####### > ajaxValidateDataService > HERE!!!! 111:', req.body.expectedResponse, req.body.type)
+
+  if (req.body.type === 'email') {
+
+    console.log('####### > ajaxValidateDataService > HERE!!!! 222:', req.body.expectedResponse, req.body.type)
+
+    evaluateUserEmail2(req, res, function (response) {
+
+      if (response.status === 'err') {
+
+        return next(response.message)
+
+      } else {
+
+        sendJSONresponse(res, response.status, { 'response': response.response })
+
+      }
+    })
+
+  } else {
+
+    evaluateUserPassword(req, res, function (response) {
+
+      if (response.status === 'err') {
+
+        return next(response.message)
+
+      } else {
+
+        sendJSONresponse(res, response.status, { 'response': response.response })
+
+      }
+    })
+  }
+}
+
+
+
+
+/*
+module.exports.ajaxValidateDataService = function (req, res) {
+
+  evaluateUserEmailPassword(req.body.type, req.body.data, req.body.expectedResponse, req.body.expectedResponse, function (response) {
+    if (response.status === 'err') {
+      return next(response.message)
+
+    } else {
+      sendJSONresponse(res, response.status, { 'response': response.response })
+
+    }
+  })
+}
+*/
 
 module.exports.ajaxEvaluateUserEmail = function (req, res) {
   evaluateUserEmail(req.body.email, req.body.expectedResponse, function (response) {

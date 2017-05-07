@@ -101,41 +101,45 @@ block content
 
         .modal-body
 
-          form(action="https://localhost:3000/api/newuserdataitem", id="newUserDataItemForm", name="newUserDataItemForm", method="put", enctype="application/x-www-form-urlencoded")
 
+          div(id="hideCurrentUserData")
             div.required-fields
               .form-group
 
                 label.control-label(id="currentUserDataItemLabel", style="margin-top:1px;")
 
-                input.form-control.input-md(id="currentUserDataItem", name="currentUserDataItem", tabindex="1")
+                input.form-control.input-md(id="currentUserDataItem", name="currentUserDataItem")
 
-                span.hide.error(id="currentUserDataItemError") Please fill out this field.
-
-
-            div.required-fields
-              .form-group
-
-                label.control-label(id="newUserDataItemLabel", style="margin-top:6px;")
-
-                input.form-control.input-md(id="newUserDataItem", name="newUserDataItem", tabindex="2")
-
-                span.hide.error(id="newUserDataItemImproper") Email is in improper format
-                span.hide.error(id="newUserDataItemRegistered") This email address is already in our system. Sign in, or enter a new email address
-                span.hide.error(id="newUserDataItemError") Please fill out this field.
+                span.hide.error(id="currentUserDataItemRegistered") Please enter your Current Email Address.
+                span.hide.error(id="currentUserDataItemError") Please fill out this field. Please match the requested format.
 
 
-            div.required-fields
-              .form-group
+          form(action="https://localhost:3000/api/newuserdataitem", id="newUserDataItemForm", name="newUserDataItemForm", method="put", enctype="application/x-www-form-urlencoded")
 
-                label.control-label(id="confirmNewUserDataItemLabel", style="margin-top:6px;")
+            div(id="hideNewUserData")
+              div.required-fields
+                .form-group
 
-                input.form-control.input-md(id="confirmNewUserDataItem", name="confirmNewUserDataItem", tabindex="3")
+                  label.control-label(id="newUserDataItemLabel", style="margin-top:6px;")
 
-                span.hide.error(id="confirmNewUserDataItemImproper") Confirm Email is in improper format
-                span.hide.error(id="confirmNewUserDataItemRegistered") This email address is already in our system. Sign in, or enter a new email address
-                span.hide.error(id="confirmNewUserDataItemMatch")
-                span.hide.error(id="confirmNewUserDataItemError") Please fill out this field.
+                  input.form-control.input-md(id="newUserDataItem", name="newUserDataItem") 
+
+                  span.hide.error(id="newUserDataItemImproper") Email is in improper format
+                  span.hide.error(id="newUserDataItemRegistered") This email address is already in our system. Sign in, or enter a new email address
+                  span.hide.error(id="newUserDataItemError") Please fill out this field.
+
+
+              div.required-fields
+                .form-group
+
+                  label.control-label(id="confirmNewUserDataItemLabel", style="margin-top:6px;")
+
+                  input.form-control.input-md(id="confirmNewUserDataItem", name="confirmNewUserDataItem")
+
+                  span.hide.error(id="confirmNewUserDataItemImproper") Confirm Email is in improper format
+                  span.hide.error(id="confirmNewUserDataItemRegistered") This email address is already in our system. Sign in, or enter a new email address
+                  span.hide.error(id="confirmNewUserDataItemMatch")
+                  span.hide.error(id="confirmNewUserDataItemError") Please fill out this field.
 
 
             div(style="margin-bottom:8px;")
@@ -146,7 +150,8 @@ block content
             div(class="modalCancelSubmitBtns")
               button(class="cancel btn btn-default btn-md", data-dismiss="modal") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
-              button(type="submit", class="submit btn btn-primary btn-md", id="submitNewUserDataItemForm") Submit
+              button(class="btn btn-primary btn-md", id="nextSubmitNewUserDataItemForm")
+
 
         .modal-footer
           .loading(style="display:none;")

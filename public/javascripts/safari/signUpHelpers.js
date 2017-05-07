@@ -78,7 +78,6 @@ var helper = {
 
       console.log('+++++++++++ GOOD FORM !!!!!!!!!!!')
 
-      /*
       data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
       $.ajax({
@@ -120,7 +119,6 @@ var helper = {
           return false
         }
       })
-      */
     })
 
     if (isSafari) {
