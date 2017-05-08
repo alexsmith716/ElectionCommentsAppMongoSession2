@@ -357,10 +357,6 @@ var helper = {
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    //$('#currentUserDataItem').on('change', function (e) {
-      //helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
-    //})
-
     $('#newUserDataItem').on('change', function (e) {
       console.log('newUserDataItem > ON > CHANGE ++++++++++++++++++++++++++')
       helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
@@ -377,7 +373,6 @@ var helper = {
 
     $('#nextSubmitNewUserDataItemForm').on('click', function(e) {
 
-      $('body').off('click')
       e.preventDefault()
       var type = $('body').data('elementID')
       var currentUserDataItemVerified = $('#newUserDataItemForm').data('currentUserDataItemVerified')
@@ -446,10 +441,6 @@ var helper = {
 
       }
 
-    })
-
-    $('#currentUserDataItem').on('focusout', function(e) {
-      $('#newUserDataItemModal').data('activeInputElement', 'currentUserDataItem')
     })
 
     $('#newUserDataItem').on('focusout', function(e) {
