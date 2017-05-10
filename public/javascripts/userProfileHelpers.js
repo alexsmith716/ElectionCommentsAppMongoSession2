@@ -371,14 +371,21 @@ var helper = {
     })
 
 
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
     $('#nextSubmitNewUserDataItemForm').on('click', function(e) {
 
       e.preventDefault()
       var type = $('body').data('elementID')
       var currentUserDataItemVerified = $('#newUserDataItemForm').data('currentUserDataItemVerified')
 
+      console.log('nextSubmitNewUserDataItemForm > currentUserDataItemVerified1: ', currentUserDataItemVerified)
+
       if (currentUserDataItemVerified) {
 
+        // newUserDataItemForm.submit()
+        console.log('nextSubmitNewUserDataItemForm > currentUserDataItemVerified > SUBMIT FORM: ', currentUserDataItemVerified)
 
       } else {
 
@@ -392,6 +399,8 @@ var helper = {
 
 
             if (err) {
+
+              console.log('nextSubmitNewUserDataItemForm > validateDataService > ERR: ', err)
 
               $('#currentUserDataItem').addClass('has-error')
               $('#currentUserDataItemError').removeClass('show').addClass('hide')
@@ -410,11 +419,15 @@ var helper = {
 
               $('#nextSubmitNewUserDataItemForm').html('Submit')
 
+              console.log('nextSubmitNewUserDataItemForm > validateDataService > GOOD: ')
+
 
             }
           })
 
         }else{
+
+          console.log('nextSubmitNewUserDataItemForm > testData > BAD: ', testData)
 
           $('#currentUserDataItem').addClass('has-error')
           $('#currentUserDataItemError').removeClass('hide').addClass('show')
@@ -720,11 +733,11 @@ var helper = {
 
     formConfirmType === 'email' ? comparedFieldTypeEmail = true : null
 
-    console.log('##>>>>>>>>> validateParams > thisField: ', thisField, ' > comparedField: ', comparedField)
-    console.log('##>>>>>>>>> validateParams > formConfirmType: ', formConfirmType)
-    console.log('##>>>>>>>>> validateParams > comparedFieldLowercase: ', comparedFieldLowercase)
-    console.log('##>>>>>>>>> validateParams > comparedFieldIsItConfirm: ', comparedFieldIsItConfirm)
-    console.log('##>>>>>>>>> validateParams > comparedFieldTypeEmail: ', comparedFieldTypeEmail)
+    console.log('## validateParams > thisField: ', thisField, ' > comparedField: ', comparedField)
+    console.log('## validateParams > formConfirmType: ', formConfirmType)
+    console.log('## validateParams > comparedFieldLowercase: ', comparedFieldLowercase)
+    console.log('## validateParams > comparedFieldIsItConfirm: ', comparedFieldIsItConfirm)
+    console.log('## validateParams > comparedFieldTypeEmail: ', comparedFieldTypeEmail)
 
     if (err1 !== undefined) {
       // console.log('## validateParams > err1: ', thisField, ' || ', comparedField, ' || ', err1)
@@ -813,7 +826,6 @@ var helper = {
     }
   },
 
-
   validateDataService: function (type, value, resp, testUser, callback) {
 
     var ms = $('body').data('modalShown')
@@ -828,7 +840,7 @@ var helper = {
     data['testUser'] = testUser
     data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
-    console.log('validateDataService > DATA +++++++++++++++++++: ', data)
+    console.log('validateDataService > DATA: ', data)
 
     $.ajax({
       rejectUnauthorized: false,
@@ -842,8 +854,12 @@ var helper = {
 
       success: function (data, status, xhr) {
         if (data.response === 'success') {
+
+          console.log('validateDataService > SUCCESS: ', data)
           callback(null, true)
         } else {
+
+          console.log('validateDataService > SUCCESS > ERROR: ', data)
           err = new Error('error')
           callback(err, false)
         }
@@ -852,6 +868,8 @@ var helper = {
       },
 
       error: function (xhr, status, error) {
+
+        console.log('validateDataService > ERROR: ', xhr)
         var parsedXHR = JSON.parse(xhr.responseText)
 
         location.href = parsedXHR.redirect
@@ -1054,8 +1072,6 @@ var helper = {
   },
 
 
-
-// nextSubmitNewUserDataItemForm
   doNewUserDataItemModal: function(editBtnClicked) {
 
     var editBtnClickedParentElem = $(editBtnClicked).parent()
@@ -1116,79 +1132,6 @@ var helper = {
 
     }
 
-    // $(':input').each(function (i) { $(this).attr('tabindex', i + 1); })
-
-    $('#hideNewUserData').addClass('hideClass')
-    $('#hideNewUserData').css( 'display', 'none' )
-
-    $('#nextSubmitNewUserDataItemForm').html('Next')
-
-    $('#newUserDataItemModal').modal({
-      keyboard: false,
-      backdrop: 'static'
-    })
-  },
-
-
-
-  doNewUserDataItemModalXXXX: function(editBtnClicked) {
-
-    var editBtnClickedParentElem = $(editBtnClicked).parent()
-    var dataID = editBtnClickedParentElem.data('id')
-    var labelText = helper.makeTitleFromElementID(dataID)
-    dataID === 'email' ? labelText = labelText + ' Address' : null
-    dataID === 'email' ? $('#confirmNewUserDataItemMatch').html('Emails don\'t match') : $('#confirmNewUserDataItemMatch').html('Passwords don\'t match')
-    $('body').data('elementID', dataID)
-
-    console.log('doNewUserDataItemModal > dataID +++++++++++++++++++ : ', dataID)
-    console.log('doNewUserDataItemModal > labelText +++++++++++++++++: ', labelText)
-
-    $('#newUserDataItemModal .modal-title').html('Change your ' + labelText + ':')
-    $('#currentUserDataItemLabel').html('Please Enter Your Current ' + labelText + ':')
-    $('#newUserDataItemLabel').html('Enter Your New ' + labelText + ':')
-    $('#confirmNewUserDataItemLabel').html('Confirm The New ' + labelText + ':')
-
-    if(dataID === 'email'){
-
-      $('#currentUserDataItem').attr({
-        type: 'text',
-        title: 'Please enter a valid Email Address',
-        placeholder: 'Current Email Address'
-      })
-
-      $('#newUserDataItem').attr({
-        type: 'text',
-        title: 'Please type a valid Email Address',
-        placeholder: 'New Email Address'
-      })
-
-      $('#confirmNewUserDataItem').attr({
-        type: 'text',
-        title: 'Please type a valid Email Address',
-        placeholder: 'Confirm New Email Address'
-      })
-
-    }else{
-
-      $('#currentUserDataItem').attr({ 
-        type: 'text',
-        title: 'Please enter your Password',
-        placeholder: 'Current Password'
-      })
-
-      $('#newUserDataItem').attr({ 
-        type: 'text',
-        title: 'Password must be at least 4 characters long. No whitespace allowed',
-        placeholder: 'New Password'
-      })
-
-      $('#confirmNewUserDataItem').attr({ 
-        type: 'text',
-        title: 'Password must be at least 4 characters long. No whitespace allowed',
-        placeholder: 'Confirm New Password'
-      })
-
-    }
     /*
     if(dataID === 'email'){
 
@@ -1237,13 +1180,19 @@ var helper = {
     }
     */
 
-    $(':input').each(function (i) { $(this).attr('tabindex', i + 1); })
+    // $(':input').each(function (i) { $(this).attr('tabindex', i + 1); })
+
+    $('#hideNewUserData').addClass('hideClass')
+    $('#hideNewUserData').css( 'display', 'none' )
+
+    $('#nextSubmitNewUserDataItemForm').html('Next')
 
     $('#newUserDataItemModal').modal({
       keyboard: false,
       backdrop: 'static'
     })
   },
+
 
   handleErrorResponse: function(data) {
 

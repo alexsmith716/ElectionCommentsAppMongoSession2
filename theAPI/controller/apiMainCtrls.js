@@ -415,20 +415,24 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
 module.exports.ajaxValidateDataService = function (req, res) {
 
-  console.log('####### > ajaxValidateDataService > HERE!!!! 111:', req.body.expectedResponse, req.body.type)
+  console.log('## ajaxValidateDataService > type:', req.body.type)
+  console.log('## ajaxValidateDataService > data:', req.body.data)
+  console.log('## ajaxValidateDataService > expectedResponse:', req.body.expectedResponse)
+  console.log('## ajaxValidateDataService > testUser:', req.body.testUser)
 
   if (req.body.type === 'email') {
-
-    console.log('####### > ajaxValidateDataService > HERE!!!! 222:', req.body.expectedResponse, req.body.type)
 
     evaluateUserEmail2(req, res, function (response) {
 
       if (response.status === 'err') {
 
+        console.log('## > ajaxValidateDataService > evaluateUserEmail2 > ERR')
+
         return next(response.message)
 
       } else {
 
+        console.log('## > ajaxValidateDataService > evaluateUserEmail2 > Good > Going Back To Client: ', response.response)
         sendJSONresponse(res, response.status, { 'response': response.response })
 
       }
