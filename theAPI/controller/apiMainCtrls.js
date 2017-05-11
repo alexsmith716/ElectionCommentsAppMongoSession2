@@ -437,10 +437,13 @@ module.exports.ajaxValidateDataService = function (req, res) {
 
       }
     })
-
-  } else {
+  }
+  
+  if (req.body.type === 'password') {
 
     evaluateUserPassword(req, res, function (response) {
+
+      console.log('## > ajaxValidateDataService > evaluateUserPassword ++++++++++++ ')
 
       if (response.status === 'err') {
 

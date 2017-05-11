@@ -93,6 +93,7 @@ var helper = {
 
       $('body').removeData('modalShown')
       $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
+      $('#newUserDataItemForm').removeData('currentUserEmailVerified')
       $('#currentUserDataItem').off('focusout')
       $('#newUserDataItem').off('focusout')
       $('#confirmNewUserDataItem').off('focusout')
@@ -374,128 +375,156 @@ var helper = {
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
+
+
+
     $('#nextSubmitNewUserDataItemForm').on('click', function(e) {
 
       e.preventDefault()
       var type = $('body').data('elementID')
       var currentUserDataItemVerified = $('#newUserDataItemForm').data('currentUserDataItemVerified')
+      var currentUserEmailVerified = $('#newUserDataItemForm').data('currentUserEmailVerified')
+
+      var data = $('#currentUserDataItem').val()
+      var testData = helper.pattern.basictext.test(data)
 
       console.log('nextSubmitNewUserDataItemForm > type/elementID: ', type)
       console.log('nextSubmitNewUserDataItemForm > currentUserDataItemVerified1: ', currentUserDataItemVerified)
 
       if (currentUserDataItemVerified) {
 
+        console.log('### nextSubmitNewUserDataItemForm > SUBMIT THE FORM ++++++')
+        e.preventDefault()
+        // SUBMIT THE FORM ++++++++++++++++++++++++++++++++++++
         // newUserDataItemForm.submit()
-        console.log('nextSubmitNewUserDataItemForm > currentUserDataItemVerified > SUBMIT FORM: ', currentUserDataItemVerified)
 
       } else {
 
-        var data = $('#currentUserDataItem').val()
-        var testData = helper.pattern.basictext.test(data)
+        if (testData) {
 
-        if(testData){
+          if (currentUserEmailVerified !== true) {
 
-          helper.validateDataService('email', data, 'true', 'true', function (err, response) {
+            helper.validateDataService('email', data, 'true', 'true', function (err, response) {
 
-            if (err) {
+              if (err) {
 
-              console.log('nextSubmitNewUserDataItemForm > validateDataService > ERR: ', err)
+                $('#currentUserDataItem').addClass('has-error')
+                $('#currentUserDataItemError').removeClass('show').addClass('hide')
+                $('#currentUserDataItemRegistered').removeClass('hide').addClass('show')
 
-              $('#currentUserDataItem').addClass('has-error')
-              $('#currentUserDataItemError').removeClass('show').addClass('hide')
-              $('#currentUserDataItemRegistered').removeClass('hide').addClass('show')
+              } else {
 
-            } else {
+                $('#currentUserDataItemError').removeClass('show').addClass('hide')
+                $('#currentUserDataItemRegistered').removeClass('show').addClass('hide')
+                $('#currentUserDataItem').removeClass('has-error')
 
-              console.log('nextSubmitNewUserDataItemForm > validateDataService > GOOD 1 > ', type)
+                if(type === 'email'){
 
-              $('#currentUserDataItemError').removeClass('show').addClass('hide')
-              $('#currentUserDataItemRegistered').removeClass('show').addClass('hide')
-              $('#currentUserDataItem').removeClass('has-error')
+                  $('#newUserDataItemForm').data('currentUserDataItemVerified', true)
+                  $('#newUserDataItemForm').data('currentUserEmailVerified', true)
 
-              if(type === 'email'){
+                  $('#hideCurrentUserData').addClass('hideClass')
+                  $('#hideCurrentUserData').css( 'display', 'none' )
 
-                console.log('nextSubmitNewUserDataItemForm > validateDataService1 > GOOD 2a > ', type)
+                  $('#hideNewUserData').removeClass('hideClass')
+                  $('#hideNewUserData').css( 'display', '' )
 
-                $('#newUserDataItemForm').data('currentUserDataItemVerified', true)
+                  $('#nextSubmitNewUserDataItemForm').html('Submit')
+                }
 
-                $('#hideCurrentUserData').addClass('hideClass')
-                $('#hideCurrentUserData').css( 'display', 'none' )
+                if(type === 'password'){
 
-                $('#hideNewUserData').removeClass('hideClass')
-                $('#hideNewUserData').css( 'display', '' )
+                  $('#newUserDataItemForm').data('currentUserEmailVerified', true)
+                  $('#currentUserDataItemLabel').html('Please Enter Your Current Password:')
+                  $('#currentUserDataItem').val('')
 
-                $('#nextSubmitNewUserDataItemForm').html('Submit')
+                  /*
+                  $('#currentUserDataItem').attr({ 
+                      type: 'password',
+                      pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
+                      title: 'Please enter your Password',
+                      placeholder: 'Current Password'
+                  })
+                  */
+                }
               }
+            })
 
-              if(type === 'password'){
+          } else {
 
-                console.log('nextSubmitNewUserDataItemForm > validateDataService1 > GOOD 2b > ', type)
-                $('#currentUserDataItemLabel').html('Please Enter Your Current Password:')
-                $('#currentUserDataItem').val('')
+            if (type === 'password') {
 
-                $('#currentUserDataItem').attr({ 
-                  type: 'text',
-                  title: 'Please enter your Password',
-                  placeholder: 'Current Password'
-                })
+              helper.validateDataService(type, data, 'true', 'true', function (err, response) {
 
-                $('#newUserDataItem').attr({ 
-                  type: 'text',
-                  title: 'Password must be at least 4 characters long. No whitespace allowed',
-                  placeholder: 'New Password'
-                })
+                if (err) {
 
-                $('#confirmNewUserDataItem').attr({ 
-                  type: 'text',
-                  title: 'Password must be at least 4 characters long. No whitespace allowed',
-                  placeholder: 'Confirm New Password'
-                })
-                /*
-                $('#currentUserDataItem').attr({ 
-                    type: 'password',
-                    pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
-                    title: 'Please enter your Password',
-                    placeholder: 'Current Password'
-                })
+                  $('#currentUserDataItem').addClass('has-error')
+                  $('#currentUserDataItemError').removeClass('show').addClass('hide')
+                  $('#currentUserDataItemRegistered').removeClass('hide').addClass('show')
 
-                $('#newUserDataItem').attr({ 
-                    type: 'password',
-                    pattern: '[\\S]{4,}',
-                    title: 'Password must be at least 4 characters long. No whitespace allowed',
-                    placeholder: 'New Password'
-                })
+                } else {
 
-                $('#confirmNewUserDataItem').attr({ 
-                    type: 'password',
-                    pattern: '[\\S]{4,}',
-                    title: 'Password must be at least 4 characters long. No whitespace allowed',
-                    placeholder: 'Confirm New Password'
-                })
-                */
+                  $('#currentUserDataItemError').removeClass('show').addClass('hide')
+                  $('#currentUserDataItemRegistered').removeClass('show').addClass('hide')
+                  $('#currentUserDataItem').removeClass('has-error')
 
-              }
+                  $('#newUserDataItemForm').data('currentUserDataItemVerified', true)
+                  $('#newUserDataItemForm').data('currentUserEmailVerified', true)
 
-            
+                  $('#hideCurrentUserData').addClass('hideClass')
+                  $('#hideCurrentUserData').css( 'display', 'none' )
+
+                  $('#hideNewUserData').removeClass('hideClass')
+                  $('#hideNewUserData').css( 'display', '' )
+
+                  $('#currentUserDataItem').attr({ 
+                      type: 'password',
+                      pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
+                      title: 'Please enter your Password',
+                      placeholder: 'Current Password'
+                  })
+                  
+                  $('#newUserDataItem').attr({ 
+                      type: 'password',
+                      pattern: '[\\S]{4,}',
+                      title: 'Password must be at least 4 characters long. No whitespace allowed',
+                      placeholder: 'New Password'
+                  })
+                  
+                  $('#confirmNewUserDataItem').attr({ 
+                      type: 'password',
+                      pattern: '[\\S]{4,}',
+                      title: 'Password must be at least 4 characters long. No whitespace allowed',
+                      placeholder: 'Confirm New Password'
+                  })
+               
+
+                  $('#nextSubmitNewUserDataItemForm').html('Submit')
+
+                }
+
+              })
+
             }
-          })
 
-        }else{
+          }
+
+        } else {
 
           console.log('nextSubmitNewUserDataItemForm > testData > BAD: ', testData)
-
           $('#currentUserDataItem').addClass('has-error')
           $('#currentUserDataItemError').removeClass('hide').addClass('show')
 
         }
       }
 
+
     })
+
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   },
-
 
   handleSpecificEvents: function(){
 
@@ -886,6 +915,8 @@ var helper = {
 
   validateDataService: function (type, value, resp, testUser, callback) {
 
+    console.log('validateDataService > type/value +++++++++: ', type , ' :: ', value)
+
     var ms = $('body').data('modalShown')
     ms ? $(ms + ' .loading').show() : helper.showLoading()
 
@@ -1140,6 +1171,7 @@ var helper = {
     dataID === 'email' ? $('#confirmNewUserDataItemMatch').html('Emails don\'t match') : $('#confirmNewUserDataItemMatch').html('Passwords don\'t match')
     $('body').data('elementID', dataID)
     $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
+    $('#newUserDataItemForm').removeData('currentUserEmailVerified')
 
     console.log('doNewUserDataItemModal > dataID +++++++++++++++++++ : ', dataID)
     console.log('doNewUserDataItemModal > labelText +++++++++++++++++: ', labelText)
