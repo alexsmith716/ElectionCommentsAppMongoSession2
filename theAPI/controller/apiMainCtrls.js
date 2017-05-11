@@ -444,9 +444,13 @@ module.exports.ajaxValidateDataService = function (req, res) {
 
       if (response.status === 'err') {
 
+        console.log('## > ajaxValidateDataService > evaluateUserPassword > ERR')
+
         return next(response.message)
 
       } else {
+
+        console.log('## > ajaxValidateDataService > evaluateUserPassword > Good > Going Back To Client: ', response.response)
 
         sendJSONresponse(res, response.status, { 'response': response.response })
 

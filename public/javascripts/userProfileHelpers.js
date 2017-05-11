@@ -380,6 +380,7 @@ var helper = {
       var type = $('body').data('elementID')
       var currentUserDataItemVerified = $('#newUserDataItemForm').data('currentUserDataItemVerified')
 
+      console.log('nextSubmitNewUserDataItemForm > type/elementID: ', type)
       console.log('nextSubmitNewUserDataItemForm > currentUserDataItemVerified1: ', currentUserDataItemVerified)
 
       if (currentUserDataItemVerified) {
@@ -392,11 +393,9 @@ var helper = {
         var data = $('#currentUserDataItem').val()
         var testData = helper.pattern.basictext.test(data)
 
-
         if(testData){
 
-          helper.validateDataService(type, data, 'true', 'true', function (err, response) {
-
+          helper.validateDataService('email', data, 'true', 'true', function (err, response) {
 
             if (err) {
 
@@ -408,20 +407,76 @@ var helper = {
 
             } else {
 
+              console.log('nextSubmitNewUserDataItemForm > validateDataService > GOOD 1 > ', type)
+
+              $('#currentUserDataItemError').removeClass('show').addClass('hide')
               $('#currentUserDataItemRegistered').removeClass('show').addClass('hide')
-              $('#newUserDataItemForm').data('currentUserDataItemVerified', true)
+              $('#currentUserDataItem').removeClass('has-error')
 
-              $('#hideCurrentUserData').addClass('hideClass')
-              $('#hideCurrentUserData').css( 'display', 'none' )
+              if(type === 'email'){
 
-              $('#hideNewUserData').removeClass('hideClass')
-              $('#hideNewUserData').css( 'display', '' )
+                console.log('nextSubmitNewUserDataItemForm > validateDataService1 > GOOD 2a > ', type)
 
-              $('#nextSubmitNewUserDataItemForm').html('Submit')
+                $('#newUserDataItemForm').data('currentUserDataItemVerified', true)
 
-              console.log('nextSubmitNewUserDataItemForm > validateDataService > GOOD: ')
+                $('#hideCurrentUserData').addClass('hideClass')
+                $('#hideCurrentUserData').css( 'display', 'none' )
 
+                $('#hideNewUserData').removeClass('hideClass')
+                $('#hideNewUserData').css( 'display', '' )
 
+                $('#nextSubmitNewUserDataItemForm').html('Submit')
+              }
+
+              if(type === 'password'){
+
+                console.log('nextSubmitNewUserDataItemForm > validateDataService1 > GOOD 2b > ', type)
+                $('#currentUserDataItemLabel').html('Please Enter Your Current Password:')
+                $('#currentUserDataItem').val('')
+
+                $('#currentUserDataItem').attr({ 
+                  type: 'text',
+                  title: 'Please enter your Password',
+                  placeholder: 'Current Password'
+                })
+
+                $('#newUserDataItem').attr({ 
+                  type: 'text',
+                  title: 'Password must be at least 4 characters long. No whitespace allowed',
+                  placeholder: 'New Password'
+                })
+
+                $('#confirmNewUserDataItem').attr({ 
+                  type: 'text',
+                  title: 'Password must be at least 4 characters long. No whitespace allowed',
+                  placeholder: 'Confirm New Password'
+                })
+                /*
+                $('#currentUserDataItem').attr({ 
+                    type: 'password',
+                    pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
+                    title: 'Please enter your Password',
+                    placeholder: 'Current Password'
+                })
+
+                $('#newUserDataItem').attr({ 
+                    type: 'password',
+                    pattern: '[\\S]{4,}',
+                    title: 'Password must be at least 4 characters long. No whitespace allowed',
+                    placeholder: 'New Password'
+                })
+
+                $('#confirmNewUserDataItem').attr({ 
+                    type: 'password',
+                    pattern: '[\\S]{4,}',
+                    title: 'Password must be at least 4 characters long. No whitespace allowed',
+                    placeholder: 'Confirm New Password'
+                })
+                */
+
+              }
+
+            
             }
           })
 
@@ -434,7 +489,10 @@ var helper = {
 
         }
       }
+
     })
+
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   },
 
@@ -1072,6 +1130,7 @@ var helper = {
   },
 
 
+
   doNewUserDataItemModal: function(editBtnClicked) {
 
     var editBtnClickedParentElem = $(editBtnClicked).parent()
@@ -1086,101 +1145,51 @@ var helper = {
     console.log('doNewUserDataItemModal > labelText +++++++++++++++++: ', labelText)
 
     $('#newUserDataItemModal .modal-title').html('Change your ' + labelText + ':')
-    $('#currentUserDataItemLabel').html('Please Enter Your Current ' + labelText + ':')
+
+    // $('#currentUserDataItemLabel').html('Please Enter Your Current ' + labelText + ':')
+
+    $('#currentUserDataItemLabel').html('Please Enter Your Current Email Address:')
     $('#newUserDataItemLabel').html('Enter Your New ' + labelText + ':')
     $('#confirmNewUserDataItemLabel').html('Confirm The New ' + labelText + ':')
 
-    if(dataID === 'email'){
 
-      $('#currentUserDataItem').attr({
+    $('#currentUserDataItem').attr({
+      type: 'text',
+      title: 'Please enter a valid Email Address',
+      placeholder: 'Current Email Address'
+    })
+    
+    $('#newUserDataItem').attr({
+      type: 'text',
+      title: 'Please type a valid Email Address',
+      placeholder: 'New Email Address'
+    })
+    
+    $('#confirmNewUserDataItem').attr({
+      type: 'text',
+      title: 'Please type a valid Email Address',
+      placeholder: 'Confirm New Email Address'
+    })
+    /*
+    $('#currentUserDataItem').attr({
         type: 'text',
+        pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
         title: 'Please enter a valid Email Address',
         placeholder: 'Current Email Address'
-      })
+    })
 
-      $('#newUserDataItem').attr({
-        type: 'text',
+    $('#newUserDataItem').attr({
+        type: 'email',
         title: 'Please type a valid Email Address',
         placeholder: 'New Email Address'
-      })
-
-      $('#confirmNewUserDataItem').attr({
-        type: 'text',
+    })
+    
+    $('#confirmNewUserDataItem').attr({
+        type: 'email',
         title: 'Please type a valid Email Address',
         placeholder: 'Confirm New Email Address'
-      })
-
-    }else{
-
-      $('#currentUserDataItem').attr({ 
-        type: 'text',
-        title: 'Please enter your Password',
-        placeholder: 'Current Password'
-      })
-
-      $('#newUserDataItem').attr({ 
-        type: 'text',
-        title: 'Password must be at least 4 characters long. No whitespace allowed',
-        placeholder: 'New Password'
-      })
-
-      $('#confirmNewUserDataItem').attr({ 
-        type: 'text',
-        title: 'Password must be at least 4 characters long. No whitespace allowed',
-        placeholder: 'Confirm New Password'
-      })
-
-    }
-
-    /*
-    if(dataID === 'email'){
-
-        $('#currentUserDataItem').attr({
-            type: 'text',
-            pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
-            title: 'Please enter a valid Email Address',
-            placeholder: 'Current Email Address'
-        })
-
-        $('#newUserDataItem').attr({
-            type: 'email',
-            title: 'Please type a valid Email Address',
-            placeholder: 'New Email Address'
-        })
-        
-        $('#confirmNewUserDataItem').attr({
-            type: 'email',
-            title: 'Please type a valid Email Address',
-            placeholder: 'Confirm New Email Address'
-        })
-
-    }else{
-
-        $('#currentUserDataItem').attr({ 
-            type: 'password',
-            pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
-            title: 'Please enter your Password',
-            placeholder: 'Current Password'
-        })
-
-        $('#newUserDataItem').attr({ 
-            type: 'password',
-            pattern: '[\\S]{4,}',
-            title: 'Password must be at least 4 characters long. No whitespace allowed',
-            placeholder: 'New Password'
-        })
-        
-        $('#confirmNewUserDataItem').attr({ 
-            type: 'password',
-            pattern: '[\\S]{4,}',
-            title: 'Password must be at least 4 characters long. No whitespace allowed',
-            placeholder: 'Confirm New Password'
-        })
-
-    }
+    })
     */
-
-    // $(':input').each(function (i) { $(this).attr('tabindex', i + 1); })
 
     $('#hideNewUserData').addClass('hideClass')
     $('#hideNewUserData').css( 'display', 'none' )
