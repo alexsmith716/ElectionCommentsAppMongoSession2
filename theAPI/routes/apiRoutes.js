@@ -18,7 +18,7 @@ router.post('/forgotpassword', csrfProtection, apiControllers.ajaxForgotPassword
 router.put('/evaluateuserprofile', csrfProtection, apiControllers.ajaxEvaluateUserProfile)
 router.put('/newuserdataitem', csrfProtection, apiControllers.ajaxNewUserDataItem)
 
-router.post('/validatedataservice', csrfProtection, apiControllers.ajaxValidateDataService)
+router.post('/validatedataservice', csrfProtection, auth.ensureAuthenticated, apiControllers.ajaxValidateDataService)
 
 router.post('/evaluateuseremail', csrfProtection, apiControllers.ajaxEvaluateUserEmail)
 

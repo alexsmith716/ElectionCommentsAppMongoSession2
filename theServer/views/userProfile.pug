@@ -52,6 +52,9 @@ block content
 
           form(action="https://localhost:3000/api/evaluateuserprofile", id="editProfileForm", name="editProfileForm", method="put", enctype="application/x-www-form-urlencoded")
 
+            .modalAlertWarning(style="display:none; margin-top: 0px; margin-bottom: 0px;")
+              .alert.alert-danger An Error occurred processing your request, please try again.
+
             div
               .form-group
 
@@ -101,6 +104,8 @@ block content
 
         .modal-body
 
+          .modalAlertWarning(style="display:none; margin-top: 0px; margin-bottom: 0px;")
+            .alert.alert-danger An Error occurred processing your request, please try again.
 
           div(id="hideCurrentUserData")
             div.required-fields

@@ -441,24 +441,43 @@ module.exports.ajaxValidateDataService = function (req, res) {
   
   if (req.body.type === 'password') {
 
-    evaluateUserPassword(req, res, function (response) {
+    var nd = new Date()
+    var millis = nd.getTime() - req.session.userValidatedEmail
+    var nds = new Date(millis)
+    req.session.userValidatedEmail
 
-      console.log('## > ajaxValidateDataService > evaluateUserPassword ++++++++++++ ')
+    console.log('#################################################2: ', nd.getTime())
+    console.log('#################################################3: ', millis)
+    console.log('#################################################4: ', nds.getMinutes())
 
-      if (response.status === 'err') {
+    if(nds.getMinutes() > 3){
 
-        console.log('## > ajaxValidateDataService > evaluateUserPassword > ERR')
+    // limit time for 
+    sendJSONresponse(res, 201, { 'response': 'error' })
 
-        return next(response.message)
 
-      } else {
+    }else{
 
-        console.log('## > ajaxValidateDataService > evaluateUserPassword > Good > Going Back To Client: ', response.response)
+      evaluateUserPassword(req, res, function (response) {
 
-        sendJSONresponse(res, response.status, { 'response': response.response })
+        console.log('## > ajaxValidateDataService > evaluateUserPassword ++++++++++++ ')
 
-      }
-    })
+        if (response.status === 'err') {
+
+          console.log('## > ajaxValidateDataService > evaluateUserPassword > ERR')
+
+          return next(response.message)
+
+        } else {
+
+          console.log('## > ajaxValidateDataService > evaluateUserPassword > Good > Going Back To Client: ', response.response)
+
+          sendJSONresponse(res, response.status, { 'response': response.response })
+
+        }
+      })
+    }
+
   }
 }
 
