@@ -42,6 +42,12 @@ module.exports = function (req, res, callback) {
 
             if (user.email === res.locals.currentUser.email) {
 
+              var nd = new Date()
+              nd = nd.getTime()
+              req.session.userValidatedEmail = nd
+
+              console.log('## evaluateUserEmail2 > User.findOne > req.session.userValidatedEmail 1:', req.session.userValidatedEmail)
+
               callback({status: 201, response: 'success'})
 
             } else {
@@ -55,12 +61,8 @@ module.exports = function (req, res, callback) {
             callback({status: 201, response: 'success'})
 
           }
-
         }
-
       }
-
     }
-
   })
 }

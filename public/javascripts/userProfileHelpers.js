@@ -92,6 +92,7 @@ var helper = {
       console.log('##### newUserDataItemModal > ON hidden.bs.modal +++++++++')
 
       $('body').removeData('modalShown')
+      $('#newUserDataItemModal .modalAlertWarning').hide();
       $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
       $('#newUserDataItemForm').removeData('currentUserEmailVerified')
       $('#currentUserDataItem').off('focusout')
@@ -438,12 +439,17 @@ var helper = {
                   $('#currentUserDataItemLabel').html('Please Enter Your Current Password:')
                   $('#currentUserDataItem').val('')
 
+                  $('#currentUserDataItem').attr({ 
+                    type: 'text',
+                    title: 'Please enter your Password',
+                    placeholder: 'Current Password'
+                  })
                   /*
                   $('#currentUserDataItem').attr({ 
-                      type: 'password',
-                      pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
-                      title: 'Please enter your Password',
-                      placeholder: 'Current Password'
+                    type: 'password',
+                    pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
+                    title: 'Please enter your Password',
+                    placeholder: 'Current Password'
                   })
                   */
                 }
