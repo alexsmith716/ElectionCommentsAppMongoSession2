@@ -441,11 +441,12 @@ module.exports.ajaxValidateDataService = function (req, res) {
     var nd = new Date()
     var millis = nd.getTime() - req.session.userValidatedEmail.time
     var nds = new Date(millis)
-
     var foo = 'foo'
 
-    // if(nds.getMinutes() > 1){
-    if(foo === 'foo'){
+    console.log('## ajaxValidateDataService > nds.getMinutes():', nds.getMinutes())
+
+    if(nds.getMinutes() > 1){
+    // if(foo === 'foo'){
 
       var u =  req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
 

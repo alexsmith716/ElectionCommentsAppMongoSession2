@@ -372,6 +372,8 @@ var helper = {
       var type = $('body').data('elementID')
       var currentUserDataItemVerified = $('#newUserDataItemForm').data('currentUserDataItemVerified')
       var currentUserEmailVerified = $('#newUserDataItemForm').data('currentUserEmailVerified')
+      $('#newUserDataItemModal .modalAlertWarning .alert').html('');
+      $('#newUserDataItemModal .modalAlertWarning').hide();
 
       var data = $('#currentUserDataItem').val()
       var testData = helper.pattern.basictext.test(data)
@@ -392,7 +394,7 @@ var helper = {
 
           if (currentUserEmailVerified !== true) {
 
-            helper.validateDataService('email', data, 'true', 'true', function (err, response) {
+            helper.validateDataService(data, 'email', 'true', 'true', function (err, response) {
 
               if (err) {
 
@@ -448,7 +450,7 @@ var helper = {
 
             if (type === 'password') {
 
-              helper.validateDataService(type, data, 'true', 'true', function (err, response) {
+              helper.validateDataService(data, type, 'true', 'true', function (err, response) {
 
                 if (err) {
 
@@ -468,8 +470,6 @@ var helper = {
                       title: 'Please enter a valid Email Address',
                       placeholder: 'Current Email Address'
                     })
-
-                    $('#currentUserDataItem').focus()
 
                   }else{
 
@@ -540,7 +540,7 @@ var helper = {
   },
 
 
-    validateDataService: function (type, value, resp, testUser, callback) {
+    validateDataService: function (value, type, resp, testUser, callback) {
 
     console.log('validateDataService > type/value +++++++++: ', type , ' :: ', value)
 
@@ -1007,7 +1007,7 @@ var helper = {
 
       if (isEmailValid) {
 
-        helper.validateDataService('email', elementVal, 'false', 'false', function (err, response) {
+        helper.validateDataService(elementVal, 'email', 'false', 'false', function (err, response) {
 
           if (err) {
 
