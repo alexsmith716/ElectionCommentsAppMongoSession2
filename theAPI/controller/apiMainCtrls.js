@@ -426,51 +426,41 @@ module.exports.ajaxValidateDataService = function (req, res) {
 
       if (response.status === 'err') {
 
-        console.log('## > ajaxValidateDataService > evaluateUserEmail2 > ERR')
-
         return next(response.message)
 
       } else {
 
-        console.log('## > ajaxValidateDataService > evaluateUserEmail2 > Good > Going Back To Client: ', response.response)
         sendJSONresponse(res, response.status, { 'response': response.response })
 
       }
     })
   }
-  
-  if (req.body.type === 'password') {
+
+  if (req.body.type === 'password' && req.session.userValidatedEmail.validated) {
 
     var nd = new Date()
-    var millis = nd.getTime() - req.session.userValidatedEmail
+    var millis = nd.getTime() - req.session.userValidatedEmail.time
     var nds = new Date(millis)
-    req.session.userValidatedEmail
 
-    console.log('#################################################2: ', nd.getTime())
-    console.log('#################################################3: ', millis)
-    console.log('#################################################4: ', nds.getMinutes())
+    var foo = 'foo'
 
-    if(nds.getMinutes() > 3){
+    // if(nds.getMinutes() > 1){
+    if(foo === 'foo'){
 
-    // limit time for 
-    sendJSONresponse(res, 201, { 'response': 'error' })
+      var u =  req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
+
+      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 
 
     }else{
 
       evaluateUserPassword(req, res, function (response) {
 
-        console.log('## > ajaxValidateDataService > evaluateUserPassword ++++++++++++ ')
-
         if (response.status === 'err') {
-
-          console.log('## > ajaxValidateDataService > evaluateUserPassword > ERR')
 
           return next(response.message)
 
         } else {
-
-          console.log('## > ajaxValidateDataService > evaluateUserPassword > Good > Going Back To Client: ', response.response)
 
           sendJSONresponse(res, response.status, { 'response': response.response })
 
@@ -482,22 +472,6 @@ module.exports.ajaxValidateDataService = function (req, res) {
 }
 
 
-
-
-/*
-module.exports.ajaxValidateDataService = function (req, res) {
-
-  evaluateUserEmailPassword(req.body.type, req.body.data, req.body.expectedResponse, req.body.expectedResponse, function (response) {
-    if (response.status === 'err') {
-      return next(response.message)
-
-    } else {
-      sendJSONresponse(res, response.status, { 'response': response.response })
-
-    }
-  })
-}
-*/
 
 module.exports.ajaxEvaluateUserEmail = function (req, res) {
   evaluateUserEmail(req.body.email, req.body.expectedResponse, function (response) {

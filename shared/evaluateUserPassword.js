@@ -12,22 +12,18 @@ module.exports = function (req, res, callback) {
 
   res.locals.currentUser.checkPassword(req.body.data, function(err, result) {
 
-  console.log('## evaluateUserPassword > checkPassword 1 +++++++')
 
     if (err) {
 
-      console.log('## evaluateUserPassword > checkPassword 2 +++++++')
       callback({status: 'err', response: 'error', message: err})
     }
 
     if (!result) {
 
-      console.log('## evaluateUserPassword > checkPassword 3 +++++++')
       callback({status: 201, response: 'error'})
 
     } else {
 
-      console.log('## evaluateUserPassword > checkPassword 4 +++++++')
       callback({status: 201, response: 'success'})
 
     }
