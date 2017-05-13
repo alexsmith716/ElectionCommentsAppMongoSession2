@@ -239,13 +239,6 @@ var helper = {
       console.log('#newUserDataItemForm > SUBMIT 3+++', $('#newUserDataItem').val())
       console.log('#newUserDataItemForm > SUBMIT 4+++', $('#confirmNewUserDataItem').val())
 
-      // required & regex pattern will handle client validation for currentUserDataItem  ( pattern="\\s*(?=\\s*\\S)(.{1,35})\\s*" )
-      // ++++++++++++++++++++++++++++++++++++++++++
-      // EMAIL: required, type = email & script will handle client validation for newUserDataItem
-      // EMAIL: required, type = email & script will handle client validation for confirmNewUserDataItem
-      // ++++++++++++++++++++++++++++++++++++++++++
-      // PASSWORD: required, regex pattern & script will handle client validation for newUserDataItem     ( pattern="[\\S]{4,}" )
-      // PASSWORD: required, regex pattern & script will handle client validation for confirmNewUserDataItem ( pattern="[\\S]{4,}" )
 
       e.preventDefault()
       $('.loading').show()
@@ -330,9 +323,6 @@ var helper = {
     })
 
 
-
-
-
     $('#personalInfoToggle').click(function(){
       helper.toggleEditBtn('personalInfo', true);
     })
@@ -360,7 +350,6 @@ var helper = {
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     $('#newUserDataItem').on('change', function (e) {
-      console.log('newUserDataItem > ON > CHANGE ++++++++++++++++++++++++++')
       helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
     })
 
@@ -373,10 +362,8 @@ var helper = {
     })
 
 
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
     $('#nextSubmitNewUserDataItemForm').on('click', function(e) {
@@ -440,10 +427,11 @@ var helper = {
                   $('#currentUserDataItem').val('')
 
                   $('#currentUserDataItem').attr({ 
-                    type: 'text',
+                    type: 'password',
                     title: 'Please enter your Password',
                     placeholder: 'Current Password'
                   })
+
                   /*
                   $('#currentUserDataItem').attr({ 
                     type: 'password',
@@ -464,9 +452,31 @@ var helper = {
 
                 if (err) {
 
-                  $('#currentUserDataItem').addClass('has-error')
-                  $('#currentUserDataItemError').removeClass('show').addClass('hide')
-                  $('#currentUserDataItemRegistered').removeClass('hide').addClass('show')
+                  if(err.alertDanger){
+
+                    e.preventDefault()
+                    var a = err.alertDanger
+                    $('#currentUserDataItem').val('')
+                    $('#newUserDataItemForm').removeData('currentUserEmailVerified')
+                    $('#newUserDataItemModal .modalAlertWarning .alert').html(err.alertDanger);
+                    $('#newUserDataItemModal .modalAlertWarning').show();
+
+                    $('#currentUserDataItemLabel').html('Please Enter Your Current Email Address:')
+
+                    $('#currentUserDataItem').attr({
+                      type: 'text',
+                      title: 'Please enter a valid Email Address',
+                      placeholder: 'Current Email Address'
+                    })
+
+                    $('#currentUserDataItem').focus()
+
+                  }else{
+
+                    $('#currentUserDataItem').addClass('has-error')
+                    $('#currentUserDataItemError').removeClass('show').addClass('hide')
+                    $('#currentUserDataItemRegistered').removeClass('hide').addClass('show')
+                  }
 
                 } else {
 
@@ -489,21 +499,21 @@ var helper = {
                       title: 'Please enter your Password',
                       placeholder: 'Current Password'
                   })
-                  
+
                   $('#newUserDataItem').attr({ 
                       type: 'password',
                       pattern: '[\\S]{4,}',
                       title: 'Password must be at least 4 characters long. No whitespace allowed',
                       placeholder: 'New Password'
                   })
-                  
+
                   $('#confirmNewUserDataItem').attr({ 
                       type: 'password',
                       pattern: '[\\S]{4,}',
                       title: 'Password must be at least 4 characters long. No whitespace allowed',
                       placeholder: 'Confirm New Password'
                   })
-               
+
 
                   $('#nextSubmitNewUserDataItemForm').html('Submit')
 
@@ -524,13 +534,72 @@ var helper = {
         }
       }
 
-
     })
 
 
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
   },
+
+
+    validateDataService: function (type, value, resp, testUser, callback) {
+
+    console.log('validateDataService > type/value +++++++++: ', type , ' :: ', value)
+
+    var ms = $('body').data('modalShown')
+    ms ? $(ms + ' .loading').show() : helper.showLoading()
+
+    var err
+    var data = {}
+
+    data['type'] = type
+    data['data'] = value
+    data['expectedResponse'] = resp
+    data['testUser'] = testUser
+    data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
+
+    console.log('validateDataService > DATA: ', data)
+
+    $.ajax({
+
+      rejectUnauthorized: false,
+      url: 'https://localhost:3000/api/validatedataservice',
+      type: 'POST',
+      data: JSON.stringify(data),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8',
+      accepts: 'application/json',
+      async: true,
+
+      success: function (data, status, xhr) {
+
+        if (data.response === 'success') {
+
+          console.log('validateDataService > SUCCESS: ', data)
+          callback(null, true)
+
+        } else {
+
+          console.log('validateDataService > SUCCESS > ERROR: ', data)
+          callback(data, false)
+        }
+
+        ms ? $(ms + ' .loading').hide() : helper.hideLoading()
+
+      },
+
+      error: function (xhr, status, error) {
+
+        console.log('validateDataService > ERROR: ', xhr)
+        var parsedXHR = JSON.parse(xhr.responseText)
+
+        location.href = parsedXHR.redirect
+      }
+
+    })
+  },
+
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   handleSpecificEvents: function(){
 
@@ -559,9 +628,6 @@ var helper = {
 
   },
 
-// =================================================================================================================================
-// =================================================================================================================================
-// =================================================================================================================================
 // =================================================================================================================================
 // =================================================================================================================================
 
@@ -919,58 +985,7 @@ var helper = {
     }
   },
 
-  validateDataService: function (type, value, resp, testUser, callback) {
 
-    console.log('validateDataService > type/value +++++++++: ', type , ' :: ', value)
-
-    var ms = $('body').data('modalShown')
-    ms ? $(ms + ' .loading').show() : helper.showLoading()
-
-    var err
-    var data = {}
-
-    data['type'] = type
-    data['data'] = value
-    data['expectedResponse'] = resp
-    data['testUser'] = testUser
-    data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
-
-    console.log('validateDataService > DATA: ', data)
-
-    $.ajax({
-      rejectUnauthorized: false,
-      url: 'https://localhost:3000/api/validatedataservice',
-      type: 'POST',
-      data: JSON.stringify(data),
-      dataType: 'json',
-      contentType: 'application/json; charset=utf-8',
-      accepts: 'application/json',
-      async: true,
-
-      success: function (data, status, xhr) {
-        if (data.response === 'success') {
-
-          console.log('validateDataService > SUCCESS: ', data)
-          callback(null, true)
-        } else {
-
-          console.log('validateDataService > SUCCESS > ERROR: ', data)
-          err = new Error('error')
-          callback(err, false)
-        }
-
-        ms ? $(ms + ' .loading').hide() : helper.hideLoading()
-      },
-
-      error: function (xhr, status, error) {
-
-        console.log('validateDataService > ERROR: ', xhr)
-        var parsedXHR = JSON.parse(xhr.responseText)
-
-        location.href = parsedXHR.redirect
-      }
-    })
-  },
 
   validateEmailField: function (elementVal, thisField, comparedField, err1) {
 
