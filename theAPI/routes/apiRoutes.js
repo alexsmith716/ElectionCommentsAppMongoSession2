@@ -9,6 +9,17 @@ var csrfProtection = csrf({ cookie: true })
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+router.use(function (req, res, next) {
+  if (req.isAuthenticated()) {
+    console.log('+++++++++++++ API ROUTES > AUTHENTICATED ++++++++++++')
+  }else{
+    console.log('+++++++++++++ API ROUTES > NOT AUTHENTICATED ++++++++++++')
+  }
+  next()
+})
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 router.post('/loginuser', csrfProtection, apiControllers.ajaxLoginUser)
 router.post('/signupuser', csrfProtection, apiControllers.ajaxSignUpUser)
 
@@ -16,10 +27,11 @@ router.post('/signupuser', csrfProtection, apiControllers.ajaxSignUpUser)
 
 router.post('/forgotpassword', csrfProtection, apiControllers.ajaxForgotPassword)
 router.put('/evaluateuserprofile', csrfProtection, apiControllers.ajaxEvaluateUserProfile)
-router.put('/newuserdataitem', csrfProtection, apiControllers.ajaxNewUserDataItem)
 
-router.post('/validatedataservice', csrfProtection, auth.ensureAuthenticated, apiControllers.ajaxValidateDataService)
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+router.put('/newuserdataitem', csrfProtection, auth.ensureAuthenticatedNewUserDataItem, apiControllers.ajaxNewUserDataItem)
+router.post('/validatedataservice', csrfProtection, apiControllers.ajaxValidateDataService)
 router.post('/evaluateuseremail', csrfProtection, apiControllers.ajaxEvaluateUserEmail)
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

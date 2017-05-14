@@ -93,8 +93,6 @@ var helper = {
 
       $('body').removeData('modalShown')
       $('#newUserDataItemModal .modalAlertWarning').hide();
-      $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
-      $('#newUserDataItemForm').removeData('currentUserEmailVerified')
       $('#currentUserDataItem').off('focusout')
       $('#newUserDataItem').off('focusout')
       $('#confirmNewUserDataItem').off('focusout')
@@ -259,7 +257,7 @@ var helper = {
       }
 
       console.log('+++++++++++ GOOD FORM !!!!!!!!!!!')
-      /*
+
       var data = {
         type: elementID,
         currentUserDataItem: $('#currentUserDataItem').val(),
@@ -319,7 +317,7 @@ var helper = {
 
         }
       })
-      */
+
     })
 
 
@@ -369,24 +367,26 @@ var helper = {
     $('#nextSubmitNewUserDataItemForm').on('click', function(e) {
 
       e.preventDefault()
+
       var type = $('body').data('elementID')
+
       var currentUserDataItemVerified = $('#newUserDataItemForm').data('currentUserDataItemVerified')
       var currentUserEmailVerified = $('#newUserDataItemForm').data('currentUserEmailVerified')
+
       $('#newUserDataItemModal .modalAlertWarning .alert').html('');
       $('#newUserDataItemModal .modalAlertWarning').hide();
 
       var data = $('#currentUserDataItem').val()
       var testData = helper.pattern.basictext.test(data)
 
-      console.log('nextSubmitNewUserDataItemForm > type/elementID: ', type)
-      console.log('nextSubmitNewUserDataItemForm > currentUserDataItemVerified1: ', currentUserDataItemVerified)
+      console.log('nextSubmitNewUserDataItemForm > type: ', type)
+      console.log('nextSubmitNewUserDataItemForm > currentUserDataItemVerified: ', currentUserDataItemVerified)
 
       if (currentUserDataItemVerified) {
 
-        console.log('### nextSubmitNewUserDataItemForm > SUBMIT THE FORM ++++++')
-        e.preventDefault()
-        // SUBMIT THE FORM ++++++++++++++++++++++++++++++++++++
-        // newUserDataItemForm.submit()
+        console.log('### nextSubmitNewUserDataItemForm > SUBMIT THE FORM 1++++++')
+        $('#newUserDataItemForm').submit()
+        console.log('### nextSubmitNewUserDataItemForm > SUBMIT THE FORM 2++++++')
 
       } else {
 
@@ -404,14 +404,16 @@ var helper = {
 
               } else {
 
+                $('#currentUserDataItem').removeClass('has-error')
                 $('#currentUserDataItemError').removeClass('show').addClass('hide')
                 $('#currentUserDataItemRegistered').removeClass('show').addClass('hide')
-                $('#currentUserDataItem').removeClass('has-error')
+
+                $('#newUserDataItemForm').data('currentUserEmailVerified', true)
+
 
                 if(type === 'email'){
 
                   $('#newUserDataItemForm').data('currentUserDataItemVerified', true)
-                  $('#newUserDataItemForm').data('currentUserEmailVerified', true)
 
                   $('#hideCurrentUserData').addClass('hideClass')
                   $('#hideCurrentUserData').css( 'display', 'none' )
@@ -422,9 +424,9 @@ var helper = {
                   $('#nextSubmitNewUserDataItemForm').html('Submit')
                 }
 
+
                 if(type === 'password'){
 
-                  $('#newUserDataItemForm').data('currentUserEmailVerified', true)
                   $('#currentUserDataItemLabel').html('Please Enter Your Current Password:')
                   $('#currentUserDataItem').val('')
 
@@ -443,6 +445,7 @@ var helper = {
                   })
                   */
                 }
+                
               }
             })
 
@@ -454,9 +457,10 @@ var helper = {
 
                 if (err) {
 
+                  // e.preventDefault()
+
                   if(err.alertDanger){
 
-                    e.preventDefault()
                     var a = err.alertDanger
                     $('#currentUserDataItem').val('')
                     $('#newUserDataItemForm').removeData('currentUserEmailVerified')
@@ -1189,7 +1193,6 @@ var helper = {
     var dataID = editBtnClickedParentElem.data('id')
     var labelText = helper.makeTitleFromElementID(dataID)
     dataID === 'email' ? labelText = labelText + ' Address' : null
-    dataID === 'email' ? $('#confirmNewUserDataItemMatch').html('Emails don\'t match') : $('#confirmNewUserDataItemMatch').html('Passwords don\'t match')
     $('body').data('elementID', dataID)
     $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
     $('#newUserDataItemForm').removeData('currentUserEmailVerified')
@@ -1199,12 +1202,9 @@ var helper = {
 
     $('#newUserDataItemModal .modal-title').html('Change your ' + labelText + ':')
 
-    // $('#currentUserDataItemLabel').html('Please Enter Your Current ' + labelText + ':')
-
     $('#currentUserDataItemLabel').html('Please Enter Your Current Email Address:')
     $('#newUserDataItemLabel').html('Enter Your New ' + labelText + ':')
     $('#confirmNewUserDataItemLabel').html('Confirm The New ' + labelText + ':')
-
 
     $('#currentUserDataItem').attr({
       type: 'text',
