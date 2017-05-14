@@ -12,7 +12,6 @@ module.exports = function (req, res, callback) {
 
   res.locals.currentUser.checkPassword(req.body.data, function(err, result) {
 
-
     if (err) {
 
       callback({status: 'err', response: 'error', message: err})
@@ -23,6 +22,10 @@ module.exports = function (req, res, callback) {
       callback({status: 201, response: 'error'})
 
     } else {
+
+      var nd = new Date()
+      nd = nd.getTime()
+      req.session.userValidatedPassword = {'validated': true, 'time': nd}
 
       callback({status: 201, response: 'success'})
 

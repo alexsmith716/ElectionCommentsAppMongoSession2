@@ -234,7 +234,7 @@ module.exports.getUserProfileResponse = function(req, res) {
         newExceptionError.status = 400
         return next(newExceptionError)
       }
-    
+
       if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
         newExceptionError = new Error('Bad Request')
         newExceptionError.status = 400
@@ -445,8 +445,16 @@ module.exports.ajaxValidateDataService = function (req, res) {
 
     console.log('## ajaxValidateDataService > nds.getMinutes():', nds.getMinutes())
 
-    if(nds.getMinutes() > 1){
-    // if(foo === 'foo'){
+    // if(nds.getMinutes() > 1){
+    // if(nds.getMinutes() > 5){
+    if(foo === 'foo'){
+
+      console.log('## ajaxValidateDataService > req.session.userValidatedEmail.validated 1:', req.session.userValidatedEmail.validated)
+
+      req.session.userValidatedEmail.validated = false
+
+      console.log('## ajaxValidateDataService > req.session.userValidatedEmail.validated 2:', req.session.userValidatedEmail.validated)
+
 
       var u =  req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
 
@@ -467,8 +475,8 @@ module.exports.ajaxValidateDataService = function (req, res) {
 
         }
       })
+      
     }
-
   }
 }
 

@@ -8,10 +8,14 @@ var serverControllers = require('../controller/serverMainCtrls')
 var auth = require('../../shared/auth')
 var csrfProtection = csrf({ cookie: true })
 
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 router.use(function (req, res, next) {
   if (req.isAuthenticated()) {
-    console.log('+++++++++++++ SERVER ROUTES > req.isAuthenticated ++++++++++++')
-	}
+    console.log('+++++++++++++ SERVER ROUTES > AUTHENTICATED ++++++++++++')
+	}else{
+    console.log('+++++++++++++ SERVER ROUTES > NOT AUTHENTICATED ++++++++++++')
+  }
   next()
 })
 
