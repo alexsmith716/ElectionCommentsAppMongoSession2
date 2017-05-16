@@ -255,14 +255,14 @@ var helper = {
       var constrainedFormElements = document.getElementById('newUserDataItemForm').querySelectorAll('[placeholder]')
 
       if(isSafari){
-        //var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
+        var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
 
-        //if (testFocusout.formValid !== undefined){
+        if (testFocusout.formValid !== undefined){
           console.log('+++++++++++ BAD FORM !!!!!!!!!!!')
-          //testFocusout.focusFirstElement.focus()
-          //$('.loading').hide()
-          //return false
-        //}
+          testFocusout.focusFirstElement.focus()
+          $('.loading').hide()
+          return false
+        }
       }
 
       console.log('+++++++++++ GOOD FORM !!!!!!!!!!!')
@@ -615,6 +615,48 @@ var helper = {
         location.href = parsedXHR.redirect
       }
 
+    })
+  },
+
+
+  validateEmailService: function (email, callback) {
+    var data = {}
+    var pathName = 'email'
+    var err
+    data[pathName] = $.trim(email)
+    pathName = 'expectedResponse'
+    data[pathName] = 'false'
+
+    $('body').data('modalShown') ? null : helper.showLoading()
+
+    data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
+
+    $.ajax({
+      rejectUnauthorized: false,
+      url: 'https://localhost:3000/api/evaluateuseremail',
+      type: 'POST',
+      data: JSON.stringify(data),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8',
+      accepts: 'application/json',
+      async: true,
+
+      success: function (data, status, xhr) {
+        if (data.response === 'success') {
+          callback(null, true)
+        } else {
+          err = new Error('error')
+          callback(err, false)
+        }
+
+        $('body').data('modalShown') ? null : helper.hideLoading()
+      },
+
+      error: function (xhr, status, error) {
+        var parsedXHR = JSON.parse(xhr.responseText)
+
+        location.href = parsedXHR.redirect
+      }
     })
   },
 
@@ -1028,7 +1070,7 @@ var helper = {
 
       if (isEmailValid) {
 
-        helper.validateDataService(elementVal, 'email', 'false', 'false', function (err, response) {
+        helper.validateEmailService(elementVal, function (err, response) {
 
           if (err) {
 

@@ -10,10 +10,10 @@ module.exports.ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
     return next()
   } else {
+    // res.redirect('/loginorsignup');  }
     var newExceptionError = new Error('Bad Request')
     newExceptionError.status = 400
     return next(newExceptionError)
-  }
 }
 
 module.exports.ensureAuthenticatedAPI = function (req, res, next) {
@@ -76,12 +76,12 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
     if(pmillis.getMinutes() > 1){
 
-      console.log('## auth > ensureAuthenticatedNewUserDataItem > EMAIL > BAAAAAAAAAD')
+      console.log('## auth > ensureAuthenticatedNewUserDataItem > PASSWORD > BAAAAAAAAAD')
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 
     } else {
 
-      console.log('## auth > ensureAuthenticatedNewUserDataItem > EMAIL > GOOOOOOOOOD')
+      console.log('## auth > ensureAuthenticatedNewUserDataItem > PASSWORD > GOOOOOOOOOD')
       return next()
 
     }
