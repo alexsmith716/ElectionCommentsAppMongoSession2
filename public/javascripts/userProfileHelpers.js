@@ -74,7 +74,12 @@ var helper = {
       $('.modalCancelSubmitBtns').show()
     })
 
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 
     $('#newUserDataItemModal').on('shown.bs.modal', function() {
       $('body').data('modalShown', '#newUserDataItemModal')
@@ -89,40 +94,37 @@ var helper = {
     })
 
     $('#newUserDataItemModal').on('hidden.bs.modal', function () {
-      console.log('##### newUserDataItemModal > ON hidden.bs.modal +++++++++')
-
       $('body').removeData('modalShown')
       $('#newUserDataItemModal .modalAlertWarning').hide();
+
       $('#currentUserDataItem').off('focusout')
       $('#newUserDataItem').off('focusout')
       $('#confirmNewUserDataItem').off('focusout')
       $('body').off('click')
 
       $('#newUserDataItemForm').get(0).reset()
-      $('#newUserDataItemForm').find('.error').removeClass('show ').addClass('hide')
-      $('#currentUserDataItem').val('')
+      $('#newUserDataItemModal input').val('')
 
       $('#hideNewUserData').attr('class', 'hideClass')
       $('#hideNewUserData').attr('style', 'display:none')
       
-      $('#currentUserDataItemRegistered').removeClass('show').addClass('hide')
-      $('#currentUserDataItemError').removeClass('show').addClass('hide')
-      $('#newUserDataItemImproper').removeClass('show').html('')
-      $('#newUserDataItemRegistered').removeClass('show').html('')
-      $('#newUserDataItemRegistered').removeClass('show').html('')
-      $('#confirmNewUserDataItemImproper').removeClass('show').html('')
-      $('#confirmNewUserDataItemRegistered').removeClass('show').html('')
-      $('#confirmNewUserDataItemMatch').removeClass('show').html('')
-      $('#confirmNewUserDataItemImproper').removeClass('show').html('')
-      $('#currentUserDataItem').removeClass('has-error')
-      $('#newUserDataItem').removeClass('has-error')
-      $('#confirmNewUserDataItem').removeClass('has-error')
+      $('#newUserDataItemModal .required-fields .error').removeClass('show').addClass('hide')
+
+      $('#newUserDataItemModal input').removeClass('has-error')
 
       $('.modalAlertSuccess').hide()
       $('.modalAlertDanger').hide()
       $('.modalOkayBtn').hide()
       $('.modalCancelSubmitBtns').show()
     })
+
+
+
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 
 
     $('#editProfileForm').on('submit', function(e) {
@@ -228,6 +230,12 @@ var helper = {
 
 
 
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+
     $('#newUserDataItemForm').on('submit', function(e) {
 
       var elementID = $('body').data('elementID')
@@ -247,13 +255,14 @@ var helper = {
       var constrainedFormElements = document.getElementById('newUserDataItemForm').querySelectorAll('[placeholder]')
 
       if(isSafari){
-        var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
-        if (testFocusout.formValid !== undefined){
+        //var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
+
+        //if (testFocusout.formValid !== undefined){
           console.log('+++++++++++ BAD FORM !!!!!!!!!!!')
-          testFocusout.focusFirstElement.focus()
-          $('.loading').hide()
-          return false
-        }
+          //testFocusout.focusFirstElement.focus()
+          //$('.loading').hide()
+          //return false
+        //}
       }
 
       console.log('+++++++++++ GOOD FORM !!!!!!!!!!!')
@@ -319,6 +328,14 @@ var helper = {
       })
 
     })
+
+
+
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 
 
     $('#personalInfoToggle').click(function(){
@@ -602,8 +619,8 @@ var helper = {
   },
 
 
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   handleSpecificEvents: function(){
 
@@ -1244,6 +1261,8 @@ var helper = {
     })
     */
 
+    $('#hideCurrentUserData').removeClass('hideClass')
+    $('#hideCurrentUserData').css( 'display', '' )
     $('#hideNewUserData').addClass('hideClass')
     $('#hideNewUserData').css( 'display', 'none' )
 
