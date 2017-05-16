@@ -258,6 +258,17 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
   console.log('####### > API > ajaxNewUserDataItem > req.body:', req.body)
 
   /*
+  req.body: { type: 'email',
+    currentUserDataItem: 'aaa2@aaa.com',
+    newUserDataItem: '',
+    confirmNewUserDataItem: '',
+    _csrf: 'sN3SdDFv-zMtIMOPPREvvPrVRryOF1Dze2ik' }
+  */
+
+
+
+
+  /*
   var template = {email: 'required',
     confirmEmail: 'required', 
     password: 'required', 
