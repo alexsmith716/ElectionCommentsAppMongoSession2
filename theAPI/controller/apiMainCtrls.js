@@ -252,34 +252,140 @@ module.exports.getUserProfileResponse = function(req, res) {
   }
 }
 
+
+
+
 module.exports.ajaxNewUserDataItem = function (req, res, next) {
-  var newExceptionError
+
+  var nd = new Date()
+  var millis
+  var ndm
+  var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
+  var foo = 'foo'
 
   console.log('####### > API > ajaxNewUserDataItem > req.body:', req.body)
 
   /*
   req.body: { type: 'email',
-    currentUserDataItem: 'aaa2@aaa.com',
+    data: 'aaa2@aaa.com',
     newUserDataItem: '',
     confirmNewUserDataItem: '',
     _csrf: 'sN3SdDFv-zMtIMOPPREvvPrVRryOF1Dze2ik' }
   */
 
+  var template = {}
 
-  var template = {email: 'required',
-    confirmEmail: 'required', 
-    password: 'required', 
-    confirmPassword: 'required'}
+  if(req.body.type === 'email' && req.session.userValidatedEmail.validated){
+
+    millis = nd.getTime() - req.session.userValidatedEmail.time
+    ndm = new Date(millis)
+
+    if(ndm.getMinutes() > 5){
+    // if(nds.getMinutes() > 5){
+    // if(foo === 'foo'){
+
+      console.log('## ajaxValidateDataService > req.session.userValidatedEmail.validated 1:', req.session.userValidatedEmail.validated)
+
+      req.session.userValidatedEmail.validated = false
+
+      console.log('## ajaxValidateDataService > req.session.userValidatedEmail.validated 2:', req.session.userValidatedEmail.validated)
+
+      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
+
+    } else {
+
+      evaluateUserEmail2(req, res, function (response) {
+
+        if (response.response === 'success') {
+
+          template['email'] = 'required'
+          template['confirmEmail'] = 'required'
+          template['expectedResponse'] = 'false'
+
+          // serverSideValidation(req, res, template, function (validatedResponse) {
+
+          // })
+
+
+        } else {
+
+          req.session.userValidatedEmail.validated = false
+
+          if (response.status === 'err') {
+
+            return next(response.message)
+
+          } else {
+
+            sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
+
+          }
+
+        }
+
+      })
+    }
+
+  }
+
+  if (req.body.type === 'password' && req.session.userValidatedEmail.validated && req.session.userValidatedPassword.validated) {
+
+    millis = nd.getTime() - req.session.userValidatedPassword.time
+    ndm = new Date(millis)
+
+    if(ndm.getMinutes() > 5){
+    // if(nds.getMinutes() > 5){
+    // if(foo === 'foo'){
+
+      console.log('## ajaxValidateDataService > req.session.userValidatedPassword.validated 1:', req.session.userValidatedPassword.validated)
+
+      req.session.userValidatedPassword.validated = false
+
+      console.log('## ajaxValidateDataService > req.session.userValidatedPassword.validated 2:', req.session.userValidatedPassword.validated)
+
+      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
+
+    } else {
+
+      evaluateUserPassword(req, res, function (response) {
+
+        if (response.response === 'success') {
+
+          template['password'] = 'required'
+          template['confirmPassword'] = 'required'
+
+          // serverSideValidation(req, res, template, function (validatedResponse) {
+
+          // })
+
+        } else {
+
+          req.session.userValidatedPassword.validated = false
+
+          if (response.status === 'err') {
+
+            return next(response.message)
+
+          } else {
+
+            sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
+
+          }
+
+        }
+
+      })
+
+    }
+
+  }
+
+  /*
 
   // =============================================================================================
 
   reqBody[objName] = reqBody[objName].trim();
   isDataValid = emailPattern.test(reqBody[objName]);
-
-  evaluateUserEmail(objValue, validateTemplate.expectedResponse, function(response) {
-
-
-  })
 
   serverSideValidation(req, res, template, function (validatedResponse) {
     var validationErrors = false
@@ -306,11 +412,15 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
     }else{
       console.log('####### > API > ajaxNewUserDataItem > YES ERRORS!!!')
-      //sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
+      sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
     }
   })
-
+  */
 }
+
+
+
+
 
 // AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
 module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
@@ -423,7 +533,6 @@ module.exports.ajaxValidateDataService = function (req, res) {
   console.log('## ajaxValidateDataService > type:', req.body.type)
   console.log('## ajaxValidateDataService > data:', req.body.data)
   console.log('## ajaxValidateDataService > expectedResponse:', req.body.expectedResponse)
-  console.log('## ajaxValidateDataService > testUser:', req.body.testUser)
 
   if (req.body.type === 'email') {
 
@@ -451,8 +560,8 @@ module.exports.ajaxValidateDataService = function (req, res) {
     console.log('## ajaxValidateDataService > nds.getMinutes():', nds.getMinutes())
 
     // if(nds.getMinutes() > 1){
-    // if(nds.getMinutes() > 5){
-    if(foo === 'foo'){
+    if(nds.getMinutes() > 5){
+    // if(foo === 'foo'){
 
       console.log('## ajaxValidateDataService > req.session.userValidatedEmail.validated 1:', req.session.userValidatedEmail.validated)
 
@@ -460,8 +569,7 @@ module.exports.ajaxValidateDataService = function (req, res) {
 
       console.log('## ajaxValidateDataService > req.session.userValidatedEmail.validated 2:', req.session.userValidatedEmail.validated)
 
-
-      var u =  req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
+      var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 

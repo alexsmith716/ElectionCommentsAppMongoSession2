@@ -10,26 +10,33 @@ module.exports = function (req, res, callback) {
   console.log('## evaluateUserPassword > expectedResponse:', req.body.expectedResponse)
   console.log('## evaluateUserPassword > testUser:', req.body.testUser)
 
-  res.locals.currentUser.checkPassword(req.body.data, function(err, result) {
+  if (req.session.userValidatedEmail.validated === true) {
 
-    if (err) {
+    res.locals.currentUser.checkPassword(req.body.data, function(err, result) {
 
-      callback({status: 'err', response: 'error', message: err})
-    }
+      if (err) {
 
-    if (!result) {
+        callback({status: 'err', response: 'error', message: err})
+      }
 
-      callback({status: 201, response: 'error'})
+      if (!result) {
 
-    } else {
+        callback({status: 201, response: 'error'})
 
-      var nd = new Date()
-      nd = nd.getTime()
-      req.session.userValidatedPassword = {'validated': true, 'time': nd}
+      } else {
 
-      callback({status: 201, response: 'success'})
+        var nd = new Date()
+        nd = nd.getTime()
+        req.session.userValidatedPassword = {'validated': true, 'time': nd}
 
-    }
-  })
+        callback({status: 201, response: 'success'})
 
+      }
+    })
+
+  } else {
+
+    callback({status: 201, response: 'error'})
+
+  }
 }

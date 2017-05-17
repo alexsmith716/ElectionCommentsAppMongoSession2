@@ -13,47 +13,28 @@ module.exports = function (req, res, callback) {
 
     } else {
 
-      if (req.body.expectedResponse === 'false') {
+      if (!user) {
 
-        if (user) {
-          callback({status: 201, response: 'error'})
-
-        } else {
-          callback({status: 201, response: 'success'})
-
-        }
+        callback({status: 201, response: 'error'})
 
       } else {
 
-        if (!user) {
+        if (user.email === res.locals.currentUser.email) {
 
-          callback({status: 201, response: 'error'})
+          var nd = new Date()
+          nd = nd.getTime()
+          req.session.userValidatedEmail = {'validated': true, 'time': nd}
+
+          callback({status: 201, response: 'success'})
 
         } else {
 
-          if (req.body.testUser) {
+          callback({status: 201, response: 'error'})
 
-            if (user.email === res.locals.currentUser.email) {
-
-              var nd = new Date()
-              nd = nd.getTime()
-              req.session.userValidatedEmail = {'validated': true, 'time': nd}
-
-              callback({status: 201, response: 'success'})
-
-            } else {
-
-              callback({status: 201, response: 'error'})
-
-            }
-
-          } else {
-
-            callback({status: 201, response: 'success'})
-
-          }
         }
+
       }
+
     }
   })
 }

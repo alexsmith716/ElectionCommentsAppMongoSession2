@@ -1,7 +1,7 @@
 
-var sendJSONresponse = function(res, status, content) {/*
+var sendJSONresponse = function(res, status, content) {
   res.status(status)
-  res.json(content)*/
+  res.json(content)
 }
 
 var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'}
@@ -34,9 +34,6 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
   var u =  req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
   var nd = new Date()
-
-
-  // testing for which type (email/password)
 
   // if type === email     >>>   (if req.session.userValidatedEmail.time > 5 minutes, then ERROR: 'response': 'error', 'alertDanger')
   // you have 5 minutes to submit form, otherwise you repeat 'nextSubmitNewUserDataItemForm' from start

@@ -250,7 +250,7 @@ var helper = {
 
       var data = {
         type: elementID,
-        currentUserDataItem: $('#currentUserDataItem').val(),
+        data: $('#currentUserDataItem').val(),
         newUserDataItem: $('#newUserDataItem').val(),
         confirmNewUserDataItem: $('#confirmNewUserDataItem').val()
       }
@@ -561,7 +561,7 @@ var helper = {
   },
 
 
-  validateDataService: function (value, type, resp, testUser, callback) {
+  validateDataService: function (value, type, resp, callback) {
     console.log('validateDataService > type/value +++++++++: ', type , ' :: ', value)
 
     var ms = $('body').data('modalShown')
@@ -573,7 +573,6 @@ var helper = {
     data['type'] = type
     data['data'] = value
     data['expectedResponse'] = resp
-    data['testUser'] = testUser
     data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
     console.log('validateDataService > DATA: ', data)
@@ -1043,82 +1042,6 @@ var helper = {
     }
   },
 
-
-
-  validateParamsXXX: function (thisField, comparedField, err1) {
-
-    var formConfirmType = $('body').data('elementID')
-    var comparedFieldTypeEmail = false
-    var c = /confirm/
-    var comparedFieldLowercase = comparedField.toLowerCase()
-    var comparedFieldIsItConfirm = c.test(comparedFieldLowercase)
-
-    formConfirmType === 'email' ? comparedFieldTypeEmail = true : null
-
-    console.log('## validateParams > thisField: ', thisField, ' > comparedField: ', comparedField)
-    console.log('## validateParams > formConfirmType: ', formConfirmType)
-    console.log('## validateParams > comparedFieldLowercase: ', comparedFieldLowercase)
-    console.log('## validateParams > comparedFieldIsItConfirm: ', comparedFieldIsItConfirm)
-    console.log('## validateParams > comparedFieldTypeEmail: ', comparedFieldTypeEmail)
-
-    if (err1 !== undefined) {
-      // console.log('## validateParams > err1: ', thisField, ' || ', comparedField, ' || ', err1)
-    } else {
-      console.log('## validateParams > no err1: ', thisField, ' || ', comparedField)
-    }
-
-    if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + comparedField).val() !== '') {
-      var property1 = document.getElementsByName(thisField)[0]
-      var property2 = document.getElementsByName(comparedField)[0]
-
-      if ((err1 !== undefined && err1.error === 'nomatch') || property1.value !== property2.value) {
-        if (isSafari) {
-          if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
-            $('#' + thisField + 'Match').removeClass('hide').addClass('show')
-          } else {
-            $('#' + comparedField + 'Match').removeClass('hide').addClass('show')
-          }
-        } else {
-          if (err1 !== undefined) {
-            $('#' + comparedField + 'Match').removeClass('hide').addClass('show')
-          } else {
-            $('#' + comparedField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + 's don\'t match')
-          }
-        }
-      } else {
-        if (isSafari) {
-          if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
-            $('#' + thisField + 'Match').removeClass('show').addClass('hide')
-          } else {
-            $('#' + comparedField + 'Match').removeClass('show').addClass('hide')
-          }
-        } else {
-          if (err1 === undefined) {
-            $('#' + thisField).get(0).setCustomValidity('')
-            $('#' + comparedField).get(0).setCustomValidity('')
-          } else {
-            $('#' + comparedField + 'Match').removeClass('show').addClass('hide')
-          }
-        }
-        if (comparedFieldTypeEmail) {
-          var valdata = $('body').data('validatedData')
-          var v
-
-          if (valdata) {
-            Object.keys(valdata).forEach(function (p) {
-              if (p !== 'email' || p !== 'confirmEmail') {
-                if (valdata[p].error === 'match' || valdata[p].error === false) {
-                  v = true
-                }
-              }
-            })
-
-            v === true ? $('#signUpForm').submit() : null
-          }
-        }
-      }
-    }
-  },
 
   testUserInputEmail: function (elementID, err1) {
 
