@@ -266,9 +266,6 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
   */
 
 
-
-
-  /*
   var template = {email: 'required',
     confirmEmail: 'required', 
     password: 'required', 
@@ -284,9 +281,6 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
   })
 
-  */
-
-  /*
   serverSideValidation(req, res, template, function (validatedResponse) {
     var validationErrors = false
 
@@ -315,7 +309,7 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
       //sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
     }
   })
-  */
+
 }
 
 // AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
