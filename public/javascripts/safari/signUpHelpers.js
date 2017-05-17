@@ -442,7 +442,7 @@ var helper = {
             $('#' + thisField + 'Match').removeClass('hide').addClass('show')
           } else {
             console.log('## validateParams 55555555: ', comparedField)
-            $('#' + comparedField + 'Match').removeClass('hide').addClass('show')
+            $('#' + comparedField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
           }
 
         } else {

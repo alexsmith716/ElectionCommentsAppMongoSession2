@@ -1,7 +1,7 @@
 
-var sendJSONresponse = function(res, status, content) {
+var sendJSONresponse = function(res, status, content) {/*
   res.status(status)
-  res.json(content)
+  res.json(content)*/
 }
 
 var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'}
@@ -10,10 +10,11 @@ module.exports.ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
     return next()
   } else {
-    // res.redirect('/loginorsignup');  }
+    // res.redirect('/loginorsignup')
     var newExceptionError = new Error('Bad Request')
     newExceptionError.status = 400
     return next(newExceptionError)
+  }
 }
 
 module.exports.ensureAuthenticatedAPI = function (req, res, next) {
