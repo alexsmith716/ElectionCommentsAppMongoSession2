@@ -12,7 +12,6 @@ var evaluateUserEmail = require('../../shared/evaluateUserEmail.js')
 
 var evaluateUserEmail2 = require('../../shared/evaluateUserEmail2.js')
 var evaluateUserPassword = require('../../shared/evaluateUserPassword.js')
-var evaluateUserEmailPassword = require('../../shared/evaluateUserEmailPassword.js')
 
 var stateNamer = require('../../shared/stateNamer.js')
 var createError = require('http-errors')
@@ -217,7 +216,7 @@ module.exports.deleteOneComment = function(req, res) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-module.exports.getUserProfileResponse = function(req, res) {
+module.exports.getUserProfileResponse = function(req, res, next) {
   var newExceptionError
   var credentials = auth(req)
 
@@ -281,14 +280,14 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
     ndm = new Date(millis)
 
     if(ndm.getMinutes() > 5){
-    // if(nds.getMinutes() > 5){
+    // if(ndm.getMinutes() > 1){
     // if(foo === 'foo'){
 
-      console.log('## ajaxValidateDataService > req.session.userValidatedEmail.validated 1:', req.session.userValidatedEmail.validated)
+      console.log('## ajaxNewUserDataItem > req.session.userValidatedEmail.validated 1:', req.session.userValidatedEmail.validated)
 
       req.session.userValidatedEmail.validated = false
 
-      console.log('## ajaxValidateDataService > req.session.userValidatedEmail.validated 2:', req.session.userValidatedEmail.validated)
+      console.log('## ajaxNewUserDataItem > req.session.userValidatedEmail.validated 2:', req.session.userValidatedEmail.validated)
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 
@@ -300,7 +299,9 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
           template['email'] = 'required'
           template['confirmEmail'] = 'required'
-          template['expectedResponse'] = 'false'
+          template['expectedResponse'] = 'true'
+
+          console.log('## ajaxNewUserDataItem > EMAIL > GOOD > serverSideValidation +++++++++')
 
           // serverSideValidation(req, res, template, function (validatedResponse) {
 
@@ -309,13 +310,19 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
         } else {
 
+          console.log('## ajaxNewUserDataItem > EMAIL > BAD 1 +++++++++')
+
           req.session.userValidatedEmail.validated = false
 
           if (response.status === 'err') {
 
+            console.log('## ajaxNewUserDataItem > EMAIL > BAD 2 +++++++++')
+
             return next(response.message)
 
           } else {
+
+            console.log('## ajaxNewUserDataItem > EMAIL > BAD 3 +++++++++')
 
             sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 
@@ -334,14 +341,14 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
     ndm = new Date(millis)
 
     if(ndm.getMinutes() > 5){
-    // if(nds.getMinutes() > 5){
+    // if(ndm.getMinutes() > 1){
     // if(foo === 'foo'){
 
-      console.log('## ajaxValidateDataService > req.session.userValidatedPassword.validated 1:', req.session.userValidatedPassword.validated)
+      console.log('## ajaxNewUserDataItem > req.session.userValidatedPassword.validated 1:', req.session.userValidatedPassword.validated)
 
       req.session.userValidatedPassword.validated = false
 
-      console.log('## ajaxValidateDataService > req.session.userValidatedPassword.validated 2:', req.session.userValidatedPassword.validated)
+      console.log('## ajaxNewUserDataItem > req.session.userValidatedPassword.validated 2:', req.session.userValidatedPassword.validated)
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 
@@ -353,6 +360,8 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
           template['password'] = 'required'
           template['confirmPassword'] = 'required'
+
+          console.log('## ajaxNewUserDataItem > PASSWORD > serverSideValidation +++++++++++++++')
 
           // serverSideValidation(req, res, template, function (validatedResponse) {
 
@@ -528,11 +537,11 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
 
 
-module.exports.ajaxValidateDataService = function (req, res) {
+module.exports.ajaxValidateNewEmailPasswordService = function (req, res, next) {
 
-  console.log('## ajaxValidateDataService > type:', req.body.type)
-  console.log('## ajaxValidateDataService > data:', req.body.data)
-  console.log('## ajaxValidateDataService > expectedResponse:', req.body.expectedResponse)
+  console.log('## ajaxValidateNewEmailPasswordService > type:', req.body.type)
+  console.log('## ajaxValidateNewEmailPasswordService > data:', req.body.data)
+  console.log('## ajaxValidateNewEmailPasswordService > expectedResponse:', req.body.expectedResponse)
 
   if (req.body.type === 'email') {
 
@@ -557,21 +566,17 @@ module.exports.ajaxValidateDataService = function (req, res) {
     var nds = new Date(millis)
     var foo = 'foo'
 
-    console.log('## ajaxValidateDataService > nds.getMinutes():', nds.getMinutes())
+    console.log('## ajaxValidateNewEmailPasswordService > nds.getMinutes():', nds.getMinutes())
 
     // if(nds.getMinutes() > 1){
     if(nds.getMinutes() > 5){
     // if(foo === 'foo'){
 
-      console.log('## ajaxValidateDataService > req.session.userValidatedEmail.validated 1:', req.session.userValidatedEmail.validated)
-
       req.session.userValidatedEmail.validated = false
-
-      console.log('## ajaxValidateDataService > req.session.userValidatedEmail.validated 2:', req.session.userValidatedEmail.validated)
 
       var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
 
-      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
+      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
 
     }else{
@@ -595,17 +600,25 @@ module.exports.ajaxValidateDataService = function (req, res) {
 
 
 
-module.exports.ajaxEvaluateUserEmail = function (req, res) {
+module.exports.ajaxEvaluateUserEmail = function (req, res, next) {
+
   evaluateUserEmail(req.body.email, req.body.expectedResponse, function (response) {
+
     if (response.status === 'err') {
+
+      console.log('###### ERROR! > ajaxEvaluateUserEmail > evaluateUserEmail > err1?: ', response.message)
       return next(response.message)
 
     } else {
+
       sendJSONresponse(res, response.status, { 'response': response.response })
 
     }
+
   })
 }
+
+
 
 // will include nodemailer for ForgotPassword later/last
 // for client, only testing if email is invalid, otherwise indicating instructions sent to reset password

@@ -209,12 +209,8 @@ var helper = {
     })
 
 
-
-
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
 
 
     $('#newUserDataItemForm').on('submit', function(e) {
@@ -277,16 +273,34 @@ var helper = {
 
           } else {
 
-            if(data.validatedData){
+
+            if (data.alertDanger) {
+
+              $('#currentUserDataItem').val('')
+              $('#newUserDataItemForm').removeData('currentUserEmailVerified')
+              $('#newUserDataItemModal .modalAlertWarning .alert').html(err.alertDanger);
+              $('#newUserDataItemModal .modalAlertWarning').show();
+
+              $('#currentUserDataItemLabel').html('Please Enter Your Current Email Address:')
+
+              $('#currentUserDataItem').attr({
+                type: 'text',
+                title: 'Please enter a valid Email Address',
+                placeholder: 'Current Email Address'
+              })
+
+            } else if (data.validatedData) {
 
               console.log('#newUserDataItemForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData)
               helper.handleErrorResponse(data.validatedData)
 
-            }else{
+            } else {
 
-              console.log('#newUserDataItemForm > ajax > SUCCESS > ERROR')
-              $('#newUserDataItemForm .formerror').removeClass('hide').addClass('show')
-
+              $('#currentUserDataItem').addClass('has-error')
+              $('#currentUserDataItemError').removeClass('show').addClass('hide')
+              $('#currentUserDataItemRegistered').removeClass('hide').addClass('show')
+              // $('#newUserDataItemForm .formerror').removeClass('hide').addClass('show')
+              
             }
 
             $('.loading').hide()
@@ -392,7 +406,8 @@ var helper = {
 
           if (currentUserEmailVerified !== true) {
 
-            helper.validateDataService(data, 'email', 'true', 'true', function (err, response) {
+            // just make user validate their email for both email & password
+            helper.validateNewEmailPasswordService(data, 'email', 'true', function (err, response) {
 
               if (err) {
 
@@ -450,13 +465,12 @@ var helper = {
 
             if (type === 'password') {
 
-              helper.validateDataService(data, type, 'true', 'true', function (err, response) {
+              helper.validateNewEmailPasswordService(data, type, 'true', function (err, response) {
 
                 if (err) {
 
                   if(err.alertDanger){
 
-                    var a = err.alertDanger
                     $('#currentUserDataItem').val('')
                     $('#newUserDataItemForm').removeData('currentUserEmailVerified')
                     $('#newUserDataItemModal .modalAlertWarning .alert').html(err.alertDanger);
@@ -491,13 +505,6 @@ var helper = {
 
                   $('#hideNewUserData').removeClass('hideClass')
                   $('#hideNewUserData').css( 'display', '' )
-
-                  $('#currentUserDataItem').attr({ 
-                      type: 'password',
-                      pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
-                      title: 'Please enter your Password',
-                      placeholder: 'Current Password'
-                  })
 
                   $('#newUserDataItem').attr({ 
                       type: 'password',
@@ -561,8 +568,8 @@ var helper = {
   },
 
 
-  validateDataService: function (value, type, resp, callback) {
-    console.log('validateDataService > type/value +++++++++: ', type , ' :: ', value)
+  validateNewEmailPasswordService: function (value, type, resp, callback) {
+    console.log('validateNewEmailPasswordService > type/value +++++++++: ', type , ' :: ', value)
 
     var ms = $('body').data('modalShown')
     ms ? $(ms + ' .loading').show() : helper.showLoading()
@@ -575,12 +582,12 @@ var helper = {
     data['expectedResponse'] = resp
     data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
-    console.log('validateDataService > DATA: ', data)
+    console.log('validateNewEmailPasswordService > DATA: ', data)
 
     $.ajax({
 
       rejectUnauthorized: false,
-      url: 'https://localhost:3000/api/validatedataservice',
+      url: 'https://localhost:3000/api/validatenewemailpasswordservice',
       type: 'POST',
       data: JSON.stringify(data),
       dataType: 'json',
@@ -592,12 +599,12 @@ var helper = {
 
         if (data.response === 'success') {
 
-          console.log('validateDataService > SUCCESS: ', data)
+          console.log('validateNewEmailPasswordService > SUCCESS: ', data)
           callback(null, true)
 
         } else {
 
-          console.log('validateDataService > SUCCESS > ERROR: ', data)
+          console.log('validateNewEmailPasswordService > SUCCESS > ERROR: ', data)
           callback(data, false)
         }
 
@@ -607,7 +614,7 @@ var helper = {
 
       error: function (xhr, status, error) {
 
-        console.log('validateDataService > ERROR: ', xhr)
+        console.log('validateNewEmailPasswordService > ERROR: ', xhr)
         var parsedXHR = JSON.parse(xhr.responseText)
 
         location.href = parsedXHR.redirect

@@ -27,44 +27,34 @@ module.exports.ensureAuthenticatedAPI = function (req, res, next) {
   }
 }
 
-
+// reaching this this middleware means user is authenticated and has validated their email (if changing email or password) and password (if changing password)
+// a time limit is ticking, so user has 5 minutes to submit form from last email/password verification
+// that is what this is middleware verifying
 module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
-
-  console.log('## auth > ensureAuthenticatedNewUserDataItem +++++++++++++++++')
 
   var u =  req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
   var nd = new Date()
 
-  // if type === email     >>>   (if req.session.userValidatedEmail.time > 5 minutes, then ERROR: 'response': 'error', 'alertDanger')
-  // you have 5 minutes to submit form, otherwise you repeat 'nextSubmitNewUserDataItemForm' from start
-
-  // if type === password  >>>   (if req.session.userValidatedPassword.time > 5 minutes, then ERROR: 'response': 'error', 'alertDanger')
-  // you have 5 minutes to submit form, otherwise you repeat 'nextSubmitNewUserDataItemForm' from start
-
   if (req.body.type === 'email' && req.session.userValidatedEmail.validated) {
-
-    console.log('## auth > ensureAuthenticatedNewUserDataItem > req.session.userValidatedEmail:', req.session.userValidatedEmail.validated)
 
     var dmillis = nd.getTime() - req.session.userValidatedEmail.time
     var dmillis = new Date(dmillis)
 
     req.session.userValidatedEmail.validated = false
 
-    if(dmillis.getMinutes() > 1){
+    if (dmillis.getMinutes() > 1) {
 
-      console.log('## auth > ensureAuthenticatedNewUserDataItem > EMAIL > BAAAAAAAAAD')
-      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
+      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
 
-      console.log('## auth > ensureAuthenticatedNewUserDataItem > EMAIL > GOOOOOOOOOD')
       return next()
 
     }
 
-  }else if (req.body.type === 'password' && req.session.userValidatedEmail.validated && req.session.userValidatedPassword.validated) {
+  }
 
-    console.log('## auth > ensureAuthenticatedNewUserDataItem > req.session.userValidatedPassword:', req.session.userValidatedPassword.validated)
+  if (req.body.type === 'password' && req.session.userValidatedEmail.validated && req.session.userValidatedPassword.validated) {
 
     var pmillis = nd.getTime() - req.session.userValidatedPassword.time
     var pmillis = new Date(pmillis)
@@ -74,12 +64,10 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
     if(pmillis.getMinutes() > 1){
 
-      console.log('## auth > ensureAuthenticatedNewUserDataItem > PASSWORD > BAAAAAAAAAD')
-      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
+      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
 
-      console.log('## auth > ensureAuthenticatedNewUserDataItem > PASSWORD > GOOOOOOOOOD')
       return next()
 
     }

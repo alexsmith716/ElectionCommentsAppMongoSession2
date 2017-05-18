@@ -1,8 +1,7 @@
 
 var User = require('../theAPI/model/userSchema.js')
-var crypto = require('crypto');
 
-module.exports = function (req, res, callback) {
+module.exports = function (req, res, cb) {
 
   console.log('## evaluateUserPassword > res.locals.currentUser', res.locals.currentUser)
   console.log('## evaluateUserPassword > type:', req.body.type)
@@ -10,33 +9,28 @@ module.exports = function (req, res, callback) {
   console.log('## evaluateUserPassword > expectedResponse:', req.body.expectedResponse)
   console.log('## evaluateUserPassword > testUser:', req.body.testUser)
 
-  if (req.session.userValidatedEmail.validated === true) {
+  res.locals.currentUser.checkPassword(req.body.data, function(err, result) {
 
-    res.locals.currentUser.checkPassword(req.body.data, function(err, result) {
+    // err = new Error('Bad Request')
+    // err.status = 400
 
-      if (err) {
+    if (err) {
 
-        callback({status: 'err', response: 'error', message: err})
-      }
+      cb({status: 'err', response: 'error', message: err})
+    }
 
-      if (!result) {
+    if (!result) {
 
-        callback({status: 201, response: 'error'})
+      cb({status: 201, response: 'error'})
 
-      } else {
+    } else {
 
-        var nd = new Date()
-        nd = nd.getTime()
-        req.session.userValidatedPassword = {'validated': true, 'time': nd}
+      var nd = new Date()
+      nd = nd.getTime()
+      req.session.userValidatedPassword = {'validated': true, 'time': nd}
 
-        callback({status: 201, response: 'success'})
+      cb({status: 201, response: 'success'})
 
-      }
-    })
-
-  } else {
-
-    callback({status: 201, response: 'error'})
-
-  }
+    }
+  })
 }
