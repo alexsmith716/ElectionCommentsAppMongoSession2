@@ -30,10 +30,10 @@ router.put('/evaluateuserprofile', csrfProtection, apiControllers.ajaxEvaluateUs
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-router.put('/newuserdataitem', csrfProtection, auth.ensureAuthenticatedNewUserDataItem, apiControllers.ajaxNewUserDataItem)
-
-router.post('/validatedataservice', csrfProtection, auth.ensureAuthenticated, apiControllers.ajaxValidateDataService)
 router.post('/evaluateuseremail', csrfProtection, apiControllers.ajaxEvaluateUserEmail)
+
+router.post('/validatenewemailpasswordservice', csrfProtection, auth.ensureAuthenticated, apiControllers.ajaxValidateNewEmailPasswordService)
+router.put('/newuserdataitem', csrfProtection, auth.ensureAuthenticated, auth.ensureAuthenticatedNewUserDataItem, apiControllers.ajaxNewUserDataItem)
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

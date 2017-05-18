@@ -1,27 +1,42 @@
 
 var User = require('../theAPI/model/userSchema.js')
 
-module.exports = function (email, expectingARegisteredEmail, callback) {
+module.exports = function (reqEmail, expectedResponse, cb) {
+
+  var email = reqEmail.trim()
+
   User.findOne( { email: email } ).exec(function (err, user) {
+
+    // err = new Error('Bad Request')
+    // err.status = 400
+
     if (err) {
-      callback({status: 'err', response: 'error', message: err})
+
+      cb({status: 'err', response: 'error', message: err})
 
     } else {
-      if (expectingARegisteredEmail === 'false') {
+
+      if (expectedResponse === 'false') {
+
         if (user) {
-          callback({status: 201, response: 'error'})
+
+          cb({status: 201, response: 'error'})
 
         } else {
-          callback({status: 201, response: 'success'})
+
+          cb({status: 201, response: 'success'})
 
         }
 
       } else {
+
         if (!user) {
-          callback({status: 201, response: 'error'})
+
+          cb({status: 201, response: 'error'})
 
         } else {
-          callback({status: 201, response: 'success'})
+
+          cb({status: 201, response: 'success'})
 
         }
       }

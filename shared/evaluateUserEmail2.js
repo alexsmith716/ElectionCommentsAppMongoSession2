@@ -1,21 +1,24 @@
 
 var User = require('../theAPI/model/userSchema.js')
 
-module.exports = function (req, res, callback) {
+module.exports = function (req, res, cb) {
 
   var email = req.body.data.trim()
 
   User.findOne( { email: email } ).exec(function (err, user) {
 
+    // err = new Error('Bad Request')
+    // err.status = 400
+
     if (err) {
 
-      callback({status: 'err', response: 'error', message: err})
+      cb({status: 'err', response: 'error', message: err})
 
     } else {
 
       if (!user) {
 
-        callback({status: 201, response: 'error'})
+        cb({status: 201, response: 'error'})
 
       } else {
 
@@ -25,11 +28,11 @@ module.exports = function (req, res, callback) {
           nd = nd.getTime()
           req.session.userValidatedEmail = {'validated': true, 'time': nd}
 
-          callback({status: 201, response: 'success'})
+          cb({status: 201, response: 'success'})
 
         } else {
 
-          callback({status: 201, response: 'error'})
+          cb({status: 201, response: 'error'})
 
         }
 
