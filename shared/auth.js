@@ -34,25 +34,17 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
   var u =  req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
   var nd = new Date()
 
-  console.log('## auth > ensureAuthenticatedNewUserDataItem +++++++++++ U1:', u)
-  console.log('## auth > ensureAuthenticatedNewUserDataItem +++++++++++ U2:', req.session.userValidatedEmail.validated)
-  console.log('## auth > ensureAuthenticatedNewUserDataItem +++++++++++ U3:', req.session.userValidatedEmail.time)
-
   if (req.body.type === 'email' && req.session.userValidatedEmail.validated) {
 
     var dmillis = nd.getTime() - req.session.userValidatedEmail.time
-    console.log('## auth > ensureAuthenticatedNewUserDataItem +++++++++++ U4a:', nd.getTime())
-    console.log('## auth > ensureAuthenticatedNewUserDataItem +++++++++++ U4b:', req.session.userValidatedEmail.time)
     var dmillis = new Date(dmillis)
     var foo = 'foo'
-
-    req.session.userValidatedEmail.validated = false
-
-    console.log('## auth > ensureAuthenticatedNewUserDataItem +++++++++++ U5:', dmillis.getMinutes())
 
     // if (foo === 'foo') {
     // if (dmillis.getMinutes() > 4) {
     if (dmillis.getMinutes() > 0) {
+
+      req.session.userValidatedEmail.validated = false
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
@@ -63,12 +55,12 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
   } else if (req.body.type === 'password' && req.session.userValidatedEmail.validated && req.session.userValidatedPassword.validated) {
     var pmillis = nd.getTime() - req.session.userValidatedPassword.time
 
-    req.session.userValidatedEmail.validated = false
-    req.session.userValidatedPassword.validated = false
-
     // if (foo === 'foo') {
     // if (pmillis.getMinutes() > 4) {
     if (pmillis.getMinutes() > 0) {
+
+      req.session.userValidatedEmail.validated = false
+      req.session.userValidatedPassword.validated = false
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 

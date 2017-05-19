@@ -278,30 +278,23 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
     millis = nd.getTime() - req.session.userValidatedEmail.time
     ndm = new Date(millis)
+    req.session.userValidatedEmail.validated = false
 
-    if(ndm.getMinutes() > 5){
-    // if(ndm.getMinutes() > 1){
-    // if(foo === 'foo'){
+    // if (foo === 'foo') {
+    // if (ndm.getMinutes() > 4) {
+    if (ndm.getMinutes() > 0) {
 
-      console.log('## ajaxNewUserDataItem > req.session.userValidatedEmail.validated 1:', req.session.userValidatedEmail.validated)
-
-      req.session.userValidatedEmail.validated = false
-
-      console.log('## ajaxNewUserDataItem > req.session.userValidatedEmail.validated 2:', req.session.userValidatedEmail.validated)
-
-      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
+      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
 
-      evaluateUserEmail2(req, res, function (response) {
+      evaluateUserEmail2(req, res, false, function (response) {
 
         if (response.response === 'success') {
 
           template['email'] = 'required'
           template['confirmEmail'] = 'required'
-          template['expectedResponse'] = 'true'
-
-          console.log('## ajaxNewUserDataItem > EMAIL > GOOD > serverSideValidation +++++++++')
+          template['expectedResponse'] = 'false'
 
           // serverSideValidation(req, res, template, function (validatedResponse) {
 
@@ -310,66 +303,47 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
         } else {
 
-          console.log('## ajaxNewUserDataItem > EMAIL > BAD 1 +++++++++')
-
-          req.session.userValidatedEmail.validated = false
-
           if (response.status === 'err') {
-
-            console.log('## ajaxNewUserDataItem > EMAIL > BAD 2 +++++++++')
 
             return next(response.message)
 
           } else {
 
-            console.log('## ajaxNewUserDataItem > EMAIL > BAD 3 +++++++++')
-
             sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 
           }
-
         }
-
       })
     }
-
   }
 
   if (req.body.type === 'password' && req.session.userValidatedEmail.validated && req.session.userValidatedPassword.validated) {
 
     millis = nd.getTime() - req.session.userValidatedPassword.time
     ndm = new Date(millis)
+    req.session.userValidatedEmail.validated = false
+    req.session.userValidatedPassword.validated = false
 
-    if(ndm.getMinutes() > 5){
-    // if(ndm.getMinutes() > 1){
-    // if(foo === 'foo'){
+    if (ndm.getMinutes() > 5) {
+    // if (ndm.getMinutes() > 1) {
+    // if (foo === 'foo') {
 
-      console.log('## ajaxNewUserDataItem > req.session.userValidatedPassword.validated 1:', req.session.userValidatedPassword.validated)
-
-      req.session.userValidatedPassword.validated = false
-
-      console.log('## ajaxNewUserDataItem > req.session.userValidatedPassword.validated 2:', req.session.userValidatedPassword.validated)
-
-      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
+      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
 
-      evaluateUserPassword(req, res, function (response) {
+      evaluateUserPassword(req, res, false, function (response) {
 
         if (response.response === 'success') {
 
           template['password'] = 'required'
           template['confirmPassword'] = 'required'
 
-          console.log('## ajaxNewUserDataItem > PASSWORD > serverSideValidation +++++++++++++++')
-
           // serverSideValidation(req, res, template, function (validatedResponse) {
 
           // })
 
         } else {
-
-          req.session.userValidatedPassword.validated = false
 
           if (response.status === 'err') {
 
@@ -380,13 +354,9 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
             sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 
           }
-
         }
-
       })
-
     }
-
   }
 
   /*
@@ -544,7 +514,7 @@ module.exports.ajaxValidateNewEmailPasswordService = function (req, res, next) {
 
   if (req.body.type === 'email') {
 
-    evaluateUserEmail2(req, res, function (response) {
+    evaluateUserEmail2(req, res, true, function (response) {
 
       if (response.status === 'err') {
 
@@ -580,7 +550,7 @@ module.exports.ajaxValidateNewEmailPasswordService = function (req, res, next) {
 
     }else{
 
-      evaluateUserPassword(req, res, function (response) {
+      evaluateUserPassword(req, res, true, function (response) {
 
         if (response.status === 'err') {
 
