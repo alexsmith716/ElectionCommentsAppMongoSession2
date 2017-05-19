@@ -254,7 +254,7 @@ module.exports.getUserProfileResponse = function(req, res, next) {
 
 
 
-module.exports.ajaxNewUserDataItem = function (req, res, next) {
+module.exports.newUserDataItem = function (req, res, next) {
 
   var nd = new Date()
   var millis
@@ -262,7 +262,7 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
   var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
   var foo = 'foo'
 
-  console.log('####### > API > ajaxNewUserDataItem > req.body:', req.body)
+  console.log('####### > API > newUserDataItem > req.body:', req.body)
 
   /*
   req.body: { type: 'email',
@@ -283,11 +283,11 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
     // if(ndm.getMinutes() > 1){
     // if(foo === 'foo'){
 
-      console.log('## ajaxNewUserDataItem > req.session.userValidatedEmail.validated 1:', req.session.userValidatedEmail.validated)
+      console.log('## newUserDataItem > req.session.userValidatedEmail.validated 1:', req.session.userValidatedEmail.validated)
 
       req.session.userValidatedEmail.validated = false
 
-      console.log('## ajaxNewUserDataItem > req.session.userValidatedEmail.validated 2:', req.session.userValidatedEmail.validated)
+      console.log('## newUserDataItem > req.session.userValidatedEmail.validated 2:', req.session.userValidatedEmail.validated)
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 
@@ -301,7 +301,7 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
           template['confirmEmail'] = 'required'
           template['expectedResponse'] = 'true'
 
-          console.log('## ajaxNewUserDataItem > EMAIL > GOOD > serverSideValidation +++++++++')
+          console.log('## newUserDataItem > EMAIL > GOOD > serverSideValidation +++++++++')
 
           // serverSideValidation(req, res, template, function (validatedResponse) {
 
@@ -310,19 +310,19 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
         } else {
 
-          console.log('## ajaxNewUserDataItem > EMAIL > BAD 1 +++++++++')
+          console.log('## newUserDataItem > EMAIL > BAD 1 +++++++++')
 
           req.session.userValidatedEmail.validated = false
 
           if (response.status === 'err') {
 
-            console.log('## ajaxNewUserDataItem > EMAIL > BAD 2 +++++++++')
+            console.log('## newUserDataItem > EMAIL > BAD 2 +++++++++')
 
             return next(response.message)
 
           } else {
 
-            console.log('## ajaxNewUserDataItem > EMAIL > BAD 3 +++++++++')
+            console.log('## newUserDataItem > EMAIL > BAD 3 +++++++++')
 
             sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 
@@ -344,11 +344,11 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
     // if(ndm.getMinutes() > 1){
     // if(foo === 'foo'){
 
-      console.log('## ajaxNewUserDataItem > req.session.userValidatedPassword.validated 1:', req.session.userValidatedPassword.validated)
+      console.log('## newUserDataItem > req.session.userValidatedPassword.validated 1:', req.session.userValidatedPassword.validated)
 
       req.session.userValidatedPassword.validated = false
 
-      console.log('## ajaxNewUserDataItem > req.session.userValidatedPassword.validated 2:', req.session.userValidatedPassword.validated)
+      console.log('## newUserDataItem > req.session.userValidatedPassword.validated 2:', req.session.userValidatedPassword.validated)
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 
@@ -361,7 +361,7 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
           template['password'] = 'required'
           template['confirmPassword'] = 'required'
 
-          console.log('## ajaxNewUserDataItem > PASSWORD > serverSideValidation +++++++++++++++')
+          console.log('## newUserDataItem > PASSWORD > serverSideValidation +++++++++++++++')
 
           // serverSideValidation(req, res, template, function (validatedResponse) {
 
@@ -541,7 +541,6 @@ module.exports.ajaxValidateNewEmailPasswordService = function (req, res, next) {
 
   console.log('## ajaxValidateNewEmailPasswordService > type:', req.body.type)
   console.log('## ajaxValidateNewEmailPasswordService > data:', req.body.data)
-  console.log('## ajaxValidateNewEmailPasswordService > expectedResponse:', req.body.expectedResponse)
 
   if (req.body.type === 'email') {
 

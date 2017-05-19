@@ -273,28 +273,20 @@ var helper = {
 
           } else {
 
-
             if (data.alertDanger) {
 
-              $('#currentUserDataItem').val('')
-              $('#newUserDataItemForm').removeData('currentUserEmailVerified')
-              $('#newUserDataItemModal .modalAlertWarning .alert').html(err.alertDanger);
-              $('#newUserDataItemModal .modalAlertWarning').show();
+              console.log('#newUserDataItemForm > ajax > SUCCESS > ERROR 1: ', data)
+              helper.alertDangerNewUserDataItemModal()
 
-              $('#currentUserDataItemLabel').html('Please Enter Your Current Email Address:')
-
-              $('#currentUserDataItem').attr({
-                type: 'text',
-                title: 'Please enter a valid Email Address',
-                placeholder: 'Current Email Address'
-              })
 
             } else if (data.validatedData) {
 
-              console.log('#newUserDataItemForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData)
+              console.log('#newUserDataItemForm > ajax > SUCCESS > ERROR 2: ', data)
               helper.handleErrorResponse(data.validatedData)
 
             } else {
+
+              console.log('#newUserDataItemForm > ajax > SUCCESS > ERROR 3: ', data)
 
               $('#currentUserDataItem').addClass('has-error')
               $('#currentUserDataItemError').removeClass('show').addClass('hide')
@@ -393,6 +385,7 @@ var helper = {
 
       console.log('nextSubmitNewUserDataItemForm > type: ', type)
       console.log('nextSubmitNewUserDataItemForm > currentUserDataItemVerified: ', currentUserDataItemVerified)
+      console.log('nextSubmitNewUserDataItemForm > currentUserEmailVerified 1: ', currentUserEmailVerified)
 
       if (currentUserDataItemVerified) {
 
@@ -421,8 +414,6 @@ var helper = {
                 $('#currentUserDataItemError').removeClass('show').addClass('hide')
                 $('#currentUserDataItemRegistered').removeClass('show').addClass('hide')
 
-                $('#newUserDataItemForm').data('currentUserEmailVerified', true)
-
                 if(type === 'email'){
 
                   $('#newUserDataItemForm').data('currentUserDataItemVerified', true)
@@ -438,6 +429,8 @@ var helper = {
 
 
                 if(type === 'password'){
+
+                  $('#newUserDataItemForm').data('currentUserEmailVerified', true)
 
                   $('#currentUserDataItemLabel').html('Please Enter Your Current Password:')
                   $('#currentUserDataItem').val('')
@@ -542,10 +535,13 @@ var helper = {
 
     })
 
-
   },
 
-  resetNewUserDataItemModal: function() {
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  resetNewUserDataItemModal: function () {
 
     $('body').removeData('modalShown')
     $('#newUserDataItemModal .modalAlertWarning').hide();
@@ -561,12 +557,36 @@ var helper = {
     $('#hideNewUserData').attr('class', 'hideClass')
     $('#hideNewUserData').attr('style', 'display:none')
     
-    $('#newUserDataItemModal .required-fields .error').removeClass('show').addClass('hide')
+    $('#newUserDataItemModal').find('.error').removeClass('show').addClass('hide')
 
     $('#newUserDataItemModal input').removeClass('has-error')
-
   },
 
+
+  alertDangerNewUserDataItemModal: function () {
+    $('#newUserDataItemModal .modalAlertWarning .alert').html(data.alertDanger);
+    $('#newUserDataItemModal .modalAlertWarning').show();
+    $('#newUserDataItemModal').find('.error').removeClass('show').addClass('hide')
+    $('#newUserDataItemModal input').removeClass('has-error')
+  
+    $('#currentUserDataItem').val('')
+    $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
+    $('#newUserDataItemForm').removeData('currentUserEmailVerified')
+
+    $('#hideCurrentUserData').removeClass('hideClass')
+    $('#hideCurrentUserData').css( 'display', '' )
+    $('#hideNewUserData').addClass('hideClass')
+    $('#hideNewUserData').css( 'display', 'none' )
+    $('#nextSubmitNewUserDataItemForm').html('Next')
+
+    $('#currentUserDataItem').off('focusout')
+    $('#newUserDataItem').off('focusout')
+    $('#confirmNewUserDataItem').off('focusout')
+    $('body').off('click')
+  },
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   validateNewEmailPasswordService: function (value, type, resp, callback) {
     console.log('validateNewEmailPasswordService > type/value +++++++++: ', type , ' :: ', value)
@@ -579,7 +599,6 @@ var helper = {
 
     data['type'] = type
     data['data'] = value
-    data['expectedResponse'] = resp
     data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
     console.log('validateNewEmailPasswordService > DATA: ', data)
@@ -1344,6 +1363,7 @@ var helper = {
       keyboard: false,
       backdrop: 'static'
     })
+
   },
 
 
