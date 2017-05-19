@@ -8,8 +8,10 @@ var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https:/
 
 module.exports.ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
+    console.log('## auth > ensureAuthenticated +++++++++++ YES')
     return next()
   } else {
+    console.log('## auth > ensureAuthenticated +++++++++++ NO')
     // res.redirect('/loginorsignup')
     var newExceptionError = new Error('Bad Request')
     newExceptionError.status = 400
@@ -27,9 +29,6 @@ module.exports.ensureAuthenticatedAPI = function (req, res, next) {
   }
 }
 
-// reaching this this middleware means user is authenticated and has validated their email (if changing email or password) and password (if changing password)
-// a time limit is ticking, so user has 5 minutes to submit form from last email/password verification
-// that is what this is middleware verifying
 module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
   var u =  req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
@@ -39,45 +38,41 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
     var dmillis = nd.getTime() - req.session.userValidatedEmail.time
     var dmillis = new Date(dmillis)
+    var foo = 'foo'
 
     req.session.userValidatedEmail.validated = false
 
+    // if (foo === 'foo') {
+    // if (dmillis.getMinutes() > 5) {
     if (dmillis.getMinutes() > 1) {
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
-
       return next()
 
     }
-
-  }
-
-  if (req.body.type === 'password' && req.session.userValidatedEmail.validated && req.session.userValidatedPassword.validated) {
-
+  } else if (req.body.type === 'password' && req.session.userValidatedEmail.validated && req.session.userValidatedPassword.validated) {
     var pmillis = nd.getTime() - req.session.userValidatedPassword.time
     var pmillis = new Date(pmillis)
 
     req.session.userValidatedEmail.validated = false
     req.session.userValidatedPassword.validated = false
 
-    if(pmillis.getMinutes() > 1){
+    // if (foo === 'foo') {
+    // if (pmillis.getMinutes() > 5) {
+    if (pmillis.getMinutes() > 1) {
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
-
       return next()
 
     }
-
   } else {
-
     sendJSONresponse(res, 400, exceptionError)
 
   }
-
 }
 
 module.exports.noCache = function (req, res, next) {
