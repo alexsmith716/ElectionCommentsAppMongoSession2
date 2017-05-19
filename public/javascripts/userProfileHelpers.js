@@ -276,7 +276,25 @@ var helper = {
             if (data.alertDanger) {
 
               console.log('#newUserDataItemForm > ajax > SUCCESS > ERROR 1: ', data)
-              helper.alertDangerNewUserDataItemModal()
+              $('#newUserDataItemModal .modalAlertWarning .alert').html(data.alertDanger);
+              $('#newUserDataItemModal .modalAlertWarning').show();
+              $('#newUserDataItemModal').find('.error').removeClass('show').addClass('hide')
+              $('#newUserDataItemModal input').removeClass('has-error')
+
+              $('#currentUserDataItem').val('')
+              $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
+              $('#newUserDataItemForm').removeData('currentUserEmailVerified')
+
+              $('#hideCurrentUserData').removeClass('hideClass')
+              $('#hideCurrentUserData').css( 'display', '' )
+              $('#hideNewUserData').addClass('hideClass')
+              $('#hideNewUserData').css( 'display', 'none' )
+              $('#nextSubmitNewUserDataItemForm').html('Next')
+
+              $('#currentUserDataItem').off('focusout')
+              $('#newUserDataItem').off('focusout')
+              $('#confirmNewUserDataItem').off('focusout')
+              $('body').off('click')
 
 
             } else if (data.validatedData) {
@@ -562,28 +580,6 @@ var helper = {
     $('#newUserDataItemModal input').removeClass('has-error')
   },
 
-
-  alertDangerNewUserDataItemModal: function () {
-    $('#newUserDataItemModal .modalAlertWarning .alert').html(data.alertDanger);
-    $('#newUserDataItemModal .modalAlertWarning').show();
-    $('#newUserDataItemModal').find('.error').removeClass('show').addClass('hide')
-    $('#newUserDataItemModal input').removeClass('has-error')
-  
-    $('#currentUserDataItem').val('')
-    $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
-    $('#newUserDataItemForm').removeData('currentUserEmailVerified')
-
-    $('#hideCurrentUserData').removeClass('hideClass')
-    $('#hideCurrentUserData').css( 'display', '' )
-    $('#hideNewUserData').addClass('hideClass')
-    $('#hideNewUserData').css( 'display', 'none' )
-    $('#nextSubmitNewUserDataItemForm').html('Next')
-
-    $('#currentUserDataItem').off('focusout')
-    $('#newUserDataItem').off('focusout')
-    $('#confirmNewUserDataItem').off('focusout')
-    $('body').off('click')
-  },
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
