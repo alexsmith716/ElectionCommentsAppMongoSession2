@@ -7,12 +7,9 @@ var nodemailer = require('nodemailer')
 var passport = require('passport')
 var mongoose = require('mongoose')
 var serverSideValidation = require('../../shared/serverSideValidation.js')
-
 var evaluateUserEmail = require('../../shared/evaluateUserEmail.js')
-
-var evaluateUserEmail2 = require('../../shared/evaluateUserEmail2.js')
-var evaluateUserPassword = require('../../shared/evaluateUserPassword.js')
-
+var evaluateUserEmailVerify = require('../../shared/evaluateUserEmailVerify.js')
+var evaluateUserPasswordVerify = require('../../shared/evaluateUserPasswordVerify.js')
 var stateNamer = require('../../shared/stateNamer.js')
 var createError = require('http-errors')
 var auth = require('basic-auth')
@@ -288,7 +285,7 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
     } else {
 
-      evaluateUserEmail2(req, res, false, function (response) {
+      evaluateUserEmailVerify(req, res, false, function (response) {
 
         if (response.response === 'success') {
 
@@ -324,15 +321,15 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
     req.session.userValidatedEmail.validated = false
     req.session.userValidatedPassword.validated = false
 
-    if (ndm.getMinutes() > 5) {
-    // if (ndm.getMinutes() > 1) {
-    // if (foo === 'foo') {
+    if (foo === 'foo') {
+    // if (ndm.getMinutes() > 4) {
+    // if (ndm.getMinutes() > 0) {
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
 
-      evaluateUserPassword(req, res, false, function (response) {
+      evaluateUserPasswordVerify(req, res, false, function (response) {
 
         if (response.response === 'success') {
 
@@ -514,7 +511,7 @@ module.exports.ajaxValidateNewEmailPasswordService = function (req, res, next) {
 
   if (req.body.type === 'email') {
 
-    evaluateUserEmail2(req, res, true, function (response) {
+    evaluateUserEmailVerify(req, res, true, function (response) {
 
       if (response.status === 'err') {
 
@@ -550,7 +547,7 @@ module.exports.ajaxValidateNewEmailPasswordService = function (req, res, next) {
 
     }else{
 
-      evaluateUserPassword(req, res, true, function (response) {
+      evaluateUserPasswordVerify(req, res, true, function (response) {
 
         if (response.status === 'err') {
 

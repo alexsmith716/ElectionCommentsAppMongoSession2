@@ -40,9 +40,7 @@ module.exports = function (req, res, doUserValidatedEmail, cb) {
           cb({status: 201, response: 'error'})
 
         }
-
       }
-
     }
   })
 }
