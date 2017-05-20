@@ -26,7 +26,7 @@ router.post('/signupuser', csrfProtection, apiControllers.ajaxSignUpUser)
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 router.post('/forgotpassword', csrfProtection, apiControllers.ajaxForgotPassword)
-router.put('/evaluateuserprofile', csrfProtection, apiControllers.ajaxEvaluateUserProfile)
+router.put('/evaluateuserprofile', csrfProtection, auth.ensureAuthenticated, apiControllers.ajaxEvaluateUserProfile)
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -37,14 +37,13 @@ router.put('/newuserdataitem', csrfProtection, auth.ensureAuthenticated, auth.en
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-router.get('/userprofile/:userid', csrfProtection, auth.ensureAuthenticatedAPI, apiControllers.getUserProfileResponse)
+router.get('/userprofile/:userid', csrfProtection, auth.basicAuthenticationAPI, apiControllers.getUserProfileResponse)
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-// holding off on updating comments for next project version +++++++++++++++++++++++++++++++
-router.get('/comments', csrfProtection, auth.ensureAuthenticatedAPI, apiControllers.getCommentsResponse)
-router.post('/comments/maincomment', csrfProtection, auth.ensureAuthenticatedAPI, apiControllers.postMainCommentResponse)
-router.post('/comments/subcomment/:subcommentid', csrfProtection, auth.ensureAuthenticatedAPI, apiControllers.postSubCommentResponse)
-router.get('/:commentid', csrfProtection, auth.ensureAuthenticatedAPI, apiControllers.getOneCommentResponse)
+router.get('/comments', csrfProtection, auth.basicAuthenticationAPI, apiControllers.getCommentsResponse)
+router.post('/comments/maincomment', csrfProtection, auth.basicAuthenticationAPI, apiControllers.postMainCommentResponse)
+router.post('/comments/subcomment/:subcommentid', csrfProtection, auth.basicAuthenticationAPI, apiControllers.postSubCommentResponse)
+router.get('/:commentid', csrfProtection, auth.basicAuthenticationAPI, apiControllers.getOneCommentResponse)
 
 module.exports = router

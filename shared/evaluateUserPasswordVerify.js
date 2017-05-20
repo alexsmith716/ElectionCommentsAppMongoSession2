@@ -34,7 +34,6 @@ module.exports = function (req, res, doUserValidatedPassword, cb) {
         req.session.userValidatedPassword = {'validated': true, 'time': nd}
       }
       
-
       cb({status: 201, response: 'success'})
 
     }
