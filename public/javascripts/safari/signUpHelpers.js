@@ -439,7 +439,7 @@ var helper = {
 
           if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
             console.log('## validateParams 44444444')
-            $('#' + thisField + 'Match').removeClass('hide').addClass('show')
+            $('#' + thisField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
           } else {
             console.log('## validateParams 55555555: ', comparedField)
             $('#' + comparedField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
@@ -448,7 +448,7 @@ var helper = {
         } else {
           console.log('## validateParams 6666666')
           if (err1 !== undefined) {
-            $('#' + comparedField + 'Match').removeClass('hide').addClass('show')
+            $('#' + comparedField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
           } else {
             $('#' + comparedField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + 's don\'t match')
           }

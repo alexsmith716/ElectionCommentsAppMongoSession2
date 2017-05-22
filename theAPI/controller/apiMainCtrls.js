@@ -259,14 +259,16 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
   var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
   var foo = 'foo'
 
-  console.log('####### > API > ajaxNewUserDataItem > req.body:', req.body)
+  console.log('####### > API > ajaxNewUserDataItem > req.body1:', req.body)
 
   /*
-  req.body: { type: 'email',
-    data: 'aaa2@aaa.com',
-    newUserDataItem: '',
-    confirmNewUserDataItem: '',
-    _csrf: 'sN3SdDFv-zMtIMOPPREvvPrVRryOF1Dze2ik' }
+  { 
+  type: 'email',
+  data: 'aaa2@aaa.com',
+  newUserDataItem: 'hnhnhnh@nhgnhgn.com',
+  confirmNewUserDataItem: 'hnhnhnh@nhgnhgn.com',
+  _csrf: 'j9iIaJLi-mkJ7m7EBI5UwSzSjmniHKLhBjGI' 
+  }
   */
 
   var template = {}
@@ -281,6 +283,8 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
     // if (ndm.getMinutes() > 4) {
     if (ndm.getMinutes() > 0) {
 
+      console.log('aaaaaaaaaaa 1111111111111')
+
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
@@ -289,14 +293,61 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
         if (response.response === 'success') {
 
+          Object.keys(req.body).forEach(function(k) {
+            var nk
+            if(k === 'newUserDataItem'){
+              nk = 'email'
+              req.body[nk] = req.body[k];
+              delete req.body[k];
+            }
+            if(k === 'confirmNewUserDataItem'){
+              nk = 'confirmEmail'
+              req.body[nk] = req.body[k];
+              delete req.body[k];
+            }
+          });
+
+          console.log('####### > API > ajaxNewUserDataItem > req.body2:', req.body)
+
           template['email'] = 'required'
           template['confirmEmail'] = 'required'
           template['expectedResponse'] = 'false'
 
-          // serverSideValidation(req, res, template, function (validatedResponse) {
+          // ==============================================================================================
 
-          // })
+          serverSideValidation(req, res, template, function (validatedResponse) {
 
+            console.log('apiMainCtrls > ajaxNewUserDataItem > serverSideValidation > validatedResponse1: ', validatedResponse)
+
+            var validationErrors = false
+
+            if (validatedResponse.status === 'err') {
+              console.log('apiMainCtrls > ajaxNewUserDataItem > serverSideValidation > validatedResponse2: ', validatedResponse)
+              return next(validatedResponse.message)
+
+            } else {
+              console.log('apiMainCtrls > ajaxNewUserDataItem > serverSideValidation > validatedResponse3: ', validatedResponse)
+              for (var prop in validatedResponse) {
+                if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+                  console.log('apiMainCtrls > ajaxNewUserDataItem > serverSideValidation > validatedResponse4: ', validatedResponse)
+                  validationErrors = true
+                  break
+
+                }
+              }
+            }
+
+            if (!validationErrors) {
+              console.log('apiMainCtrls > ajaxNewUserDataItem > serverSideValidation > validatedResponse5: ', validatedResponse)
+
+            } else {
+              console.log('apiMainCtrls > ajaxNewUserDataItem > serverSideValidation > validatedResponse6: ', validatedResponse)
+              sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
+
+            }
+          })
+
+          // ==============================================================================================
 
         } else {
 
@@ -305,6 +356,8 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
             return next(response.message)
 
           } else {
+
+            console.log('aaaaaaaaaaa 22222222222222')
 
             sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 
@@ -324,6 +377,9 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
     if (foo === 'foo') {
     // if (ndm.getMinutes() > 4) {
     // if (ndm.getMinutes() > 0) {
+
+
+      console.log('aaaaaaaaaaa 333333333333')
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
@@ -348,6 +404,9 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
           } else {
 
+
+            console.log('aaaaaaaaaaa 44444444444')
+
             sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
 
           }
@@ -355,43 +414,6 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
       })
     }
   }
-
-  /*
-
-  // =============================================================================================
-
-  reqBody[objName] = reqBody[objName].trim();
-  isDataValid = emailPattern.test(reqBody[objName]);
-
-  serverSideValidation(req, res, template, function (validatedResponse) {
-    var validationErrors = false
-
-    console.log('####### > API > ajaxNewUserDataItem > validatedResponse:', validatedResponse)
-
-    if (validatedResponse.status === 'err') {
-      return next(validatedResponse.message)
-
-    } else {
-      for (var prop in validatedResponse) {
-        if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
-          validationErrors = true
-          break
-
-        }
-      }
-    }
-
-    console.log('####### > API > ajaxNewUserDataItem > validationErrors:', validationErrors)
-
-    if (!validationErrors) {
-      console.log('####### > API > ajaxNewUserDataItem > NO ERRORS!!!')
-
-    }else{
-      console.log('####### > API > ajaxNewUserDataItem > YES ERRORS!!!')
-      sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
-    }
-  })
-  */
 }
 
 
@@ -504,10 +526,10 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
 
 
-module.exports.ajaxValidateNewEmailPasswordService = function (req, res, next) {
+module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 
-  console.log('## ajaxValidateNewEmailPasswordService > type:', req.body.type)
-  console.log('## ajaxValidateNewEmailPasswordService > data:', req.body.data)
+  console.log('## ajaxValidateNewUserDataService > type:', req.body.type)
+  console.log('## ajaxValidateNewUserDataService > data:', req.body.data)
 
   if (req.body.type === 'email') {
 
@@ -532,7 +554,7 @@ module.exports.ajaxValidateNewEmailPasswordService = function (req, res, next) {
     var nds = new Date(millis)
     var foo = 'foo'
 
-    console.log('## ajaxValidateNewEmailPasswordService > nds.getMinutes():', nds.getMinutes())
+    console.log('## ajaxValidateNewUserDataService > nds.getMinutes():', nds.getMinutes())
 
     // if(nds.getMinutes() > 1){
     if(nds.getMinutes() > 5){
@@ -541,6 +563,9 @@ module.exports.ajaxValidateNewEmailPasswordService = function (req, res, next) {
       req.session.userValidatedEmail.validated = false
 
       var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
+
+
+      console.log('aaaaaaaaaaa 5555555555')
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
@@ -559,7 +584,6 @@ module.exports.ajaxValidateNewEmailPasswordService = function (req, res, next) {
 
         }
       })
-      
     }
   }
 }
@@ -580,7 +604,6 @@ module.exports.ajaxEvaluateUserEmail = function (req, res, next) {
       sendJSONresponse(res, response.status, { 'response': response.response })
 
     }
-
   })
 }
 
