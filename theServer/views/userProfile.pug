@@ -115,7 +115,7 @@ block content
 
                 input.form-control.input-md(id="currentUserDataItem", name="currentUserDataItem")
 
-                span.hide.error(id="currentUserDataItemRegistered") Please enter your Current Email Address
+                span.hide.error(id="currentUserDataItemRegistered")
                 span.hide.error(id="currentUserDataItemError") Please fill out this field. Please match the requested format.
 
 
@@ -153,9 +153,9 @@ block content
 
 
             div(class="modalCancelSubmitBtns")
-              button(class="btn btn-default btn-md", data-dismiss="modal") Cancel
+              button(class="btn btn-default btn-md cancelBtn", data-dismiss="modal", id="newUserDataItemModalCancel") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
-              button(class="btn btn-primary btn-md", id="nextSubmitNewUserDataItemForm")
+              button(class="btn btn-primary btn-md submitBtn", id="nextSubmitNewUserDataItemForm")
 
 
         .modal-footer

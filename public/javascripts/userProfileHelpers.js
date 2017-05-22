@@ -10,8 +10,6 @@ var helper = {
 
     setTimeout(function () { helper.hideLoading() }, 500)
 
-    isSafari ? helper.handleSpecificEvents() : null
-
     helper.initializeJqueryEvents()
   },
 
@@ -77,11 +75,8 @@ var helper = {
     })
 
 
-
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
 
     $('#newUserDataItemModal').on('shown.bs.modal', function() {
       $('body').data('modalShown', '#newUserDataItemModal')
@@ -95,17 +90,16 @@ var helper = {
       }, 150)
     })
 
+
     $('#newUserDataItemModal').on('hidden.bs.modal', function () {
-      helper.resetNewUserDataItemModal()
+      setTimeout(function() {
+        helper.resetNewUserDataItemModal()
+      }, 150)
     })
 
 
-
-
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
 
 
     $('#editProfileForm').on('submit', function(e) {
@@ -131,14 +125,14 @@ var helper = {
 
       if(isSafari){
 
-          var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
+        var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
 
-          if (testFocusout.formValid !== undefined){
-              console.log('+++++++++++ BAD FORM !!!!!!!!!!!')
-              testFocusout.focusFirstElement.focus()
-              $('.loading').hide()
-              return false
-          }
+        if (testFocusout.formValid !== undefined){
+          console.log('+++++++++++ BAD FORM !!!!!!!!!!!')
+          testFocusout.focusFirstElement.focus()
+          $('.loading').hide()
+          return false
+        }
       }
 
       // console.log('#editProfileForm > GOOD FORM');
@@ -163,46 +157,45 @@ var helper = {
 
         success: function(data, status, xhr) {
 
-            if (data.response === 'success') {
+          if (data.response === 'success') {
 
-                console.log('#editProfileForm > ajax > SUCCESS > SUCCESS: ')
+            console.log('#editProfileForm > ajax > SUCCESS > SUCCESS: ')
+            $('.loading').hide()
+            $('#editProfileFormModal').modal('hide')
+            $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re '+labelText+' has been successfully edited!')
+            $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show')
+            $('#editProfileModalAlert').modal('show')
+            $('.'+whichformdataid).text(newVal)
 
-                $('.loading').hide()
-                $('#editProfileFormModal').modal('hide')
-                $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re '+labelText+' has been successfully edited!')
-                $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show')
-                $('#editProfileModalAlert').modal('show')
-                $('.'+whichformdataid).text(newVal)
+          } else {
 
-            } else {
+            if(data.validatedData){
 
-                if(data.validatedData){
+              console.log('#editProfileForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData)
+              helper.handleErrorResponse(data.validatedData)
 
-                    console.log('#editProfileForm > ajax > SUCCESS > ERROR > validatedData: ', data.validatedData)
-                    helper.handleErrorResponse(data.validatedData)
+            }else{
 
-                }else{
+              console.log('#editProfileForm > ajax > SUCCESS > ERROR')
+              $('#editProfileForm .formerror').removeClass('hide').addClass('show')
 
-                    console.log('#editProfileForm > ajax > SUCCESS > ERROR')
-                    $('#editProfileForm .formerror').removeClass('hide').addClass('show')
-
-                }
-
-                $('.loading').hide()
-                return false
             }
+
+            $('.loading').hide()
+            return false
+          }
 
         },
 
         error: function(xhr, status, error) {
 
-            console.log('#editProfileForm > ajax > ERROR > ERROR: ', xhr)
+          console.log('#editProfileForm > ajax > ERROR > ERROR: ', xhr)
 
-            var parsedXHR = JSON.parse(xhr.responseText)
+          var parsedXHR = JSON.parse(xhr.responseText)
 
-            location.href = parsedXHR.redirect
+          location.href = parsedXHR.redirect
 
-            return false
+          return false
 
         }
       })
@@ -222,7 +215,6 @@ var helper = {
       console.log('#newUserDataItemForm > SUBMIT 3+++', $('#newUserDataItem').val())
       console.log('#newUserDataItemForm > SUBMIT 4+++', $('#confirmNewUserDataItem').val())
 
-
       e.preventDefault()
       $('.loading').show()
       $('#newUserDataItemForm .formerror').removeClass('show').addClass('hide')
@@ -230,6 +222,7 @@ var helper = {
       var data = {}
       var serviceUrl = $(this).attr('action')
       var constrainedFormElements = document.getElementById('newUserDataItemForm').querySelectorAll('[placeholder]')
+
 
       if(isSafari){
         var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
@@ -252,6 +245,8 @@ var helper = {
       }
 
       data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
+
+      console.log('+++++++++++ GOOD FORM !!!!!!!!!!! > DATA: ', data)
 
       $.ajax({
 
@@ -296,7 +291,6 @@ var helper = {
               $('#confirmNewUserDataItem').off('focusout')
               $('body').off('click')
 
-
             } else if (data.validatedData) {
 
               console.log('#newUserDataItemForm > ajax > SUCCESS > ERROR 2: ', data)
@@ -308,7 +302,7 @@ var helper = {
 
               $('#currentUserDataItem').addClass('has-error')
               $('#currentUserDataItemError').removeClass('show').addClass('hide')
-              $('#currentUserDataItemRegistered').removeClass('hide').addClass('show')
+              $('#currentUserDataItemRegistered').removeClass('hide').addClass('show').html('Please Enter Your '+$('#currentUserDataItem').attr('placeholder'))
               // $('#newUserDataItemForm .formerror').removeClass('hide').addClass('show')
               
             }
@@ -331,54 +325,35 @@ var helper = {
 
         }
       })
-
     })
 
 
-
-
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-
-
-    $('#personalInfoToggle').click(function(){
+    $('#personalInfoToggle').on('click', function (e) {
       helper.toggleEditBtn('personalInfo', true);
     })
 
-    $('#personalInfoUpdate').click(function(){
+    $('#personalInfoUpdate').on('click', function (e) {
       helper.toggleEditBtn('personalInfo', false);
     })
 
-    $('#accountInfoToggle').click(function(){
+    $('#accountInfoToggle').on('click', function (e) {
       helper.toggleEditBtn('accountInfo', true);
     })
 
-    $('#accountInfoUpdate').click(function(){
+    $('#accountInfoUpdate').on('click', function (e) {
       helper.toggleEditBtn('accountInfo', false);
     })
 
-    $('.editFormElement').click(function(){
+    $('.editFormElement').on('click', function (e) {
       helper.doEditProfileModal(this);
     })
 
-    $('.editFormEmailPassElement').click(function(){
+    $('.editFormEmailPassElement').on('click', function (e) {
       helper.doNewUserDataItemModal(this);
-    })
-
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    $('#newUserDataItem').on('change', function (e) {
-      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
-    })
-
-    $('#confirmNewUserDataItem').on('change', function (e) {
-      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
-    })
-
-    $('#state').on('change', function(e) {
-      helper.handleFormEvents($(this).attr('id'))
     })
 
 
@@ -387,6 +362,8 @@ var helper = {
 
 
     $('#nextSubmitNewUserDataItemForm').on('click', function(e) {
+
+      console.log('nextSubmitNewUserDataItemForm > ON > CLICK ++++++++++++')
 
       e.preventDefault()
 
@@ -407,7 +384,7 @@ var helper = {
 
       if (currentUserDataItemVerified) {
 
-        console.log('### nextSubmitNewUserDataItemForm > SUBMIT THE FORM 1++++++')
+        console.log('### nextSubmitNewUserDataItemForm > currentUserDataItemVerified > SUBMIT THE FORM !!!')
 
         $('#newUserDataItemForm').submit()
 
@@ -417,14 +394,13 @@ var helper = {
 
           if (currentUserEmailVerified !== true) {
 
-            // just make user validate their email for both email & password
-            helper.validateNewEmailPasswordService(data, 'email', 'true', function (err, response) {
+            helper.validateNewUserDataService(data, 'email', 'true', function (err, response) {
 
               if (err) {
 
                 $('#currentUserDataItem').addClass('has-error')
                 $('#currentUserDataItemError').removeClass('show').addClass('hide')
-                $('#currentUserDataItemRegistered').removeClass('hide').addClass('show')
+                $('#currentUserDataItemRegistered').removeClass('hide').addClass('show').html('Please Enter Your '+$('#currentUserDataItem').attr('placeholder'))
 
               } else {
 
@@ -442,6 +418,7 @@ var helper = {
                   $('#hideNewUserData').removeClass('hideClass')
                   $('#hideNewUserData').css( 'display', '' )
 
+                  isSafari ? helper.handleSpecificEvents() : null
                   $('#nextSubmitNewUserDataItemForm').html('Submit')
                 }
 
@@ -476,7 +453,7 @@ var helper = {
 
             if (type === 'password') {
 
-              helper.validateNewEmailPasswordService(data, type, 'true', function (err, response) {
+              helper.validateNewUserDataService(data, type, 'true', function (err, response) {
 
                 if (err) {
 
@@ -499,7 +476,7 @@ var helper = {
 
                     $('#currentUserDataItem').addClass('has-error')
                     $('#currentUserDataItemError').removeClass('show').addClass('hide')
-                    $('#currentUserDataItemRegistered').removeClass('hide').addClass('show')
+                    $('#currentUserDataItemRegistered').removeClass('hide').addClass('show').html('Please Enter Your '+$('#currentUserDataItem').attr('placeholder'))
                   }
 
                 } else {
@@ -532,6 +509,7 @@ var helper = {
                   })
 
 
+                  isSafari ? helper.handleSpecificEvents() : null
                   $('#nextSubmitNewUserDataItemForm').html('Submit')
 
                 }
@@ -559,33 +537,7 @@ var helper = {
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  resetNewUserDataItemModal: function () {
-
-    $('body').removeData('modalShown')
-    $('#newUserDataItemModal .modalAlertWarning').hide();
-
-    $('#currentUserDataItem').off('focusout')
-    $('#newUserDataItem').off('focusout')
-    $('#confirmNewUserDataItem').off('focusout')
-    $('body').off('click')
-
-    $('#newUserDataItemForm').get(0).reset()
-    $('#newUserDataItemModal input').val('')
-
-    $('#hideNewUserData').attr('class', 'hideClass')
-    $('#hideNewUserData').attr('style', 'display:none')
-    
-    $('#newUserDataItemModal').find('.error').removeClass('show').addClass('hide')
-
-    $('#newUserDataItemModal input').removeClass('has-error')
-  },
-
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-  validateNewEmailPasswordService: function (value, type, resp, callback) {
-    console.log('validateNewEmailPasswordService > type/value +++++++++: ', type , ' :: ', value)
+  validateNewUserDataService: function (value, type, resp, callback) {
 
     var ms = $('body').data('modalShown')
     ms ? $(ms + ' .loading').show() : helper.showLoading()
@@ -597,12 +549,12 @@ var helper = {
     data['data'] = value
     data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
-    console.log('validateNewEmailPasswordService > DATA: ', data)
+    console.log('validateNewUserDataService > DATA: ', data)
 
     $.ajax({
 
       rejectUnauthorized: false,
-      url: 'https://localhost:3000/api/validatenewemailpasswordservice',
+      url: 'https://localhost:3000/api/validatenewuserdataservice',
       type: 'POST',
       data: JSON.stringify(data),
       dataType: 'json',
@@ -614,12 +566,12 @@ var helper = {
 
         if (data.response === 'success') {
 
-          console.log('validateNewEmailPasswordService > SUCCESS: ', data)
+          console.log('validateNewUserDataService > SUCCESS: ', data)
           callback(null, true)
 
         } else {
 
-          console.log('validateNewEmailPasswordService > SUCCESS > ERROR: ', data)
+          console.log('validateNewUserDataService > SUCCESS > ERROR: ', data)
           callback(data, false)
         }
 
@@ -629,17 +581,17 @@ var helper = {
 
       error: function (xhr, status, error) {
 
-        console.log('validateNewEmailPasswordService > ERROR: ', xhr)
+        console.log('validateNewUserDataService > ERROR: ', xhr)
         var parsedXHR = JSON.parse(xhr.responseText)
 
         location.href = parsedXHR.redirect
       }
-
     })
   },
 
 
   validateEmailService: function (email, callback) {
+
     var data = {}
     var pathName = 'email'
     var err
@@ -680,42 +632,88 @@ var helper = {
     })
   },
 
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+  resetNewUserDataItemModal: function () {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> resetNewUserDataItemModal <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
+    $('body').removeData('modalShown')
+    $('#newUserDataItemModal .modalAlertWarning').hide();
+
+    $('#newUserDataItemForm').get(0).reset()
+    $('#newUserDataItemModal input').val('')
+
+    $('#hideNewUserData').attr('class', 'hideClass')
+    $('#hideNewUserData').attr('style', 'display:none')
+    
+    $('#newUserDataItemModal').find('.error').removeClass('show').addClass('hide')
+
+    $('#newUserDataItemModal input').removeClass('has-error')
+  },
+
+
+  turnOffEvents: function () {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> turnOffEvents <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
+    $('#newUserDataItem').off('change')
+    $('#confirmNewUserDataItem').off('change')
+
+    $('#newUserDataItem').off('focusout')
+    $('#confirmNewUserDataItem').off('focusout')
+
+    $('#newUserDataItem').off('input')
+    $('#confirmNewUserDataItem').off('input')
+
+    $('body').off('mousedown')
+    $('body').off('change')
+    $('body').off('focusout')
+    $('body').off('click')
+  },
+
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
   handleSpecificEvents: function () {
 
-    $('#newUserDataItemModal').removeData('activeInputElement')
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> handleSpecificEvents <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
-    $('body').on('click', function (e) {
+    $('body').on('mousedown', function (e) {
 
-      // e.stopPropagation()
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> handleSpecificEvents > body > onMousedown: ', e.target.id)
+      //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> handleSpecificEvents > body > onMousedown2: ', e.target.attributes)
 
-      var activeInputElement = $('#newUserDataItemModal').data('activeInputElement')
+      if (e.target.id === 'newUserDataItemModalCancel') {
 
-      // console.log('##### handleSpecificEvents > BODY > CLICK > activeInputElement: ', activeInputElement)
-      // console.log('##### handleSpecificEvents > BODY > CLICK 1+++++++++++++++++++ ', activeInputElement)
+        // e.stopImmediatePropagation()
+        helper.turnOffEvents()
+      }
+    })
 
+    $('body').on('change', function (e) {
 
-      if (activeInputElement !== undefined) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> handleSpecificEvents > body > onChange: ', e.target.id)
 
-        if (e.target.attributes !== 'data-dismiss' && e.target.nodeName === 'INPUT') {
-          // console.log('##### handleSpecificEvents > BODY > CLICK 2+++++++++++++++++++ ', activeInputElement)
-          var activeInput = Object.keys(activeInputElement)[0]
-          var type = activeInputElement[Object.keys(activeInputElement)[0]]
-          helper.handleFormEvents(activeInput, type, $('#'+activeInput).val())
-        }
+      if (e.target.nodeName === 'SELECT') {
+        helper.handleFormEvents(e.target.id)
+
+      } else if (e.target.id === 'newUserDataItem' || e.target.id === 'confirmNewUserDataItem') {
+        helper.handleFormEvents(e.target.id, e.type, $('#'+e.target.id).val())
 
       }
     })
 
-    $('#newUserDataItem').on('focusout', function (e) {
-      $('#newUserDataItemModal').data('activeInputElement', {'newUserDataItem': e.type})
-    })
+    $('body').on('focusout', function (e) {
 
-    $('#confirmNewUserDataItem').on('focusout', function (e) {
-      $('#newUserDataItemModal').data('activeInputElement', {'confirmNewUserDataItem': e.type})
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> handleSpecificEvents > body > onFocusout: ', e.target.id)
+
+      if (e.target.id === 'newUserDataItem' || e.target.id === 'confirmNewUserDataItem') {
+        helper.handleFormEvents(e.target.id, e.type, $('#'+e.target.id).val())
+
+      }
     })
 
   },
@@ -725,7 +723,7 @@ var helper = {
 
   handleFormEvents: function(elementID, eType, elementVal) {
 
-    console.log('##### handleFormEvents +++++++++: ', elementID, ' :: ', eType, ' :: ', elementVal)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> handleFormEvents <<<<<<<<<<<<<<<<<<<<<<<: ', elementID, ' :: ', eType)
 
     if($('body').data('elementID') === 'email'){
       elementID === 'newUserDataItem' ? helper.emailElementValidation(elementID, 'confirmNewUserDataItem', eType, elementVal) : null
@@ -839,7 +837,7 @@ var helper = {
     if (err1 !== undefined) {
       // console.log('textElementValidation > err1: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue, ' || ', err1)
     } else {
-      console.log('textElementValidation > no err1: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue)
+      // console.log('textElementValidation > no err1: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue)
     }
 
     if (thisElementValue !== '') {
@@ -877,7 +875,7 @@ var helper = {
     if (err1 !== undefined) {
       // console.log('#selectElementValidation > err1:', elementID, ' :: ', err1, ' :: ', thisElementValue);
     } else {
-      console.log('#selectElementValidation > no err1:', elementID, ' :: ', thisElementValue);
+      // console.log('#selectElementValidation > no err1:', elementID, ' :: ', thisElementValue);
     }
 
     if (thisElementValue !== '') {
@@ -911,7 +909,7 @@ var helper = {
     if (err1 !== undefined) {
       // console.log('#testUserInput > err1: ', elementID, ' :: ', pattern, ' :: ', err1);
     } else {
-      console.log('#testUserInput > no err1: ', elementID, ' :: ', pattern);
+      // console.log('#testUserInput > no err1: ', elementID, ' :: ', pattern);
     }
 
     var thisElementValue = $('#' + elementID).val()
@@ -985,44 +983,44 @@ var helper = {
 
     formConfirmType === 'email' ? comparedFieldTypeEmail = true : null
 
-    console.log('##>>>>>>>>> validateParams > thisField: ', thisField, ' > comparedField: ', comparedField)
+    /*console.log('##>>>>>>>>> validateParams > thisField: ', thisField, ' > comparedField: ', comparedField)
     console.log('##>>>>>>>>> validateParams > formConfirmType: ', formConfirmType)
     console.log('##>>>>>>>>> validateParams > comparedFieldLowercase: ', comparedFieldLowercase)
     console.log('##>>>>>>>>> validateParams > comparedFieldIsItConfirm: ', comparedFieldIsItConfirm)
-    console.log('##>>>>>>>>> validateParams > comparedFieldTypeEmail: ', comparedFieldTypeEmail)
+    console.log('##>>>>>>>>> validateParams > comparedFieldTypeEmail: ', comparedFieldTypeEmail)*/
 
     if (err1 !== undefined) {
       // console.log('## validateParams > err1: ', thisField, ' || ', comparedField, ' || ', err1)
     } else {
-      console.log('## validateParams > no err1: ', thisField, ' || ', comparedField)
+      // console.log('## validateParams > no err1: ', thisField, ' || ', comparedField)
     }
 
     if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + comparedField).val() !== '') {
       var property1 = document.getElementsByName(thisField)[0]
       var property2 = document.getElementsByName(comparedField)[0]
 
-      console.log('## validateParams 11111: ', property1.value, ' :: ', property2.value)
+      //console.log('## validateParams 11111: ', property1.value, ' :: ', property2.value)
 
 
       if ((err1 !== undefined && err1.error === 'nomatch') || property1.value !== property2.value) {
 
-        console.log('## validateParams 22222222')
+        //console.log('## validateParams 22222222')
         if (isSafari) {
 
-          console.log('## validateParams 333333333')
+          //console.log('## validateParams 333333333')
 
           if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
-            console.log('## validateParams 44444444')
-            $('#' + thisField + 'Match').removeClass('hide').addClass('show')
+            console.log('## validateParams 44444444: ', $('#' + thisField + 'Match'))
+            $('#' + thisField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
           } else {
             console.log('## validateParams 55555555: ', comparedField, ' ::: ', $('#' + comparedField + 'Match'))
             $('#' + comparedField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
           }
 
         } else {
-          console.log('## validateParams 6666666')
+          //console.log('## validateParams 6666666')
           if (err1 !== undefined) {
-            $('#' + comparedField + 'Match').removeClass('hide').addClass('show')
+            $('#' + comparedField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
           } else {
             $('#' + comparedField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + 's don\'t match')
           }
@@ -1044,7 +1042,14 @@ var helper = {
             $('#' + comparedField + 'Match').removeClass('show').addClass('hide')
           }
         }
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams > GOOD <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        //var af = $('body').data('activeForm')
+        //$('#'+af).submit()
+
+        /*
         if (comparedFieldTypeEmail) {
+
           var valdata = $('body').data('validatedData')
           var v
 
@@ -1056,10 +1061,11 @@ var helper = {
                 }
               }
             })
-
-            v === true ? $('#signUpForm').submit() : null
+            var af = $('body').data('activeForm')
+            v === true ? $('#'+af).submit() : null
           }
         }
+        */
       }
     }
   },
@@ -1070,7 +1076,7 @@ var helper = {
     if (err1 !== undefined) {
       // console.log('#testUserInputEmail > err1: ', elementID, ' :: ', err1)
     } else {
-      console.log('#testUserInputEmail > no err1: ', elementID)
+      console.log('#################### testUserInputEmail > no err1: ', elementID)
     }
 
     var thisElementValue = $('#' + elementID).val()
@@ -1100,7 +1106,7 @@ var helper = {
     if (err1 !== undefined) {
       // console.log('#validateEmailField > err1: ', thisField, ' :: ', err1)
     } else {
-      console.log('#validateEmailField > no err1: ', elementVal, ' :: ', thisField, ' :: ', comparedField)
+      // console.log('#validateEmailField > no err1: ', elementVal, ' :: ', thisField, ' :: ', comparedField)
     }
 
     var isEmailValid
@@ -1115,6 +1121,7 @@ var helper = {
 
       if (isEmailValid) {
 
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
         helper.validateEmailService(elementVal, function (err, response) {
 
           if (err) {
@@ -1280,7 +1287,7 @@ var helper = {
     $('#editProfileFormLabelUpdated').html('Change your ' + labelText + ':')
     $('#modalFormElementValueCurrent').html(currentFormValue)
     $('#editProfileForm').data('whichformdataid', dataID)
-    
+
     $('#editProfileFormModal').modal({
       keyboard: false,
       backdrop: 'static'
@@ -1294,7 +1301,7 @@ var helper = {
     var dataID = editBtnClickedParentElem.data('id')
     var labelText = helper.makeTitleFromElementID(dataID)
 
-    isSafari ? helper.handleSpecificEvents() : null
+    //isSafari ? helper.handleSpecificEvents() : null
 
     dataID === 'email' ? labelText = labelText + ' Address' : null
     $('body').data('elementID', dataID)
@@ -1364,6 +1371,8 @@ var helper = {
 
 
   handleErrorResponse: function(data) {
+
+    console.log('### handleErrorResponse +++++++++++ ', data)
 
     Object.keys(data).forEach(function(p) {
 

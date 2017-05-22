@@ -37,7 +37,7 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
   if (req.body.type === 'email' && req.session.userValidatedEmail.validated) {
 
     var dmillis = nd.getTime() - req.session.userValidatedEmail.time
-    var dmillis = new Date(dmillis)
+    dmillis = new Date(dmillis)
     var foo = 'foo'
 
     // if (foo === 'foo') {
@@ -46,14 +46,19 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
       req.session.userValidatedEmail.validated = false
 
+      console.log('aaaaaaaaaaa 66666666666')
+
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
       return next()
 
     }
+
   } else if (req.body.type === 'password' && req.session.userValidatedEmail.validated && req.session.userValidatedPassword.validated) {
+
     var pmillis = nd.getTime() - req.session.userValidatedPassword.time
+    pmillis = new Date(pmillis)
 
     // if (foo === 'foo') {
     // if (pmillis.getMinutes() > 4) {
@@ -61,6 +66,8 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
       req.session.userValidatedEmail.validated = false
       req.session.userValidatedPassword.validated = false
+
+      console.log('aaaaaaaaaaa 77777777')
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
