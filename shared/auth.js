@@ -46,11 +46,13 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
       req.session.userValidatedEmail.validated = false
 
-      console.log('aaaaaaaaaaa 66666666666')
+      console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem > EMAIL > EXPIRED <<<<<<<<<<<<<<<<<<<<<<<')
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
+      
+      console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem > EMAIL > GOOD <<<<<<<<<<<<<<<<<<<<<<<')
       return next()
 
     }
@@ -67,11 +69,13 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
       req.session.userValidatedEmail.validated = false
       req.session.userValidatedPassword.validated = false
 
-      console.log('aaaaaaaaaaa 77777777')
+      console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem > PASS > EXPIRED <<<<<<<<<<<<<<<<<<<<<<<')
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem > PASS > GOOD <<<<<<<<<<<<<<<<<<<<<<<')
       return next()
 
     }
