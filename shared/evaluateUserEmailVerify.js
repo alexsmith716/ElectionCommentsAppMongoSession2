@@ -3,6 +3,8 @@ var User = require('../theAPI/model/userSchema.js')
 
 module.exports = function (req, res, doUserValidatedEmail, cb) {
 
+  console.log('####### evaluateUserEmailVerify > req.body:', req.body)
+
   var email = req.body.data.trim()
 
   User.findOne( { email: email } ).exec(function (err, user) {

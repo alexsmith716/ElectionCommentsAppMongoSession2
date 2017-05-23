@@ -86,6 +86,16 @@ html(lang="en-US")
 
         script.
           var isSafari = (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1)
+          var interactiveFormValidationEnabled
+          var appVersion = navigator.appVersion
+          var webkitVersion1 = appVersion.indexOf('AppleWebKit/') + 12
+          var webkitVersion2 = webkitVersion1 + 3
+          var webkitVersion = appVersion.slice(webkitVersion1, webkitVersion2)
+          if (webkitVersion < 603) {
+            interactiveFormValidationEnabled = false
+          } else {
+            interactiveFormValidationEnabled = true
+          }
 
         block content
 

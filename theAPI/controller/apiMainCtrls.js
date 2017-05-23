@@ -249,8 +249,6 @@ module.exports.getUserProfileResponse = function(req, res, next) {
 }
 
 
-
-
 module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
   var nd = new Date()
@@ -259,7 +257,7 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
   var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
   var foo = 'foo'
 
-  console.log('####### > API > ajaxNewUserDataItem > req.body1:', req.body)
+  console.log('####### > API > ajaxNewUserDataItem > req.body:', req.body)
 
   /*
   { 
@@ -275,13 +273,139 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
   if(req.body.type === 'email' && req.session.userValidatedEmail.validated){
 
+    evaluateUserEmailVerify(req, res, false, function (response) {
+
+      if (response.response === 'success') {
+
+        Object.keys(req.body).forEach(function(k) {
+          var nk
+          if(k === 'newUserDataItem'){
+            nk = 'email'
+            req.body[nk] = req.body[k];
+            delete req.body[k];
+          }
+          if(k === 'confirmNewUserDataItem'){
+            nk = 'confirmEmail'
+            req.body[nk] = req.body[k];
+            delete req.body[k];
+          }
+        });
+
+        console.log('####### > API > ajaxNewUserDataItem > req.body2:', req.body)
+
+        template['email'] = 'required'
+        template['confirmEmail'] = 'required'
+        template['expectedResponse'] = 'false'
+
+        // ==============================================================================================
+
+        serverSideValidation(req, res, template, function (validatedResponse) {
+
+          console.log('apiMainCtrls > ajaxNewUserDataItem > serverSideValidation > validatedResponse1: ', validatedResponse)
+
+          var validationErrors = false
+
+          if (validatedResponse.status === 'err') {
+            console.log('apiMainCtrls > ajaxNewUserDataItem > serverSideValidation > validatedResponse2: ', validatedResponse)
+            return next(validatedResponse.message)
+
+          } else {
+            console.log('apiMainCtrls > ajaxNewUserDataItem > serverSideValidation > validatedResponse3: ', validatedResponse)
+            for (var prop in validatedResponse) {
+              if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+                console.log('apiMainCtrls > ajaxNewUserDataItem > serverSideValidation > validatedResponse4: ', validatedResponse)
+                validationErrors = true
+                break
+
+              }
+            }
+          }
+
+          if (!validationErrors) {
+            console.log('apiMainCtrls > ajaxNewUserDataItem > serverSideValidation > validatedResponse5: ', validatedResponse)
+
+          } else {
+            console.log('apiMainCtrls > ajaxNewUserDataItem > serverSideValidation > validatedResponse6: ', validatedResponse)
+            sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
+
+          }
+        })
+
+        // ==============================================================================================
+
+      } else {
+
+        if (response.status === 'err') {
+
+          return next(response.message)
+
+        } else {
+
+          console.log('aaaaaaaaaaa 22222222222222')
+
+          sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
+
+        }
+      }
+    })
+
+  }
+
+  if (req.body.type === 'password' && req.session.userValidatedEmail.validated && req.session.userValidatedPassword.validated) {
+
+    evaluateUserPasswordVerify(req, res, false, function (response) {
+
+      if (response.response === 'success') {
+
+        template['password'] = 'required'
+        template['confirmPassword'] = 'required'
+
+        // serverSideValidation(req, res, template, function (validatedResponse) {
+
+        // })
+
+      } else {
+
+        if (response.status === 'err') {
+
+          return next(response.message)
+
+        } else {
+
+
+          console.log('aaaaaaaaaaa 44444444444')
+
+          sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
+
+        }
+      }
+    })
+
+  }
+}
+
+/*
+module.exports.ajaxNewUserDataItem = function (req, res, next) {
+
+  var nd = new Date()
+  var millis
+  var ndm
+  var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
+  var foo = 'foo'
+
+  console.log('####### > API > ajaxNewUserDataItem > req.body:', req.body)
+
+  var template = {}
+
+  if(req.body.type === 'email' && req.session.userValidatedEmail.validated){
+
     millis = nd.getTime() - req.session.userValidatedEmail.time
     ndm = new Date(millis)
     req.session.userValidatedEmail.validated = false
 
     // if (foo === 'foo') {
     // if (ndm.getMinutes() > 4) {
-    if (ndm.getMinutes() > 0) {
+    if (ndm.getMinutes() > 4) {
 
       console.log('aaaaaaaaaaa 1111111111111')
 
@@ -415,7 +539,7 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
     }
   }
 }
-
+*/
 
 
 

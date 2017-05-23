@@ -186,7 +186,9 @@ block content
             .col-xs-12
               p.small CSRF token (NEW): <br> #{csrfToken}
               script.
-                console.log('pug > isSafari: ', isSafari)
+                console.log('pug > isSafari???: ', isSafari)
+                console.log('pug > isSafari webkitVersion: ', webkitVersion)
+                console.log('pug > isSafari interactiveFormValidationEnabled: ', interactiveFormValidationEnabled)
 
               - if (error != undefined)
                 .alert.alert-danger(role="alert") #{error}
