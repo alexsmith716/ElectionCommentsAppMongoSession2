@@ -1,5 +1,5 @@
 /* global $ */
-/* global isSafari */
+/* global isSafari */isSafari
 /* global location */
 var helper = {
 
@@ -714,6 +714,7 @@ var helper = {
         // e.stopImmediatePropagation()
         helper.turnOffEvents()
       }
+
     })
 
     $('body').on('change', function (e) {
@@ -1049,6 +1050,8 @@ var helper = {
           }
         }
 
+        isSafari
+
       } else {
 
         if (isSafari) {
@@ -1088,6 +1091,8 @@ var helper = {
             v === true ? $('#'+af).submit() : null
           }
         //}
+
+        return true
 
       }
     }

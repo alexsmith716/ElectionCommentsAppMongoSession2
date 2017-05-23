@@ -21,6 +21,7 @@ var helper = {
     var formValid = null
     var resp = {}
 
+    // 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5'
     // checkValidity method on form element returns true if element has valid data (according to constraint(s))
     // safari 10.1
     // webkit 603.1.30
@@ -454,6 +455,8 @@ var helper = {
           }
         }
 
+        return false
+
       } else {
 
         if (isSafari) {
@@ -486,6 +489,7 @@ var helper = {
             v === true ? $('#signUpForm').submit() : null
           }
         }
+        return true
       }
     }
   },

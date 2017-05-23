@@ -31,6 +31,8 @@ module.exports.basicAuthenticationAPI = function (req, res, next) {
 
 module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
+  console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem <<<<<<<<<<<<<<<<<<<<<<<')
+
   var u =  req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
   var nd = new Date()
 
@@ -41,8 +43,8 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
     var foo = 'foo'
 
     // if (foo === 'foo') {
-    // if (dmillis.getMinutes() > 4) {
-    if (dmillis.getMinutes() > 0) {
+    if (dmillis.getMinutes() > 4) {
+    // if (dmillis.getMinutes() > 0) {
 
       req.session.userValidatedEmail.validated = false
 

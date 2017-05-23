@@ -3,6 +3,8 @@ var User = require('../theAPI/model/userSchema.js')
 
 module.exports = function (reqEmail, expectedResponse, cb) {
 
+  console.log('###### ajaxEvaluateUserEmail > evaluateUserEmail email/resp: ', reqEmail, ' ::', expectedResponse)
+
   var email = reqEmail.trim()
 
   User.findOne( { email: email } ).exec(function (err, user) {
