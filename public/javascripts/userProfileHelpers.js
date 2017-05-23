@@ -271,6 +271,7 @@ var helper = {
             if (data.alertDanger) {
 
               console.log('#newUserDataItemForm > ajax > SUCCESS > ERROR 1: ', data)
+              
               $('#newUserDataItemModal .modalAlertWarning .alert').html(data.alertDanger);
               $('#newUserDataItemModal .modalAlertWarning').show();
               $('#newUserDataItemModal').find('.error').removeClass('show').addClass('hide')
@@ -279,6 +280,13 @@ var helper = {
               $('#currentUserDataItem').val('')
               $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
               $('#newUserDataItemForm').removeData('currentUserEmailVerified')
+
+              $('#currentUserDataItemLabel').html('Please Enter Your Current Email Address:')
+              $('#currentUserDataItem').attr({
+                type: 'text',
+                title: 'Please enter a valid Email Address',
+                placeholder: 'Current Email Address'
+              })
 
               $('#hideCurrentUserData').removeClass('hideClass')
               $('#hideCurrentUserData').css( 'display', '' )
@@ -294,6 +302,7 @@ var helper = {
             } else if (data.validatedData) {
 
               console.log('#newUserDataItemForm > ajax > SUCCESS > ERROR 2: ', data)
+              $('body').data('validatedData', data.validatedData)
               helper.handleErrorResponse(data.validatedData)
 
             } else {
@@ -363,7 +372,7 @@ var helper = {
 
     $('#nextSubmitNewUserDataItemForm').on('click', function(e) {
 
-      console.log('nextSubmitNewUserDataItemForm > ON > CLICK ++++++++++++')
+      console.log('nextSubmitNewUserDataItemForm > ON > CLICK ++++++++++++?: ', currentUserEmailVerified)
 
       e.preventDefault()
 
@@ -393,6 +402,8 @@ var helper = {
         if (testData) {
 
           if (currentUserEmailVerified !== true) {
+
+            console.log('$$$$$$$$$$$$$$$$$$$$$#########%%%%%%%%%%%%%#########@@@@@@@@@@@@@@@^^^^^^^^^')
 
             helper.validateNewUserDataService(data, 'email', 'true', function (err, response) {
 
@@ -496,6 +507,18 @@ var helper = {
 
                   $('#newUserDataItem').attr({ 
                       type: 'password',
+                      title: 'Password must be at least 4 characters long. No whitespace allowed',
+                      placeholder: 'New Password'
+                  })
+
+                  $('#confirmNewUserDataItem').attr({ 
+                      type: 'password',
+                      title: 'Password must be at least 4 characters long. No whitespace allowed',
+                      placeholder: 'Confirm New Password'
+                  })
+                  /*
+                  $('#newUserDataItem').attr({ 
+                      type: 'password',
                       pattern: '[\\S]{4,}',
                       title: 'Password must be at least 4 characters long. No whitespace allowed',
                       placeholder: 'New Password'
@@ -507,7 +530,7 @@ var helper = {
                       title: 'Password must be at least 4 characters long. No whitespace allowed',
                       placeholder: 'Confirm New Password'
                   })
-
+                  */
 
                   isSafari ? helper.handleSpecificEvents() : null
                   $('#nextSubmitNewUserDataItemForm').html('Submit')
@@ -1047,11 +1070,11 @@ var helper = {
         //var af = $('body').data('activeForm')
         //$('#'+af).submit()
 
-        /*
-        if (comparedFieldTypeEmail) {
+        //if (comparedFieldTypeEmail) {
 
           var valdata = $('body').data('validatedData')
           var v
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>> validateParams > GOOD > valdata <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', valdata)
 
           if (valdata) {
             Object.keys(valdata).forEach(function (p) {
@@ -1064,8 +1087,8 @@ var helper = {
             var af = $('body').data('activeForm')
             v === true ? $('#'+af).submit() : null
           }
-        }
-        */
+        //}
+
       }
     }
   },
