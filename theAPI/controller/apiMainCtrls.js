@@ -324,7 +324,7 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
   var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
   var template = {}
-  var confirmK = 
+  var confirmK
 
   req.body.type === 'email' ? confirmK = 'confirmEmail' : confirmK = 'confirmPassword'
 
