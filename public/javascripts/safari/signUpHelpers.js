@@ -455,8 +455,6 @@ var helper = {
           }
         }
 
-        return false
-
       } else {
 
         if (isSafari) {
@@ -489,7 +487,6 @@ var helper = {
             v === true ? $('#signUpForm').submit() : null
           }
         }
-        return true
       }
     }
   },

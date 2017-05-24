@@ -32,7 +32,7 @@ module.exports = function (req, res, doUserValidatedEmail, cb) {
           if(doUserValidatedEmail){
             var nd = new Date()
             nd = nd.getTime()
-            req.session.userValidatedEmail = {'validated': true, 'time': nd}
+            req.session.userValidatedEmail = {'isValidated': true, 'timeStamp': nd}
           }
 
           cb({status: 201, response: 'success'})

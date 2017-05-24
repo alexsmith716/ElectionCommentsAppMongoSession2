@@ -31,7 +31,7 @@ module.exports = function (req, res, doUserValidatedPassword, cb) {
       if(doUserValidatedPassword){
         var nd = new Date()
         nd = nd.getTime()
-        req.session.userValidatedPassword = {'validated': true, 'time': nd}
+        req.session.userValidatedPassword = {'isValidated': true, 'timeStamp': nd}
       }
       
       cb({status: 201, response: 'success'})
