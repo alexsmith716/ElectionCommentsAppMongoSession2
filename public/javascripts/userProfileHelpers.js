@@ -1,5 +1,5 @@
 /* global $ */
-/* global isSafari */isSafari
+/* global isSafari */
 /* global location */
 var helper = {
 
@@ -9,6 +9,8 @@ var helper = {
     $('#state').attr('required', false)
 
     setTimeout(function () { helper.hideLoading() }, 500)
+
+    console.log('### userProfileHelpers > interactiveFormValidationEnabled: ', interactiveFormValidationEnabled)
 
     helper.initializeJqueryEvents()
   },
@@ -224,7 +226,7 @@ var helper = {
       var constrainedFormElements = document.getElementById('newUserDataItemForm').querySelectorAll('[placeholder]')
 
 
-      if(isSafari){
+      if(interactiveFormValidationEnabled){
         var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
 
         if (testFocusout.formValid !== undefined){
@@ -282,11 +284,21 @@ var helper = {
               $('#newUserDataItemForm').removeData('currentUserEmailVerified')
 
               $('#currentUserDataItemLabel').html('Please Enter Your Current Email Address:')
+      
               $('#currentUserDataItem').attr({
                 type: 'text',
                 title: 'Please enter a valid Email Address',
                 placeholder: 'Current Email Address'
               })
+   
+              /*
+              $('#currentUserDataItem').attr({
+                  type: 'text',
+                  pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
+                  title: 'Please enter a valid Email Address',
+                  placeholder: 'Current Email Address'
+              })
+              */
 
               $('#hideCurrentUserData').removeClass('hideClass')
               $('#hideCurrentUserData').css( 'display', '' )
@@ -483,11 +495,21 @@ var helper = {
                       placeholder: 'Current Email Address'
                     })
 
+                    /*
+                    $('#currentUserDataItem').attr({
+                        type: 'text',
+                        pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
+                        title: 'Please enter a valid Email Address',
+                        placeholder: 'Current Email Address'
+                    })
+                    */
+
                   }else{
 
                     $('#currentUserDataItem').addClass('has-error')
                     $('#currentUserDataItemError').removeClass('show').addClass('hide')
                     $('#currentUserDataItemRegistered').removeClass('hide').addClass('show').html('Please Enter Your '+$('#currentUserDataItem').attr('placeholder'))
+                    
                   }
 
                 } else {
@@ -709,7 +731,7 @@ var helper = {
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> handleSpecificEvents > body > onMousedown: ', e.target.id)
       //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> handleSpecificEvents > body > onMousedown2: ', e.target.attributes)
 
-      if (e.target.id === 'newUserDataItemModalCancel') {
+      if (e.target.id === 'newUserDataItemModalCancel' || e.target.id === 'editProfileFormModalCancel') {
 
         // e.stopImmediatePropagation()
         helper.turnOffEvents()
@@ -783,7 +805,8 @@ var helper = {
     email: /^\S+@\S+\.\S+/,
     password: /^\S{4,}$/,
     password2: /^[\S]{4,}$/,
-    basictext: /^(?=\s*\S)(.{1,35})$/
+    basictextMaxLength: /^(?=\s*\S)(.{1,35})$/,
+    basictext: /^(?=\s*\S)(.{1,})$/
   },
 
   showLoading: function () {
@@ -997,7 +1020,77 @@ var helper = {
   },
 
 
+
+
+
+
+
+
+
   validateParams: function (thisField, comparedField, err1) {
+
+    var formConfirmType = $('body').data('elementID')
+    var comparedFieldTypeEmail = false
+    var c = /confirm/
+    var comparedFieldLowercase = comparedField.toLowerCase()
+    var comparedFieldIsItConfirm = c.test(comparedFieldLowercase)
+
+    formConfirmType === 'email' ? comparedFieldTypeEmail = true : null
+
+    /*
+    console.log('##>>>>>>>>> validateParams > thisField: ', thisField, ' > comparedField: ', comparedField)
+    console.log('##>>>>>>>>> validateParams > formConfirmType: ', formConfirmType)
+    console.log('##>>>>>>>>> validateParams > comparedFieldLowercase: ', comparedFieldLowercase)
+    console.log('##>>>>>>>>> validateParams > comparedFieldIsItConfirm: ', comparedFieldIsItConfirm)
+    console.log('##>>>>>>>>> validateParams > comparedFieldTypeEmail: ', comparedFieldTypeEmail)
+    */
+
+
+    if (err1 !== undefined) {
+      // console.log('## validateParams > err1: ', thisField, ' || ', comparedField, ' || ', err1)
+    } else {
+      // console.log('## validateParams > no err1: ', thisField, ' || ', comparedField)
+    }
+
+
+    if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + comparedField).val() !== '') {
+
+      var property1 = document.getElementsByName(thisField)[0]
+      var property2 = document.getElementsByName(comparedField)[0]
+
+
+      if ((err1 !== undefined && err1.error === 'nomatch') || property1.value !== property2.value) {
+
+        // Non Safari Browsers && Safari Browsers 10.1/603.1 and Higher
+        if (interactiveFormValidationEnabled) {
+
+
+        // Safari Browsers 10.1/603.1 and Lower
+        } else {
+
+
+
+        }
+
+      } else {
+
+        // Non Safari Browsers && Safari Browsers 10.1/603.1 and Higher
+        if (interactiveFormValidationEnabled) {
+
+
+        // Safari Browsers 10.1/603.1 and Lower
+        } else {
+
+
+
+        }
+
+      }
+    }
+  },
+
+
+  validateParamsXXXXX: function (thisField, comparedField, err1) {
 
     var formConfirmType = $('body').data('elementID')
     var comparedFieldTypeEmail = false
@@ -1020,6 +1113,7 @@ var helper = {
     }
 
     if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + comparedField).val() !== '') {
+
       var property1 = document.getElementsByName(thisField)[0]
       var property2 = document.getElementsByName(comparedField)[0]
 
@@ -1029,44 +1123,76 @@ var helper = {
       if ((err1 !== undefined && err1.error === 'nomatch') || property1.value !== property2.value) {
 
         //console.log('## validateParams 22222222')
+
         if (isSafari) {
 
           //console.log('## validateParams 333333333')
 
           if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
+
             console.log('## validateParams 44444444: ', $('#' + thisField + 'Match'))
+
+            $('#' + thisField).get(0).setCustomValidity(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
+
             $('#' + thisField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
+
           } else {
+
             console.log('## validateParams 55555555: ', comparedField, ' ::: ', $('#' + comparedField + 'Match'))
+
+            $('#' + comparedField).get(0).setCustomValidity(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
+
             $('#' + comparedField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
+
           }
 
         } else {
+
           //console.log('## validateParams 6666666')
+
           if (err1 !== undefined) {
+
             $('#' + comparedField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
+
           } else {
+
             $('#' + comparedField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + 's don\'t match')
+
           }
+
         }
 
-        isSafari
 
       } else {
 
         if (isSafari) {
+
           if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
+
+            $('#' + thisField).get(0).setCustomValidity('')
+
             $('#' + thisField + 'Match').removeClass('show').addClass('hide')
+
           } else {
+
+            $('#' + comparedField).get(0).setCustomValidity('')
+
             $('#' + comparedField + 'Match').removeClass('show').addClass('hide')
           }
+
         } else {
+
           if (err1 === undefined) {
+
             $('#' + thisField).get(0).setCustomValidity('')
             $('#' + comparedField).get(0).setCustomValidity('')
+
           } else {
+
             $('#' + comparedField + 'Match').removeClass('show').addClass('hide')
+
           }
+
         }
 
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams > GOOD <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
@@ -1090,9 +1216,11 @@ var helper = {
             var af = $('body').data('activeForm')
             v === true ? $('#'+af).submit() : null
           }
-        //}
 
-        return true
+          $('#' + thisField).get(0).setCustomValidity('')
+
+          $('#' + comparedField).get(0).setCustomValidity('')
+        //}
 
       }
     }
@@ -1316,6 +1444,7 @@ var helper = {
     $('#modalFormElementValueCurrent').html(currentFormValue)
     $('#editProfileForm').data('whichformdataid', dataID)
 
+    isSafari ? helper.handleSpecificEvents() : null
     $('#editProfileFormModal').modal({
       keyboard: false,
       backdrop: 'static'
@@ -1345,6 +1474,7 @@ var helper = {
     $('#newUserDataItemLabel').html('Enter Your New ' + labelText + ':')
     $('#confirmNewUserDataItemLabel').html('Confirm The New ' + labelText + ':')
 
+
     $('#currentUserDataItem').attr({
       type: 'text',
       title: 'Please enter a valid Email Address',
@@ -1362,6 +1492,7 @@ var helper = {
       title: 'Please type a valid Email Address',
       placeholder: 'Confirm New Email Address'
     })
+
     /*
     $('#currentUserDataItem').attr({
         type: 'text',

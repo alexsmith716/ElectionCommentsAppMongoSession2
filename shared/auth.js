@@ -36,9 +36,9 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
   var u =  req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
   var nd = new Date()
 
-  if (req.body.type === 'email' && req.session.userValidatedEmail.validated) {
+  if (req.body.type === 'email' && req.session.userValidatedEmail.isValidated) {
 
-    var dmillis = nd.getTime() - req.session.userValidatedEmail.time
+    var dmillis = nd.getTime() - req.session.userValidatedEmail.timeStamp
     dmillis = new Date(dmillis)
     var foo = 'foo'
 
@@ -46,7 +46,7 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
     if (dmillis.getMinutes() > 4) {
     // if (dmillis.getMinutes() > 0) {
 
-      req.session.userValidatedEmail.validated = false
+      req.session.userValidatedEmail.isValidated = false
 
       console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem > EMAIL > EXPIRED <<<<<<<<<<<<<<<<<<<<<<<')
 
@@ -59,17 +59,17 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
     }
 
-  } else if (req.body.type === 'password' && req.session.userValidatedEmail.validated && req.session.userValidatedPassword.validated) {
+  } else if (req.body.type === 'password' && req.session.userValidatedEmail.isValidated && req.session.userValidatedPassword.isValidated) {
 
-    var pmillis = nd.getTime() - req.session.userValidatedPassword.time
+    var pmillis = nd.getTime() - req.session.userValidatedPassword.timeStamp
     pmillis = new Date(pmillis)
 
     // if (foo === 'foo') {
-    // if (pmillis.getMinutes() > 4) {
-    if (pmillis.getMinutes() > 0) {
+    if (pmillis.getMinutes() > 4) {
+    // if (pmillis.getMinutes() > 0) {
 
-      req.session.userValidatedEmail.validated = false
-      req.session.userValidatedPassword.validated = false
+      req.session.userValidatedEmail.isValidated = false
+      req.session.userValidatedPassword.isValidated = false
 
       console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem > PASS > EXPIRED <<<<<<<<<<<<<<<<<<<<<<<')
 
