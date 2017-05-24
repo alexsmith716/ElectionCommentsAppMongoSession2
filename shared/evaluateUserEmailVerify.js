@@ -3,7 +3,7 @@ var User = require('../theAPI/model/userSchema.js')
 
 module.exports = function (req, res, doUserValidatedEmail, cb) {
 
-  console.log('####### evaluateUserEmailVerify > req.body:', req.body)
+  console.log('####### evaluateUserEmailVerify 1 req.body:', req.body)
 
   var email = req.body.data.trim()
 
@@ -29,7 +29,10 @@ module.exports = function (req, res, doUserValidatedEmail, cb) {
 
         if (user.email === res.locals.currentUser.email) {
 
+          console.log('####### evaluateUserEmailVerify 2 +++++++')
+
           if(doUserValidatedEmail){
+            console.log('####### evaluateUserEmailVerify 3 +++++++')
             var nd = new Date()
             nd = nd.getTime()
             req.session.userValidatedEmail = {'isValidated': true, 'timeStamp': nd}
@@ -38,6 +41,8 @@ module.exports = function (req, res, doUserValidatedEmail, cb) {
           cb({status: 201, response: 'success'})
 
         } else {
+
+          console.log('####### evaluateUserEmailVerify 4 +++++++')
 
           cb({status: 201, response: 'error'})
 

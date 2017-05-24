@@ -17,6 +17,8 @@ var helper = {
 
   testFormValidity: function (theForm, eventListener) {
 
+    console.log('### testFormValidity > interactiveFormValidationEnabled: ', theForm)
+
     var boundEventTypes
     var formElement
     var checkConstraints
@@ -225,7 +227,6 @@ var helper = {
       var serviceUrl = $(this).attr('action')
       var constrainedFormElements = document.getElementById('newUserDataItemForm').querySelectorAll('[placeholder]')
 
-
       if(interactiveFormValidationEnabled){
         var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
 
@@ -237,7 +238,7 @@ var helper = {
         }
       }
 
-      console.log('+++++++++++ GOOD FORM !!!!!!!!!!!')
+      console.log('+++++++++++ GOOD / UNCONSTRAINED FORM !!!!!!!!!!!')
 
       var data = {
         type: elementID,
@@ -248,7 +249,7 @@ var helper = {
 
       data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
-      console.log('+++++++++++ GOOD FORM !!!!!!!!!!! > DATA: ', data)
+      console.log('+++++++++++ GOOD / UNCONSTRAINED FORM !!!!!!!!!!! > DATA: ', data)
 
       $.ajax({
 
@@ -721,6 +722,7 @@ var helper = {
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+  // catch Submit on mousedown, cancel input events, submit the form 
 
   handleSpecificEvents: function () {
 
@@ -729,11 +731,9 @@ var helper = {
     $('body').on('mousedown', function (e) {
 
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> handleSpecificEvents > body > onMousedown: ', e.target.id)
-      //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> handleSpecificEvents > body > onMousedown2: ', e.target.attributes)
 
-      if (e.target.id === 'newUserDataItemModalCancel' || e.target.id === 'editProfileFormModalCancel') {
+      if (e.target.id === 'newUserDataItemModalCancel' || e.target.id === 'editProfileFormModalCancel' || e.target.outerText === 'Submit') {
 
-        // e.stopImmediatePropagation()
         helper.turnOffEvents()
       }
 
@@ -794,9 +794,6 @@ var helper = {
       return labelText
   },
 
-// =================================================================================================================================
-// =================================================================================================================================
-// =================================================================================================================================
 // =================================================================================================================================
 // =================================================================================================================================
 
