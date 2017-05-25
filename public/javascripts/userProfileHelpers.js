@@ -637,7 +637,7 @@ var helper = {
 
 
   validateEmailService: function (email, callback) {
-
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailService <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
     var data = {}
     var pathName = 'email'
     var err
@@ -709,20 +709,15 @@ var helper = {
     $('#newUserDataItem').off('focusout')
     $('#confirmNewUserDataItem').off('focusout')
 
-    $('#newUserDataItem').off('input')
-    $('#confirmNewUserDataItem').off('input')
 
     $('body').off('mousedown')
     $('body').off('change')
     $('body').off('focusout')
-    $('body').off('click')
   },
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-  // catch Submit on mousedown, cancel input events, submit the form 
 
   handleSpecificEvents: function () {
 
@@ -770,6 +765,7 @@ var helper = {
   handleFormEvents: function(elementID, eType, elementVal) {
 
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> handleFormEvents <<<<<<<<<<<<<<<<<<<<<<<: ', elementID, ' :: ', eType)
+
 
     if($('body').data('elementID') === 'email'){
       elementID === 'newUserDataItem' ? helper.emailElementValidation(elementID, 'confirmNewUserDataItem', eType, elementVal) : null
@@ -1024,7 +1020,7 @@ var helper = {
 
 
 
-  validateParams: function (thisField, comparedField, err1) {
+  validateParamsXXX: function (thisField, comparedField, err1) {
 
     var formConfirmType = $('body').data('elementID')
     var comparedFieldTypeEmail = false
@@ -1087,7 +1083,9 @@ var helper = {
   },
 
 
-  validateParamsXXXXX: function (thisField, comparedField, err1) {
+  validateParams: function (thisField, comparedField, err1) {
+
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
     var formConfirmType = $('body').data('elementID')
     var comparedFieldTypeEmail = false
@@ -1253,8 +1251,9 @@ var helper = {
   },
 
 
-
   validateEmailField: function (elementVal, thisField, comparedField, err1) {
+
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField <<<<<<<<<<<<<<<<<: ', thisField)
 
     if (err1 !== undefined) {
       // console.log('#validateEmailField > err1: ', thisField, ' :: ', err1)
@@ -1266,24 +1265,39 @@ var helper = {
 
     err1 === undefined || err1.error === 'false' ? isEmailValid = helper.validateEmailValue(elementVal) : null
 
-        // EMAIL IS VALID +++++++++++++++++++
+
+    // EMAIL IS VALID +++++++++++++++++++
     if ((err1 !== undefined && (err1.error !== 'invalid' && err1.error !== 'empty')) || isEmailValid) {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 1 <<<<<<<<<<<<<<<<<<<<<<<<<')
+
       err1 !== undefined || isSafari ? $('#' + thisField + 'Improper').removeClass('show').addClass('hide') : null
+
       !isSafari ? $('#' + thisField).get(0).setCustomValidity('') : null
+
       $('#' + thisField).off('input')
 
       if (isEmailValid) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 2 <<<<<<<<<<<<<<<<<<<<<<<<<')
+
         helper.validateEmailService(elementVal, function (err, response) {
+
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 3 <<<<<<<<<<<<<<<<<<<<<<<<<')
 
           if (err) {
 
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 4 <<<<<<<<<<<<<<<<<<<<<<<<<')
+
             isSafari ? $('#' + thisField + 'Registered').removeClass('hide').addClass('show') : null
+
             !isSafari ? $('#' + thisField).get(0).setCustomValidity('This email address is already in our system. Sign in, or enter a new email address') : null
+
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
 
           } else {
+
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 5 <<<<<<<<<<<<<<<<<<<<<<<<<')
 
             isSafari ? $('#' + thisField + 'Registered').removeClass('show').addClass('hide') : null
 
@@ -1291,33 +1305,73 @@ var helper = {
 
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
           }
+
         })
 
       } else {
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 6 <<<<<<<<<<<<<<<<<<<<<<<<<')
+
         if (err1 !== undefined && err1.error === 'registered') {
+
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 7 <<<<<<<<<<<<<<<<<<<<<<<<<')
+
           $('#' + thisField + 'Registered').removeClass('hide').addClass('show')
+
         } else {
+
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 8 <<<<<<<<<<<<<<<<<<<<<<<<<')
+
           helper.validateParams(thisField, comparedField, err1)
+
         }
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 9 <<<<<<<<<<<<<<<<<<<<<<<<<')
+
         err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
+
       }
 
-        // EMAIL IS NOT VALID +++++++++++++++++++
+
+    // EMAIL IS NOT VALID +++++++++++++++++++
     } else if ((err1 !== undefined && err1.error === 'invalid') || (err1 === undefined && !isEmailValid)) {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 10 <<<<<<<<<<<<<<<<<<<<<<<<<')
+
+
       if (err1 !== undefined || isSafari) {
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 11 <<<<<<<<<<<<<<<<<<<<<<<<<')
+
         $('#' + thisField + 'Registered').removeClass('show').addClass('hide')
         $('#' + thisField + 'Improper').removeClass('hide').addClass('show')
+
       } else {
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 12 <<<<<<<<<<<<<<<<<<<<<<<<<')
+
         $('#' + thisField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + ' is in improper format')
+
       }
 
-      $('#' + thisField).focus()
+      //$('#' + thisField).focus()
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 13 <<<<<<<<<<<<<<<<<<<<<<<<<')
 
       err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
+
+
+
     } else if (err1 !== undefined && err1.error === 'empty') {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 14 <<<<<<<<<<<<<<<<<<<<<<<<<')
+
       helper.testUserInputEmail(thisField, err1)
+
     }
+
   },
+
 
 
 // =================================================================================================================================
@@ -1455,8 +1509,6 @@ var helper = {
     var dataID = editBtnClickedParentElem.data('id')
     var labelText = helper.makeTitleFromElementID(dataID)
 
-    //isSafari ? helper.handleSpecificEvents() : null
-
     dataID === 'email' ? labelText = labelText + ' Address' : null
     $('body').data('elementID', dataID)
     $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
@@ -1528,42 +1580,77 @@ var helper = {
 
   handleErrorResponse: function(data) {
 
+    // {email: {error: "empty"}, confirmEmail: {error: "registered"}, newUserDataItem: true}
     console.log('### handleErrorResponse +++++++++++ ', data)
+
+    var newUserDataItem
+    var q
+
+    for (var k in data) {
+      if(k === 'newUserDataItem'){
+        newUserDataItem = true
+        //break
+      }
+    }
 
     Object.keys(data).forEach(function(p) {
 
-        switch (p) {
-            
-            case 'email':
-                console.log('### handleErrorResponse: ', p, ' :: ', data[p])
-                break
+      switch (p) {
 
-            case 'confirmEmail':
-                console.log('### handleErrorResponse: ', p, ' :: ', data[p])
-                break
-    
-            case 'password':
-                console.log('### handleErrorResponse: ', p, ' :: ', data[p])
-                break
+        case 'email':
 
-            case 'confirmPassword':
-                console.log('### handleErrorResponse: ', p, ' :: ', data[p])
-                break
-    
-            case 'firstname':
-            case 'lastname':
-            case 'city':
-                console.log('### handleErrorResponse: ', p, ' :: ', data[p])
-                helper.textElementValidation(p, helper.pattern.basictext, data[p])
-                break
+          newUserDataItem ? p = 'newUserDataItem' : null
+          newUserDataItem ? q = 'confirmNewUserDataItem' : q = 'confirmEmail'
 
-            case 'state':
-                console.log('### handleErrorResponse: ', p, ' :: ', data[p])
-                helper.selectElementValidation(p, data[p])
-                break
-        }
+          console.log('### handleErrorResponse1: ', p, ' :: ', q, ' :: ', data[p])
+
+          helper.validateEmailField(null, p, q, data[p])
+          break
+
+        case 'confirmEmail':
+
+          newUserDataItem ? p = 'confirmNewUserDataItem' : null
+          newUserDataItem ? q = 'newUserDataItem' : q = 'email'
+
+          console.log('### handleErrorResponse2: ', p, ' :: ', q, ' :: ', data[p])
+
+          helper.validateEmailField(null, p, q, data[p])
+          break
+
+        case 'password':
+
+          console.log('### handleErrorResponse: ', p, ' :: ', data[p])
+          if (helper.validateParams('password', 'confirmPassword', data[p])) {
+            $('#confirmPassword').off('input')
+          }
+          helper.testUserInput(p, helper.pattern.password, data[p])
+          break
+
+        case 'confirmPassword':
+
+          console.log('### handleErrorResponse: ', p, ' :: ', data[p])
+          if (helper.validateParams('password', 'confirmPassword', data[p])) {
+            $('#password').off('input')
+          }
+          helper.testUserInput(p, helper.pattern.password, data[p])
+          break
+
+        case 'firstname':
+        case 'lastname':
+        case 'city':
+
+          console.log('### handleErrorResponse: ', p, ' :: ', data[p])
+          helper.textElementValidation(p, helper.pattern.basictext, data[p])
+          break
+
+        case 'state':
+
+          helper.selectElementValidation(p, data[p])
+          break
+
+      }
     })
-  },
+  }
 
 }
 
