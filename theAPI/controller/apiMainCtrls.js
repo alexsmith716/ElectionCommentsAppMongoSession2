@@ -354,8 +354,6 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
     console.log('####### > API > ajaxNewUserDataItem 4 ++++++++++++++++++++')
 
-    req.session.userValidatedEmail.isValidated = false
-
     evaluateUserEmailVerify(req, res, false, function (response) {
 
       if (response.response === 'success') {
@@ -394,6 +392,7 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
           if (!validationErrors) {
 
             // No errors, save user's new data in Db
+            req.session.userValidatedEmail.isValidated = false
             console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse5 > req.body: ', req.body)
             console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse5: ', validatedResponse)
 
@@ -413,6 +412,8 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
         // ==============================================================================================
 
       } else {
+
+        req.session.userValidatedEmail.isValidated = false
 
         if (response.status === 'err') {
 
@@ -437,9 +438,6 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
     console.log('####### > API > ajaxNewUserDataItem 8 ++++++++++++++++++++')
 
-    req.session.userValidatedEmail.isValidated = false
-    req.session.userValidatedPassword.isValidated = false
-
     evaluateUserPasswordVerify(req, res, false, function (response) {
 
       if (response.response === 'success') {
@@ -453,6 +451,9 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
           var validationErrors = false
 
           if (validatedResponse.status === 'err') {
+
+            req.session.userValidatedEmail.isValidated = false
+            req.session.userValidatedPassword.isValidated = false
 
             console.log('####### > API > ajaxNewUserDataItem 11 > serverSideValidation > validatedResponse2: ', validatedResponse)
             return next(validatedResponse.message)
@@ -477,6 +478,9 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
           if (!validationErrors) {
 
             // No errors, save user's new data in Db
+
+            req.session.userValidatedEmail.isValidated = false
+            req.session.userValidatedPassword.isValidated = false
             console.log('####### > API > ajaxNewUserDataItem 14 > serverSideValidation > validatedResponse5: ', validatedResponse)
 
           } else {
@@ -491,6 +495,9 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
         })
 
       } else {
+
+        req.session.userValidatedEmail.isValidated = false
+        req.session.userValidatedPassword.isValidated = false
 
         if (response.status === 'err') {
 
@@ -563,18 +570,6 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -721,7 +716,6 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
     if (nds.getMinutes() > 4){
     // if (nds.getMinutes() > 0) {
     
-
       req.session.userValidatedEmail.isValidated = false
 
       var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)

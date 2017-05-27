@@ -32,6 +32,7 @@ module.exports.basicAuthenticationAPI = function (req, res, next) {
 module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
   console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem <<<<<<<<<<<<<<<<<<<<<<<')
+  console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem !!! <<<<<<<<<<<<<<<<<<<<<<<: ', req.session.userValidatedEmail)
 
   var u =  req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
   var nd = new Date()
