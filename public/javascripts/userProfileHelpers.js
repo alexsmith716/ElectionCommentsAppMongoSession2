@@ -281,6 +281,8 @@ var helper = {
               $('#newUserDataItemModal input').removeClass('has-error')
 
               $('#currentUserDataItem').val('')
+              $('#newUserDataItem').val('')
+              $('#confirmNewUserDataItem').val('')
               $('#newUserDataItemForm').removeData('currentUserDataItemVerified')
               $('#newUserDataItemForm').removeData('currentUserEmailVerified')
 
@@ -385,7 +387,7 @@ var helper = {
 
     $('#nextSubmitNewUserDataItemForm').on('click', function(e) {
 
-      console.log('nextSubmitNewUserDataItemForm > ON > CLICK ++++++++++++?: ', currentUserEmailVerified)
+      console.log('nextSubmitNewUserDataItemForm > ON > CLICK ++++++++++++')
 
       e.preventDefault()
 
@@ -703,11 +705,11 @@ var helper = {
   turnOffEvents: function () {
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> turnOffEvents <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
-    $('#newUserDataItem').off('change')
-    $('#confirmNewUserDataItem').off('change')
+    //$('#newUserDataItem').off('change')
+    //$('#confirmNewUserDataItem').off('change')
 
-    $('#newUserDataItem').off('focusout')
-    $('#confirmNewUserDataItem').off('focusout')
+    //$('#newUserDataItem').off('focusout')
+    //$('#confirmNewUserDataItem').off('focusout')
 
 
     $('body').off('mousedown')
