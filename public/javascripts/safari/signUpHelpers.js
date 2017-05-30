@@ -430,7 +430,7 @@ var helper = {
 
       console.log('## validateParams 11111: ', property1.value, ' :: ', property2.value)
 
-
+      // Values NOT equal
       if ((err1 !== undefined && err1.error === 'nomatch') || property1.value !== property2.value) {
 
         console.log('## validateParams 22222222')
@@ -455,6 +455,7 @@ var helper = {
           }
         }
 
+      // Values ARE equal
       } else {
 
         if (isSafari) {

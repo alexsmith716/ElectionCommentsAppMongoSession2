@@ -312,6 +312,16 @@ module.exports.getUserProfileResponse = function(req, res, next) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+/*
+{ type: 'email',
+  data: 'aaa2@aaa.com',
+  _csrf: 'fNYPBLkq-uefK1iNSAQMCsbUfHiMmnfm98Wo',
+  email: 'aaa2ffdvdfvdfv@aaa.com',
+  confirmEmail: 'aaa2ffdvdfvdfv@aaa.com' }
+*/
+
+
+
 module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
   console.log('####### > API > ajaxNewUserDataItem 1 req.body:', req.body)
@@ -391,10 +401,37 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
           if (!validationErrors) {
 
-            // No errors, save user's new data in Db
+            // No errors, save user's new data change in Db
+            // return response success 201
             req.session.userValidatedEmail.isValidated = false
             console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse5 > req.body: ', req.body)
             console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse5: ', validatedResponse)
+
+            User.findById(res.locals.currentUser.id).exec(function (err, user) {
+              if (err) {
+                return next(err)
+              }
+
+              if (!user) {
+                sendJSONresponse(res, 201, { 'response': 'error' })
+                return
+              }
+
+              user['email'] = req.body.email
+
+              sendJSONresponse(res, 201, { 'response': 'success' })
+              /*
+              user.save(function (err) {
+                if (err) {
+                  return next(err)
+
+                } else {
+                  sendJSONresponse(res, 201, { 'response': 'success' })
+
+                }
+              })
+              */
+            })
 
           } else {
 
