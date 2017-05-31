@@ -113,7 +113,7 @@ block content
 
                 label.control-label(id="currentUserDataItemLabel", style="margin-top:1px;")
 
-                input.form-control.input-md(id="currentUserDataItem", name="currentUserDataItem")
+                input.form-control.input-md(id="currentUserDataItem", name="currentUserDataItem", required)
 
                 span.hide.error(id="currentUserDataItemRegistered")
                 span.hide.error(id="currentUserDataItemError") Please fill out this field. Please match the requested format.
@@ -131,7 +131,7 @@ block content
 
                   span.hide.error(id="newUserDataItemImproper") Email is in improper format
                   span.hide.error(id="newUserDataItemRegistered") This email address is already in our system. Sign in, or enter a new email address
-                  span.hide.error(id="newUserDataItemError") Please fill out this field.
+                  span.hide.error(id="newUserDataItemError") Please enter an email address. Please type a valid Email Address
 
 
               div.required-fields
@@ -139,12 +139,12 @@ block content
 
                   label.control-label(id="confirmNewUserDataItemLabel", style="margin-top:6px;")
 
-                  input.form-control.input-md(id="confirmNewUserDataItem", name="confirmNewUserDataItem", required)
+                  input.form-control.input-md(id="confirmNewUserDataItem", name="confirmNewUserDataItem")
 
                   span.hide.error(id="confirmNewUserDataItemImproper") Confirm Email is in improper format
                   span.hide.error(id="confirmNewUserDataItemRegistered") This email address is already in our system. Sign in, or enter a new email address
-                  span.hide.error(id="confirmNewUserDataItemMatch")
-                  span.hide.error(id="confirmNewUserDataItemError") Please fill out this field.
+                  span.hide.error(id="confirmNewUserDataItemMatch") ???????
+                  span.hide.error(id="confirmNewUserDataItemError") Please enter an email address. Please type a valid Email Address
 
 
             div(style="margin-bottom:8px;")
