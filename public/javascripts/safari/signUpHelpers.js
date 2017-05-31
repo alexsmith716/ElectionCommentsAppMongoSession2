@@ -447,7 +447,7 @@ var helper = {
           }
 
         } else {
-          console.log('## validateParams 6666666')
+          console.log('## validateParams 6666666 > comparedField: ', comparedField)
           if (err1 !== undefined) {
             $('#' + comparedField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
           } else {

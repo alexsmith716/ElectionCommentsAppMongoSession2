@@ -16,9 +16,9 @@ var helper = {
     helper.initializeJqueryEvents()
   },
 
-  testFormValidityXX: function (theForm, eventListener) {
+  testFormValidity: function (theForm, eventListener) {
 
-    console.log('### testFormValidity 1 > theForm +++++++++++: ', theForm)
+    //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> testFormValidity <<<<<<<<<<<<<<<<<<<<<<', theForm)
 
     var boundEventTypes
     var formElement
@@ -34,9 +34,9 @@ var helper = {
       formElement = $(theForm[i])
       checkConstraints = formElement.get(0).checkValidity()
 
-      console.log('### testFormValidity 2 > formElement +++++++++++: ', formElement)
-      console.log('### testFormValidity 3 > formElement.validity +++++++++++: ', formElement.validity)
-      console.log('### testFormValidity 4 > checkConstraints ++++++++++++++++++ ', checkConstraints)
+      //console.log('### testFormValidity 2 > formElement +++++++++++: ', formElement)
+      //console.log('### testFormValidity 3 > formElement.validity +++++++++++: ', formElement.validity)
+      //console.log('### testFormValidity 4 > checkConstraints ++++++++++++++++++ ', checkConstraints)
 
       if(!checkConstraints && formValid === null){
         formValid = false
@@ -61,45 +61,6 @@ var helper = {
     }
     return resp
   },
-
-
-  testFormValidity: function (theForm, eventListener) {
-
-    helper.handleSpecificEvents()
-    console.log('### testFormValidity 1 > theForm +++++++++++: ', theForm)
-
-    var boundEventTypes
-    var formElement
-    var checkConstraints
-    var formValid = null
-    var resp = {}
-
-    for( var i = 0; i < theForm.length; i++ ) {
-
-      formElement = $(theForm[i])
-      checkConstraints = formElement.get(0).checkValidity()
-
-      console.log('### testFormValidity 2 > formElement +++++++++++: ', formElement)
-      console.log('### testFormValidity 3 > formElement.validity +++++++++++: ', formElement.validity)
-      console.log('### testFormValidity 4 > checkConstraints ++++++++++++++++++ ', checkConstraints)
-
-      /*if(!checkConstraints && formValid === null){
-        formValid = false
-        resp.formValid = false
-        resp.focusFirstElement = formElement
-        break
-      }*/
-
-      if(eventListener === 'change'){
-        boundEventTypes = $._data( formElement[0], 'events' );
-        for (var eType in boundEventTypes){
-          helper.handleFormEvents(formElement.attr('id'), eType, formElement.val())
-        }
-      }
-    }
-    return resp
-  },
-
 
 
   initializeJqueryEvents:  function(){
@@ -162,7 +123,7 @@ var helper = {
       $('#editProfileForm .formerror').removeClass('show').addClass('hide')
 
       var elementID = $('#editProfileForm').data('elementID')
-      var whichformdataid = $('#editProfileForm').data('whichformdataid')
+      var whichformdataid = $('body').data('whichformdataid')
       var labelText = helper.makeTitleFromElementID(whichformdataid)
       var newVal;
       var s = document.getElementById(elementID)
@@ -252,40 +213,14 @@ var helper = {
 
     $('#newUserDataItemForm').on('submit', function(e) {
 
-      e.preventDefault()
-      $('.loading').show()
-      $('#newUserDataItemForm .formerror').removeClass('show').addClass('hide')
-
-      var elementID = $('body').data('elementID')
-      var whichformdataid = $('#newUserDataItemForm').data('whichformdataid')
-      var labelText = helper.makeTitleFromElementID(whichformdataid)
-
-      console.log('#newUserDataItemForm > SUBMIT 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', elementID)
-      console.log('#newUserDataItemForm > SUBMIT 2 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', interactiveFormValidationEnabled)
-      console.log('#newUserDataItemForm > SUBMIT 3 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', $('#currentUserDataItem').val())
-      console.log('#newUserDataItemForm > SUBMIT 4 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', $('#newUserDataItem').val())
-      console.log('#newUserDataItemForm > SUBMIT 5 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', $('#confirmNewUserDataItem').val())
-
-      var data = {}
-      var serviceUrl = $(this).attr('action')
-      var constrainedFormElements = document.getElementById('newUserDataItemForm').querySelectorAll('[placeholder]')
-      //var constrainedFormElements = document.getElementById('newUserDataItemForm').querySelectorAll('[required]')
-
-      //if(!interactiveFormValidationEnabled){
-      var testFocusout = helper.testFormValidity(constrainedFormElements, 'change')
-
-      return false
-
-    })
-
-    $('#newUserDataItemFormXXX').on('submit', function(e) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> SSSSSSSSSSSSSSSSSSSSSSSSSSS <<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
       e.preventDefault()
       $('.loading').show()
       $('#newUserDataItemForm .formerror').removeClass('show').addClass('hide')
 
       var elementID = $('body').data('elementID')
-      var whichformdataid = $('#newUserDataItemForm').data('whichformdataid')
+      var whichformdataid = $('body').data('whichformdataid')
       var labelText = helper.makeTitleFromElementID(whichformdataid)
 
       console.log('#newUserDataItemForm > SUBMIT 1+++', elementID)
@@ -300,7 +235,7 @@ var helper = {
       //var constrainedFormElements = document.getElementById('newUserDataItemForm').querySelectorAll('[required]')
 
       //if(!interactiveFormValidationEnabled){
-        var testFocusout = helper.testFormValidity(constrainedFormElements, 'change')
+       var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
 
         if (testFocusout.formValid !== undefined){
           console.log('+++++++++++ BAD FORM !!!!!!!!!!!')
@@ -384,7 +319,7 @@ var helper = {
               $('#hideCurrentUserData').css( 'display', '' )
               $('#hideNewUserData').addClass('hideClass')
               $('#hideNewUserData').css( 'display', 'none' )
-              $('#nextSubmitNewUserDataItemForm').html('Next')
+              $('#nextNewUserDataItemForm').html('Next')
 
               $('#currentUserDataItem').off('focusout')
               $('#newUserDataItem').off('focusout')
@@ -462,9 +397,13 @@ var helper = {
 
     $('body').on('mousedown', function (e) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> body > onMousedown: ', e.target.id)
+      if (e.target.outerText === 'Submit') {
 
-      if (e.target.id === 'newUserDataItemModalCancel' || e.target.id === 'editProfileFormModalCancel' || e.target.outerText === 'Submit') {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> body > SUBMIT onMousedown: ', e.target.outerText)
+
+      }
+
+      if (e.target.id === 'newUserDataItemModalCancel' || e.target.id === 'editProfileFormModalCancel') {
 
         helper.turnOffSpecificEvents()
 
@@ -474,219 +413,21 @@ var helper = {
 
     $('#newUserDataItem').on('focusin', function (e) {
       console.log('>>>>>>>>>>>>>>>>>>>>>> newUserDataItem FOCUSIN <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-      helper.handleSpecificEvents()
+      //helper.handleSpecificEvents()
     })
 
     $('#confirmNewUserDataItem').on('focusin', function (e) {
       console.log('>>>>>>>>>>>>>>>>>>>>>> confirmNewUserDataItem FOCUSIN <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-      helper.handleSpecificEvents()
+      //helper.handleSpecificEvents()
     })
 
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    $('#nextNewUserDataItemForm').on('click', function(e) {
 
-    $('#nextSubmitNewUserDataItemForm').on('click', function(e) {
-
-      console.log('nextSubmitNewUserDataItemForm > ON > CLICK ++++++++++++')
-
-      //e.preventDefault()
-
-      var type = $('body').data('elementID')
-
-      var currentUserDataItemVerified = $('#newUserDataItemForm').data('currentUserDataItemVerified')
-      var currentUserEmailVerified = $('#newUserDataItemForm').data('currentUserEmailVerified')
-
-      $('#newUserDataItemModal .modalAlertWarning .alert').html('');
-      $('#newUserDataItemModal .modalAlertWarning').hide();
-
-      var data = $('#currentUserDataItem').val()
-      var testData = helper.pattern.basictext.test(data)
-
-      console.log('nextSubmitNewUserDataItemForm > type: ', type)
-      console.log('nextSubmitNewUserDataItemForm > currentUserDataItemVerified: ', currentUserDataItemVerified)
-      console.log('nextSubmitNewUserDataItemForm > currentUserEmailVerified 1: ', currentUserEmailVerified)
-
-      if (currentUserDataItemVerified !== true) {
-
-        e.preventDefault()
-
-        if (testData) {
-
-          if (currentUserEmailVerified !== true) {
-
-            console.log('$$$$$$$$$$$$$$$$$$$$$#########%%%%%%%%%%%%%#########@@@@@@@@@@@@@@@^^^^^^^^^')
-
-            helper.validateNewUserDataService(data, 'email', 'true', function (err, response) {
-
-              if (err) {
-
-                $('#currentUserDataItem').addClass('has-error')
-                $('#currentUserDataItemError').removeClass('show').addClass('hide')
-                $('#currentUserDataItemRegistered').removeClass('hide').addClass('show').html('Please Enter Your '+$('#currentUserDataItem').attr('placeholder'))
-
-              } else {
-
-                $('#currentUserDataItem').removeClass('has-error')
-                $('#currentUserDataItemError').removeClass('show').addClass('hide')
-                $('#currentUserDataItemRegistered').removeClass('show').addClass('hide')
-
-                if(type === 'email'){
-
-                  $('#newUserDataItemForm').data('currentUserDataItemVerified', true)
-
-                  $('#hideCurrentUserData').addClass('hideClass')
-                  $('#hideCurrentUserData').css( 'display', 'none' )
-
-                  $('#hideNewUserData').removeClass('hideClass')
-                  $('#hideNewUserData').css( 'display', '' )
-
-                  $('#nextSubmitNewUserDataItemForm').attr('type', 'submit');
-                  isSafari ? helper.handleSpecificEvents() : null
-                  $('#nextSubmitNewUserDataItemForm').html('Submit')
-                }
-
-
-                if(type === 'password'){
-
-                  $('#newUserDataItemForm').data('currentUserEmailVerified', true)
-
-                  $('#currentUserDataItemLabel').html('Please Enter Your Current Password:')
-                  $('#currentUserDataItem').val('')
-
-                  $('#currentUserDataItem').attr({ 
-                    type: 'password',
-                    title: 'Please enter your Password',
-                    placeholder: 'Current Password'
-                  })
-
-                  /*
-                  $('#currentUserDataItem').attr({ 
-                    type: 'password',
-                    pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
-                    title: 'Please enter your Password',
-                    placeholder: 'Current Password'
-                  })
-                  */
-                }
-                
-              }
-            })
-
-          } else {
-
-            if (type === 'password') {
-
-              helper.validateNewUserDataService(data, type, 'true', function (err, response) {
-
-                if (err) {
-
-                  if(err.alertDanger){
-
-                    $('#currentUserDataItem').val('')
-                    $('#newUserDataItemForm').removeData('currentUserEmailVerified')
-                    $('#newUserDataItemModal .modalAlertWarning .alert').html(err.alertDanger);
-                    $('#newUserDataItemModal .modalAlertWarning').show();
-
-                    $('#currentUserDataItemLabel').html('Please Enter Your Current Email Address:')
-
-
-                    $('#currentUserDataItem').attr({
-                      type: 'text',
-                      title: 'Please enter a valid Email Address',
-                      placeholder: 'Current Email Address'
-                    })
-
-                    /*
-                    $('#currentUserDataItem').attr({
-                        type: 'text',
-                        pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
-                        title: 'Please enter a valid Email Address',
-                        placeholder: 'Current Email Address'
-                    })
-                    */
-
-                  }else{
-
-                    $('#currentUserDataItem').addClass('has-error')
-                    $('#currentUserDataItemError').removeClass('show').addClass('hide')
-                    $('#currentUserDataItemRegistered').removeClass('hide').addClass('show').html('Please Enter Your '+$('#currentUserDataItem').attr('placeholder'))
-                    
-                  }
-
-                } else {
-
-                  $('#currentUserDataItemError').removeClass('show').addClass('hide')
-                  $('#currentUserDataItemRegistered').removeClass('show').addClass('hide')
-                  $('#currentUserDataItem').removeClass('has-error')
-
-                  $('#newUserDataItemForm').data('currentUserDataItemVerified', true)
-                  $('#newUserDataItemForm').data('currentUserEmailVerified', true)
-
-                  $('#hideCurrentUserData').addClass('hideClass')
-                  $('#hideCurrentUserData').css( 'display', 'none' )
-
-                  $('#hideNewUserData').removeClass('hideClass')
-                  $('#hideNewUserData').css( 'display', '' )
-
-
-                  $('#newUserDataItem').attr({ 
-                      type: 'password',
-                      title: 'Password must be at least 4 characters long. No whitespace allowed',
-                      placeholder: 'New Password'
-                  })
-
-                  $('#confirmNewUserDataItem').attr({ 
-                      type: 'password',
-                      title: 'Password must be at least 4 characters long. No whitespace allowed',
-                      placeholder: 'Confirm New Password'
-                  })
-                  /*
-                  $('#newUserDataItem').attr({ 
-                      type: 'password',
-                      pattern: '[\\S]{4,}',
-                      title: 'Password must be at least 4 characters long. No whitespace allowed',
-                      placeholder: 'New Password'
-                  })
-
-                  $('#confirmNewUserDataItem').attr({ 
-                      type: 'password',
-                      pattern: '[\\S]{4,}',
-                      title: 'Password must be at least 4 characters long. No whitespace allowed',
-                      placeholder: 'Confirm New Password'
-                  })
-                  */
-
-                  $('#nextSubmitNewUserDataItemForm').attr('type', 'submit');
-                  isSafari ? helper.handleSpecificEvents() : null
-                  $('#nextSubmitNewUserDataItemForm').html('Submit')
-
-                }
-
-              })
-
-            }
-
-          }
-
-        } else {
-
-          console.log('nextSubmitNewUserDataItemForm > testData > BAD: ', testData)
-          $('#currentUserDataItem').addClass('has-error')
-          $('#currentUserDataItemError').removeClass('hide').addClass('show')
-
-        }
-
-      }
-
-    })
-
-
-
-    $('#nextSubmitNewUserDataItemFormXXX').on('click', function(e) {
-
-      console.log('nextSubmitNewUserDataItemForm > ON > CLICK ++++++++++++')
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> nextNewUserDataItemForm > onCLICK <<<<<<<<<<<<<<<<<<<<<<<<<')
 
       e.preventDefault()
 
@@ -701,15 +442,16 @@ var helper = {
       var data = $('#currentUserDataItem').val()
       var testData = helper.pattern.basictext.test(data)
 
-      console.log('nextSubmitNewUserDataItemForm > type: ', type)
-      console.log('nextSubmitNewUserDataItemForm > currentUserDataItemVerified: ', currentUserDataItemVerified)
-      console.log('nextSubmitNewUserDataItemForm > currentUserEmailVerified 1: ', currentUserEmailVerified)
+      console.log('nextNewUserDataItemForm > type: ', type)
+      console.log('nextNewUserDataItemForm > currentUserDataItemVerified: ', currentUserDataItemVerified)
+      console.log('nextNewUserDataItemForm > currentUserEmailVerified 1: ', currentUserEmailVerified)
 
       if (currentUserDataItemVerified) {
 
-        console.log('### nextSubmitNewUserDataItemForm > currentUserDataItemVerified > SUBMIT THE FORM !!!')
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> nextNewUserDataItemForm > onCLICK > SUBMIT <<<<<<<<<<<<<<<<<<<<<<<<<')
 
-        //$('#newUserDataItemForm').submit()
+        // $('#nextNewUserDataItemForm').attr('type', 'submit');
+        $('#submitNewUserDataItemForm').click()
         //$('#newUserDataItemForm').find(':submit').click()
 
       } else {
@@ -744,9 +486,9 @@ var helper = {
                   $('#hideNewUserData').removeClass('hideClass')
                   $('#hideNewUserData').css( 'display', '' )
 
-                  $('#nextSubmitNewUserDataItemForm').attr('type', 'submit');
+                  // $(this).attr('type', 'submit');
                   isSafari ? helper.handleSpecificEvents() : null
-                  $('#nextSubmitNewUserDataItemForm').html('Submit')
+                  $('#nextNewUserDataItemForm').html('Submit')
                 }
 
 
@@ -860,9 +602,9 @@ var helper = {
                   })
                   */
 
-                  $('#nextSubmitNewUserDataItemForm').attr('type', 'submit');
+                  //$('#nextNewUserDataItemForm').attr('type', 'submit');
                   isSafari ? helper.handleSpecificEvents() : null
-                  $('#nextSubmitNewUserDataItemForm').html('Submit')
+                  $('#nextNewUserDataItemForm').html('Submit')
 
                 }
 
@@ -874,7 +616,7 @@ var helper = {
 
         } else {
 
-          console.log('nextSubmitNewUserDataItemForm > testData > BAD: ', testData)
+          console.log('nextNewUserDataItemForm > testData > BAD: ', testData)
           $('#currentUserDataItem').addClass('has-error')
           $('#currentUserDataItemError').removeClass('hide').addClass('show')
 
@@ -883,9 +625,73 @@ var helper = {
 
     })
 
+
+
   },
 
 
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+  resetNewUserDataItemModal: function () {
+
+    $('body').removeData('modalShown')
+    $('#newUserDataItemModal .modalAlertWarning').hide();
+
+    $('#newUserDataItemForm').get(0).reset()
+    $('#newUserDataItemModal input').val('')
+
+    $('#hideNewUserData').attr('class', 'hideClass')
+    $('#hideNewUserData').attr('style', 'display:none')
+    
+    $('#newUserDataItemModal').find('.error').removeClass('show').addClass('hide')
+
+    $('#newUserDataItemModal input').removeClass('has-error')
+  },
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  turnOffSpecificEvents: function () {
+
+    $('#newUserDataItem').off('change')
+    $('#confirmNewUserDataItem').off('change')
+
+    $('#newUserDataItem').off('focusout')
+    $('#confirmNewUserDataItem').off('focusout')
+
+  },
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  handleSpecificEvents: function () {
+
+    $('#newUserDataItem').on('change', function (e) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>> newUserDataItem CHANGE <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+      //helper.turnOffSpecificEvents()
+      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
+    })
+
+    $('#confirmNewUserDataItem').on('change', function (e) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>> confirmNewUserDataItem CHANGE <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+      //helper.turnOffSpecificEvents()
+      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
+    })
+
+    $('#newUserDataItem').on('focusout', function (e) {
+      //console.log('>>>>>>>>>>>>>>>>>>>>>> newUserDataItem FOCUSOUT <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+      helper.handleFormEvents($(this).attr('id'), e.type)
+    })
+
+    $('#confirmNewUserDataItem').on('focusout', function (e) {
+      //console.log('>>>>>>>>>>>>>>>>>>>>>> confirmNewUserDataItem FOCUSOUT <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+      helper.handleFormEvents($(this).attr('id'), e.type)
+    })
+
+  },
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -985,72 +791,6 @@ var helper = {
     })
   },
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-  resetNewUserDataItemModal: function () {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> resetNewUserDataItemModal <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-
-    $('body').removeData('modalShown')
-    $('#newUserDataItemModal .modalAlertWarning').hide();
-
-    $('#newUserDataItemForm').get(0).reset()
-    $('#newUserDataItemModal input').val('')
-
-    $('#hideNewUserData').attr('class', 'hideClass')
-    $('#hideNewUserData').attr('style', 'display:none')
-    
-    $('#newUserDataItemModal').find('.error').removeClass('show').addClass('hide')
-
-    $('#newUserDataItemModal input').removeClass('has-error')
-  },
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-  turnOffSpecificEvents: function () {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> turnOffSpecificEvents <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-
-    $('#newUserDataItem').off('change')
-    $('#confirmNewUserDataItem').off('change')
-
-    $('#newUserDataItem').off('focusout')
-    $('#confirmNewUserDataItem').off('focusout')
-
-  },
-
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-  handleSpecificEvents: function () {
-
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> handleSpecificEvents <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-
-    $('#newUserDataItem').on('change', function (e) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>> newUserDataItem CHANGE <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-      helper.turnOffSpecificEvents()
-      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
-    })
-
-    $('#confirmNewUserDataItem').on('change', function (e) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>> confirmNewUserDataItem CHANGE <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-      helper.turnOffSpecificEvents()
-      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
-    })
-
-    $('#newUserDataItem').on('focusout', function (e) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>> newUserDataItem FOCUSOUT <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-      helper.handleFormEvents($(this).attr('id'), e.type)
-    })
-
-    $('#confirmNewUserDataItem').on('focusout', function (e) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>> confirmNewUserDataItem FOCUSOUT <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-      helper.handleFormEvents($(this).attr('id'), e.type)
-    })
-
-  },
 
 // =================================================================================================================================
 // =================================================================================================================================
@@ -1159,6 +899,12 @@ var helper = {
     return newVal
   },
 
+  elementIDtoTitleCase: function (whichID) {
+    whichID = whichID.replace(/([A-Z])/g, ' $1')
+    var labelText = whichID.replace(/^./, function (str) { return str.toUpperCase() })
+    return labelText
+  },
+
   textElementValidation: function (elementID, pattern, err1) {
     var thisElementValue = $.trim($('#' + elementID).val())
     var title = $('#' + elementID).attr('title')
@@ -1231,11 +977,6 @@ var helper = {
     }
   },
 
-  elementIDtoTitleCase: function (whichID) {
-    whichID = whichID.replace(/([A-Z])/g, ' $1')
-    var labelText = whichID.replace(/^./, function (str) { return str.toUpperCase() })
-    return labelText
-  },
 
   testUserInput: function (elementID, pattern, err1) {
     console.log('#testUserInput > no err1: ', elementID, ' :: ', pattern);
@@ -1306,12 +1047,11 @@ var helper = {
   },
 
 
-
   validateParams: function (thisField, comparedField, err1) {
 
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
-    var formConfirmType = $('body').data('elementID')
+    var formConfirmType = $('body').data('whichformdataid')
     var comparedFieldTypeEmail = false
     var c = /confirm/
     var comparedFieldLowercase = comparedField.toLowerCase()
@@ -1319,18 +1059,20 @@ var helper = {
 
     formConfirmType === 'email' ? comparedFieldTypeEmail = true : null
 
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 2: ', thisField, ' > comparedField: ', comparedField)
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 3: ', formConfirmType)
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 4: ', comparedFieldLowercase)
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 5: ', comparedFieldIsItConfirm)
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 6: ', comparedFieldTypeEmail)
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 6a: ', err1)
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 6b: ', interactiveFormValidationEnabled)
-
+    /*
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams thisField VAL: ', $('#' + thisField).val())
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams thisField: ', thisField)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams comparedField: ', comparedField)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams formConfirmType: ', formConfirmType)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams comparedFieldLowercase: ', comparedFieldLowercase)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams comparedFieldIsItConfirm: ', comparedFieldIsItConfirm)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams err1: ', err1)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams comparedFieldTypeEmail: ', comparedFieldTypeEmail)
+    */
     if (err1 !== undefined) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 7 ERR1 : ', thisField, ' || ', comparedField, ' || ', err1)
+      //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 7 ERR1 : ', thisField, ' || ', comparedField, ' || ', err1)
     } else {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 8 NO ERR1 : ', thisField, ' || ', comparedField)
+      //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 8 NO ERR1 : ', thisField, ' || ', comparedField)
     }
 
     if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + comparedField).val() !== '') {
@@ -1338,63 +1080,52 @@ var helper = {
       var property1 = document.getElementsByName(thisField)[0]
       var property2 = document.getElementsByName(comparedField)[0]
 
+      $('#' + thisField).get(0).setCustomValidity('')
+      $('#' + comparedField).get(0).setCustomValidity('')
+
       // Values NOT equal 
       if ((err1 !== undefined && err1.error === 'nomatch') || property1.value !== property2.value) {
 
 
-
-
-        /*
-        if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 9 NO ERR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-          $('#' + thisField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
-        } else {
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 10 NO ERR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-          $('#' + comparedField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
-        }
-        */
-
         // Handles Safari 10.1/603.1 and higher && non-Safari user-agents
         if (err1 === undefined && interactiveFormValidationEnabled) {
 
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 9 NO ERR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+          console.log('JVJVJHVJHVKJHVJHKHJVKHJVKHJVKHGVKJHVJHKJHVJHVJHVHJKKJH thisField     1111: ', thisField)
+          console.log('JVJVJHVJHVKJHVJHKHJVKHJVKHJVKHGVKJHVJHKJHVJHVJHVHJKKJH comparedField 2222: ', comparedField)
 
-          if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 9a NO ERR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+          $('#' + comparedField).get(0).setCustomValidity(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
+
+          if (formConfirmType === 'email' && !comparedFieldIsItConfirm) {
+            //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 9a NO ERR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<1 ', thisField)
             //$('#' + thisField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
-            $('#' + thisField).get(0).setCustomValidity(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
+            //$('#' + thisField).get(0).setCustomValidity(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
           } else {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 9b NO ERR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+            //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 9b NO ERR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<2 ', comparedField)
             //$('#' + comparedField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
-            $('#' + comparedField).get(0).setCustomValidity(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
+            //$('#' + comparedField).get(0).setCustomValidity(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
           }
 
 
           //$('#' + comparedField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + 's don\'t match')
           // $('#' + comparedField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
-          return false
-
-
-
-
 
 
         // Handles err1 && Safari 10.1/603.1 and lower 
         } else {
 
-          if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
+          if (formConfirmType && !comparedFieldIsItConfirm) {
 
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 10 ERR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
     
             $('#' + thisField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
-            return false
+
     
           } else {
 
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 11 ERR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
     
             $('#' + comparedField + 'Match').removeClass('hide').addClass('show').html(helper.elementIDtoTitleCase(formConfirmType) + 's don\'t match')
-            return false
+
           }
         }
 
@@ -1403,7 +1134,7 @@ var helper = {
       } else {
 
         /*
-        if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
+        if (formConfirmType && !comparedFieldIsItConfirm) {
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 11 NO ERR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
           $('#' + thisField + 'Match').removeClass('show').addClass('hide').html('')
         } else {
@@ -1419,24 +1150,23 @@ var helper = {
     
           $('#' + thisField).get(0).setCustomValidity('')
           $('#' + comparedField).get(0).setCustomValidity('')
-          return true
-    
+
         // Handles err1 && Safari 10.1/603.1 and lower 
         } else {
     
-          if (comparedFieldTypeEmail && !comparedFieldIsItConfirm) {
+          if (formConfirmType && !comparedFieldIsItConfirm) {
 
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 13 ERR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
     
             $('#' + thisField + 'Match').removeClass('show').addClass('hide')
-            return true
+
     
           } else {
 
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateParams 14 ERR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
     
             $('#' + comparedField + 'Match').removeClass('show').addClass('hide')
-            return true
+
     
           }
         }
@@ -1484,7 +1214,7 @@ var helper = {
   // {email: {error: "registered"}, confirmEmail: {error: "registered"}, newUserDataItem: true}
   validateEmailField: function (elementVal, thisField, comparedField, err1) {
 
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField ! <<<<<<<<<<<<<<<<<: ', elementVal, ' :: ', thisField, ' :: ', comparedField, ' :: ', err1)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField <<<<<<<<<<<<<<<<<: ', elementVal, ' :>: ', thisField, ' :>: ', comparedField, ' :: ', err1)
 
     if (err1 !== undefined) {
       console.log('#validateEmailField > err1: ', thisField, ' :: ', err1)
@@ -1530,7 +1260,8 @@ var helper = {
 
           } else {
 
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 5 <<<<<<<<<<<<<<<<<<<<<<<<<')
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 5 <<<<<<<<<<<<<<<<<<<<<<<<<thisField: ', thisField)
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 5 <<<<<<<<<<<<<<<<<<<<<<<<<comparedField: ', comparedField)
 
             isSafari ? $('#' + thisField + 'Registered').removeClass('show').addClass('hide') : null
 
@@ -1553,7 +1284,8 @@ var helper = {
 
         } else {
 
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 8 <<<<<<<<<<<<<<<<<<<<<<<<<')
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 8 <<<<<<<<<<<<<<<<<<<<<<<<<thisField: ', thisField)
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> validateEmailField 8 <<<<<<<<<<<<<<<<<<<<<<<<<comparedField: ', comparedField)
           $('#'+thisField+'Registered').removeClass('show').addClass('hide')
           helper.validateParams(thisField, comparedField, err1)
 
@@ -1641,7 +1373,6 @@ var helper = {
   },
 
 
-
   doEditProfileModal: function(editBtnClicked) {
     var editBtnClickedParentElem = $(editBtnClicked).parent()
     var dataID = editBtnClickedParentElem.data('id')
@@ -1726,7 +1457,7 @@ var helper = {
     $('#editProfileFormLabelCurrent').html('Current ' + labelText + ':')
     $('#editProfileFormLabelUpdated').html('Change your ' + labelText + ':')
     $('#modalFormElementValueCurrent').html(currentFormValue)
-    $('#editProfileForm').data('whichformdataid', dataID)
+    $('body').data('whichformdataid', dataID)
 
     isSafari ? helper.handleSpecificEvents() : null
     $('#editProfileFormModal').modal({
@@ -1734,7 +1465,6 @@ var helper = {
       backdrop: 'static'
     })
   },
-
 
 
   doNewUserDataItemModal: function(editBtnClicked) {
@@ -1805,9 +1535,9 @@ var helper = {
     $('#hideNewUserData').addClass('hideClass')
     $('#hideNewUserData').css( 'display', 'none' )
 
-    $('#newUserDataItemForm').data('whichformdataid', dataID)
+    $('body').data('whichformdataid', dataID)
 
-    $('#nextSubmitNewUserDataItemForm').html('Next')
+    $('#nextNewUserDataItemForm').html('Next')
 
     $('#newUserDataItemModal').modal({
       keyboard: false,
