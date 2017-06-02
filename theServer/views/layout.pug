@@ -92,7 +92,7 @@ html(lang="en-US")
           var webkitVersion2 = webkitVersion1 + 3
           var webkitVersion = appVersion.slice(webkitVersion1, webkitVersion2)
           webkitVersion = parseInt(webkitVersion, 10)
-          if (webkitVersion >= 603)
+          if (webkitVersion >= 603 || !isSafari)
             interactiveFormValidationEnabled = true
 
         block content
