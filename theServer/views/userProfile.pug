@@ -95,7 +95,10 @@ block content
           .loading(style="display:none;")
 
 
-  .modal.fade(id="newUserDataItemModal", name="newUserDataItemModal", tabindex="-1")
+
+
+
+  .modal.fade(id="currentUserDataPathModal", tabindex="-1")
     .modal-dialog
       .modal-content
         .modal-header
@@ -104,47 +107,74 @@ block content
 
         .modal-body
 
+          .modalAlertWarning.hide(style="margin-top: 0px; margin-bottom: 0px;")
+            .alert.alert-danger
+
+          div.required-fields
+            .form-group
+
+              label.control-label(id="currentUserDataPathLabel", style="margin-top:1px;")
+
+              input.form-control.input-md(id="currentUserDataPath", required)
+
+              span.hide.error(id="currentUserDataPathRegistered")
+              span.hide.error(id="currentUserDataPathError") Please fill out this field. Please match the requested format.
+
+            div(style="margin-bottom:8px;")
+              .text-danger.hide.formerror
+                strong Could not update your information!
+
+
+            div(class="modalCancelSubmitBtns")
+              button(class="btn btn-default btn-md cancelButton", data-dismiss="modal") Cancel
+              | &nbsp;&nbsp;&nbsp;&nbsp;
+              button(type="submit", class="btn btn-primary btn-md nextButton") Next
+
+
+        .modal-footer
+          .loading(style="display:none;")
+
+
+
+
+
+  .modal.fade(id="userDataEmailPathChangeModal", tabindex="-1")
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type="button" data-dismiss="modal") &times;
+          h4.modal-title Change your Email Address:
+
+        .modal-body
+
           .modalAlertWarning(style="display:none; margin-top: 0px; margin-bottom: 0px;")
             .alert.alert-danger
 
-          div(id="hideCurrentUserData")
+          form(action="https://localhost:3000/api/newuserdatapathchange", id="newUserDataPathChangeForm", method="put", enctype="application/x-www-form-urlencoded")
+
             div.required-fields
               .form-group
 
-                label.control-label(id="currentUserDataItemLabel", style="margin-top:1px;")
+                label.control-label(style="margin-top:6px;") Enter Your New Email Address:
 
-                input.form-control.input-md(id="currentUserDataItem", name="currentUserDataItem", required)
+                input.form-control.input-md(type="email", id="email", name="email", tabindex="1", title="Please type a valid Email Address", placeholder="Email Address", required) 
 
-                span.hide.error(id="currentUserDataItemRegistered")
-                span.hide.error(id="currentUserDataItemError") Please fill out this field. Please match the requested format.
-
-
-          form(action="https://localhost:3000/api/newuserdataitem", id="newUserDataItemForm", name="newUserDataItemForm", method="put", enctype="application/x-www-form-urlencoded")
-
-            div(id="hideNewUserData")
-              div.required-fields
-                .form-group
-
-                  label.control-label(id="newUserDataItemLabel", style="margin-top:6px;")
-
-                  input.form-control.input-md(id="newUserDataItem", name="newUserDataItem", required) 
-
-                  span.hide.error(id="newUserDataItemImproper") Email is in improper format
-                  span.hide.error(id="newUserDataItemRegistered") This email address is already in our system. Sign in, or enter a new email address
-                  span.hide.error(id="newUserDataItemError") Please enter an email address. Please type a valid Email Address
+                span.hide.error(id="userDataEmailPathChangeImproper") Email is in improper format
+                span.hide.error(id="userDataEmailPathChangeRegistered") This email address is already in our system. Sign in, or enter a new email address
+                span.hide.error(id="userDataEmailPathChangeError") Please enter an email address. Please type a valid Email Address
 
 
-              div.required-fields
-                .form-group
+            div.required-fields
+              .form-group
 
-                  label.control-label(id="confirmNewUserDataItemLabel", style="margin-top:6px;")
+                label.control-label(style="margin-top:6px;") Confirm The New Email Address:
 
-                  input.form-control.input-md(id="confirmNewUserDataItem", name="confirmNewUserDataItem", required)
+                input.form-control.input-md(type="email", id="confirmEmail", name="confirmEmail", tabindex="2", title="Please type a valid Email Address", placeholder="Confirm Email Address", required)
 
-                  span.hide.error(id="confirmNewUserDataItemImproper") Confirm Email is in improper format
-                  span.hide.error(id="confirmNewUserDataItemRegistered") This email address is already in our system. Sign in, or enter a new email address
-                  span.hide.error(id="confirmNewUserDataItemMatch") ???????
-                  span.hide.error(id="confirmNewUserDataItemError") Please enter an email address. Please type a valid Email Address
+                span.hide.error(id="confirmUserDataEmailPathChangeImproper") Confirm Email is in improper format
+                span.hide.error(id="confirmUserDataEmailPathChangeRegistered") This email address is already in our system. Sign in, or enter a new email address
+                span.hide.error(id="confirmUserDataEmailPathChangeMatch") Emails don't match
+                span.hide.error(id="confirmUserDataEmailPathChangeError") Please enter an email address. Please type a valid Email Address
 
 
             div(style="margin-bottom:8px;")
@@ -153,15 +183,70 @@ block content
 
 
             div(class="modalCancelSubmitBtns")
-              button(class="btn btn-default btn-md", data-dismiss="modal", id="newUserDataItemModalCancel") Cancel
+              button(class="btn btn-default btn-md cancelButton", data-dismiss="modal") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
-              button(class="btn btn-primary btn-md", id="nextNewUserDataItemForm")
-              | &nbsp;&nbsp;&nbsp;&nbsp;
-              button.hide(type="submit", id="submitNewUserDataItemForm")
+              button(type="submit", class="btn btn-primary btn-md submitButton") Submit
 
 
         .modal-footer
           .loading(style="display:none;")
+
+
+
+
+
+  .modal.fade(id="userDataPasswordPathChangeModal", tabindex="-1")
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type="button" data-dismiss="modal") &times;
+          h4.modal-title Change your Password:
+
+        .modal-body
+
+          .modalAlertWarning(style="display:none; margin-top: 0px; margin-bottom: 0px;")
+            .alert.alert-danger
+
+          form(action="https://localhost:3000/api/newuserdatapathchange", id="newUserDataPathChangeForm", method="put", enctype="application/x-www-form-urlencoded")
+
+            div.required-fields
+              .form-group
+
+                label.control-label(style="margin-top:6px;") Enter Your New Password:
+
+                input.form-control.input-md(type="password", id="password", name="password", pattern="[\\S]{4,}", tabindex="4", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Create Password", required) 
+
+                span.hide.error(id="userDataPathChangeError") Please fill out this field.
+
+
+            div.required-fields
+              .form-group
+
+                label.control-label(style="margin-top:6px;") Confirm The New Password:
+
+                input.form-control.input-md(type="password", id="confirmPassword", name="confirmPassword", pattern="[\\S]{4,}", tabindex="5", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Confirm Password", required)
+
+                span.hide.error(id="confirmUserDataPathChangeMatch") Passwords don't match
+                span.hide.error(id="confirmUserDataPathChangeError") Please fill out this field.
+
+
+            div(style="margin-bottom:8px;")
+              .text-danger.hide.formerror
+                strong Could not update your information!
+
+
+            div(class="modalCancelSubmitBtns")
+              button(class="btn btn-default btn-md cancelButton", data-dismiss="modal") Cancel
+              | &nbsp;&nbsp;&nbsp;&nbsp;
+              button(class="btn btn-primary btn-md nextButton") Next
+              | &nbsp;&nbsp;&nbsp;&nbsp;
+              button.hide(type="submit", class="btn btn-primary btn-md submitButton") Submit
+
+
+        .modal-footer
+          .loading(style="display:none;")
+
+
 
 
   .main
