@@ -63,12 +63,27 @@ var helper = {
   initializeJqueryEvents:  function(){
 
     $('#userDataEmailPathChangeModal').on('shown.bs.modal', function() {
+
+      $('body').data('modalShown', '#userDataEmailPathChangeModal')
       // $('body').data('modalShown', '#userDataEmailPathChangeModal')
       // var activeElementID = $('#editProfileForm').data('elementID')
       // $('#'+activeElementID).focus()
     })
 
     $('#userDataEmailPathChangeModal').on('hidden.bs.modal', function () {
+
+      helper.resetNewUserDataItemModals()
+      var doNextModal = $('body').data('doNextModal')
+      $('body').removeData('doNextModal')
+
+      //setTimeout(function () {
+        
+        $('#'+doNextModal).modal({
+          keyboard: false,
+          backdrop: 'static'
+        })
+
+      //}, 100)
       /*
       $('body').removeData('modalShown');
       var activeElementID = $('#editProfileForm').data('elementID')
@@ -87,12 +102,27 @@ var helper = {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     $('#userDataPasswordPathChangeModal').on('shown.bs.modal', function() {
+
+      $('body').data('modalShown', '#userDataPasswordPathChangeModal')
       // $('body').data('modalShown', '#userDataEmailPathChangeModal')
       // var activeElementID = $('#editProfileForm').data('elementID')
       // $('#'+activeElementID).focus()
     })
 
     $('#userDataPasswordPathChangeModal').on('hidden.bs.modal', function () {
+
+      helper.resetNewUserDataItemModals()
+      var doNextModal = $('body').data('doNextModal')
+      $('body').removeData('doNextModal')
+
+      //setTimeout(function () {
+        
+        $('#'+doNextModal).modal({
+          keyboard: false,
+          backdrop: 'static'
+        })
+
+      //}, 100)
       /*
       $('body').removeData('modalShown');
       var activeElementID = $('#editProfileForm').data('elementID')
@@ -119,36 +149,18 @@ var helper = {
 
     $('#currentUserDataPathModal').on('hidden.bs.modal', function () {
 
-      var doNextModal
-      $.hasData(this) ? doNextModal = $(this).data('doNextModal') : null
-      $.hasData(this) ? $(this).removeData('doNextModal') : null
+      helper.resetNewUserDataItemModals()
+      var doNextModal = $('body').data('doNextModal')
+      $('body').removeData('doNextModal')
 
-      helper.resetNewUserDataItemModal()
-
-      setTimeout(function () {
+      //setTimeout(function () {
         
-        if (doNextModal === 'email') {
-          $('#userDataEmailPathChangeModal').modal({
-            keyboard: false,
-            backdrop: 'static'
-          })
-        }
+        $('#'+doNextModal).modal({
+          keyboard: false,
+          backdrop: 'static'
+        })
 
-        if (doNextModal === 'password') {
-          $('#currentUserDataPathModal').modal({
-            keyboard: false,
-            backdrop: 'static'
-          })
-        }
-
-        if (doNextModal === 'password2') {
-          $('#userDataPasswordPathChangeModal').modal({
-            keyboard: false,
-            backdrop: 'static'
-          })
-        }
-
-      }, 250)
+      //}, 100)
     })
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -403,39 +415,162 @@ var helper = {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    $('#newUserDataPathChangeForm').on('submit', function(e) {
+    $('#userDataEmailPathChangeForm').on('submit', function(e) {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>> userDataEmailPathChangeForm > SUBMIT 1 <<<<<<<<<<<<<<<<<<<<<<<<<')
 
       e.preventDefault()
       $('.loading').show()
-      $('#newUserDataPathChangeForm .formerror').removeClass('show').addClass('hide')
+      $('#userDataEmailPathChangeForm .formerror').removeClass('show').addClass('hide')
 
-      var elementID = $('body').data('elementID')
       var whichformdataid = $('body').data('whichformdataid')
-      var labelText = helper.makeTitleFromElementID(whichformdataid)
-      var newVal = $('#'+elementID).val()
-      newVal = $.trim(newVal)
+      var newVal = $.trim($('#email').val())
 
       var data = {}
       var serviceUrl = $(this).attr('action')
-      var constrainedFormElements = document.getElementById('newUserDataPathChangeForm').querySelectorAll('[required]')
+      var constrainedFormElements = document.getElementById('userDataEmailPathChangeForm').querySelectorAll('[required]')
 
       var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
       
       if (testFocusout.formValid !== undefined){
+
         console.log('+++++++++++ BAD FORM !!!!!!!!!!!')
         testFocusout.focusFirstElement.focus()
         $('.loading').hide()
         return false
+
       }
 
       var data = {
-        type: elementID,
-        data: $('#currentUserDataItem').val(),
-        newUserDataItem: $('#newUserDataItem').val(),
-        confirmNewUserDataItem: $('#confirmNewUserDataItem').val()
+        type: 'email',
+        newUserDataItem: $('#email').val(),
+        confirmNewUserDataItem: $('#confirmEmail').val()
       }
 
       data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>> userDataEmailPathChangeForm > SUBMIT 2 <<<<<<<<<<<<<<<<<<<<<<<<<: ', data)
+
+      $.ajax({
+
+        rejectUnauthorized: false,
+        url: serviceUrl,
+        type: 'PUT',
+        data: JSON.stringify(data),
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        accepts: 'application/json',
+
+        success: function(data, status, xhr) {
+
+          if (data.response === 'success') {
+
+            console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > SUCCESS > SUCCESS <<<<<<<<<<: ', data)
+
+            $('.loading').hide()
+            $('#userDataEmailPathChangeModal').modal('hide')
+            $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re Email has been successfully changed!')
+            $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show')
+            $('#editProfileModalAlert').modal('show')
+            $('.'+whichformdataid).text(newVal)
+
+          } else {
+
+            if (data.alertDanger) {
+
+              console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > SUCCESS > ERROR 1 <<<<<<<<<<: ', data)
+
+              $('#currentUserDataPathModal .modalAlertWarning alert').html(data.alertDanger)
+              $('#currentUserDataPathModal .modalAlertWarning').addClass('show')
+
+              $('#currentUserDataItemLabel').html('Please Enter Your Current Email Address:')
+
+              $('#currentUserDataPath').attr({
+                  type: 'text',
+                  pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
+                  title: 'Please enter a valid Email Address',
+                  placeholder: 'Current Email Address'
+              })
+
+              $('body').data('doNextModal', 'currentUserDataPathModal')
+              $('#userDataEmailPathChangeModal .cancelButton').trigger('click')
+ 
+              /*
+              $('#currentUserDataPath').off('focusout')
+              $('#email').off('focusout')
+              $('#confirmEmail').off('focusout')
+              $('body').off('click')
+              */
+
+            } else if (data.validatedData) {
+
+              console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > SUCCESS > ERROR 2 <<<<<<<<<<: ', data)
+
+              $('body').data('validatedData', data.validatedData)
+              helper.handleErrorResponse(data.validatedData)
+
+            } else {
+
+              console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > SUCCESS > ERROR 3 <<<<<<<<<<: ', data)
+
+              // $('#currentUserDataItem').addClass('has-error')
+              // $('#currentUserDataItemError').removeClass('show').addClass('hide')
+              // $('#currentUserDataItemRegistered').removeClass('hide').addClass('show').html('Please Enter Your '+$('#currentUserDataItem').attr('placeholder'))
+              
+            }
+
+            $('.loading').hide()
+            return false
+          }
+
+        },
+
+        error: function(xhr, status, error) {
+
+          console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > ERROR > ERROR <<<<<<<<<<: ', xhr)
+
+          var parsedXHR = JSON.parse(xhr.responseText)
+
+          location.href = parsedXHR.redirect
+
+          return false
+
+        }
+      })
+    })
+
+    $('#userDataPasswordPathChangeForm').on('submit', function(e) {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>> userDataPasswordPathChangeForm > SUBMIT 1 <<<<<<<<<<<<<<<<<<<<<<<<<')
+
+      e.preventDefault()
+      $('.loading').show()
+      $('#userDataPasswordPathChangeForm .formerror').removeClass('show').addClass('hide')
+
+      var data = {}
+      var serviceUrl = $(this).attr('action')
+      var constrainedFormElements = document.getElementById('userDataPasswordPathChangeForm').querySelectorAll('[required]')
+
+      var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
+      
+      if (testFocusout.formValid !== undefined){
+
+        console.log('+++++++++++ BAD FORM !!!!!!!!!!!')
+        testFocusout.focusFirstElement.focus()
+        $('.loading').hide()
+        return false
+
+      }
+
+      var data = {
+        type: 'password',
+        newUserDataItem: $('#password').val(),
+        confirmNewUserDataItem: $('#confirmPassword').val()
+      }
+
+      data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>> userDataPasswordPathChangeForm > SUBMIT 2 <<<<<<<<<<<<<<<<<<<<<<<<<: ', data)
 
       /*
       $.ajax({
@@ -457,7 +592,6 @@ var helper = {
             $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re '+labelText+' has been successfully changed!')
             $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show')
             $('#editProfileModalAlert').modal('show')
-            $('.'+whichformdataid).text(newVal)
 
           } else {
 
@@ -523,7 +657,6 @@ var helper = {
         }
       })
       */
-
     })
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -555,6 +688,8 @@ var helper = {
 
     $('#currentUserDataPathModal .nextButton').on('click', function(e) {
 
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> currentUserDataPathModal .nextButton <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
       var type = $('body').data('elementID')
       var currentUserEmailVerified = $('#currentUserDataPathModal').data('currentUserEmailVerified')
       var data = $('#currentUserDataPath').val()
@@ -582,7 +717,7 @@ var helper = {
 
                 !interactiveFormValidationEnabled ? helper.turnOnSpecificEvents() : null
 
-                $('#currentUserDataPathModal').data('doNextModal', 'email')
+                $('body').data('doNextModal', 'userDataEmailPathChangeModal')
                 $('#currentUserDataPathModal .cancelButton').trigger('click')
 
               }
@@ -610,7 +745,7 @@ var helper = {
                 })
 
 
-                $('#currentUserDataPathModal').data('doNextModal', 'password')
+                $('body').data('doNextModal', 'currentUserDataPathModal')
                 $('#currentUserDataPathModal .cancelButton').trigger('click') 
       
               }
@@ -667,7 +802,7 @@ var helper = {
 
                 !interactiveFormValidationEnabled ? helper.turnOnSpecificEvents() : null
 
-                $('#currentUserDataPathModal').data('doNextModal', 'password2')
+                $('body').data('doNextModal', 'userDataPasswordPathChangeModal')
                 $('#currentUserDataPathModal .cancelButton').trigger('click') 
 
               }
@@ -692,30 +827,37 @@ var helper = {
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  resetNewUserDataItemModal: function () {
+  resetNewUserDataItemModals: function () {
 
     $('body').removeData('modalShown')
 
-    $('#currentUserDataPathModal .modalAlertWarning').hide()
-    $('#userDataEmailPathChangeModal .modalAlertWarning').hide()
-    $('#userDataPasswordPathChangeModal .modalAlertWarning').hide();
-
-    $('#newUserDataPathChangeForm').get(0).reset()
     $('#currentUserDataPath').val('')
-    // $('#userDataEmailPathChangeModal input').val('')
-    // $('#userDataPasswordPathChangeModal input').val('')
+    $('#currentUserDataPath').removeClass('has-error')
+    $('#currentUserDataPathModal .modalAlertWarning .alert').html('')
+    $('#currentUserDataPathModal .modalAlertWarning').hide()
+    $('#currentUserDataPathModal').find('.error').removeClass('show').addClass('hide')
+    $('#currentUserDataPathRegistered').html('')
 
-    $('#userDataEmailPathChangeModal').find('.error').removeClass('show').addClass('hide')
-    $('#userDataPasswordPathChangeModal').find('.error').removeClass('show').addClass('hide')
-
+    $('#userDataEmailPathChangeForm').get(0).reset()
+    $('#userDataEmailPathChangeModal .modalAlertWarning .alert').html('')
+    $('#userDataEmailPathChangeModal .modalAlertWarning').hide()
     $('#userDataEmailPathChangeModal input').removeClass('has-error')
+    $('#userDataEmailPathChangeModal').find('.error').removeClass('show').addClass('hide')
+
+    $('#userDataPasswordPathChangeForm').get(0).reset()
+    $('#userDataPasswordPathChangeModal .modalAlertWarning .alert').html('')
+    $('#userDataPasswordPathChangeModal .modalAlertWarning').hide();
+    $('#userDataPasswordPathChangeModal').find('.error').removeClass('show').addClass('hide')
     $('#userDataPasswordPathChangeModal input').removeClass('has-error')
+
   },
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   turnOffSpecificEvents: function () {
+
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> turnOffSpecificEvents <<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
     $('#newUserDataItem').off('change')
     $('#confirmNewUserDataItem').off('change')
@@ -729,6 +871,8 @@ var helper = {
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   turnOnSpecificEvents: function () {
+
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> turnOnSpecificEvents <<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
     $('#newUserDataItem').on('change', function (e) {
       //!interactiveFormValidationEnabled ? helper.turnOffSpecificEvents() : null
@@ -1093,7 +1237,7 @@ var helper = {
   },
 
 
-  validateParamsXXX: function (thisField, comparedField, err1) {
+  validateParams: function (thisField, comparedField, err1) {
 
     var formConfirmType = $('body').data('whichformdataid')
     var comparedFieldTypeEmail = false
@@ -1468,6 +1612,7 @@ var helper = {
 
     dataID === 'email' ? labelText = labelText + ' Address' : null
     $('body').data('elementID', dataID)
+    $('#currentUserDataPathModal').removeData('currentUserEmailVerified')
 
     console.log('doUserDataPathChange +++++++++++++++2 ', labelText)
     console.log('doUserDataPathChange +++++++++++++++3 ', dataID)
@@ -1494,74 +1639,13 @@ var helper = {
     $('#currentUserDataPathError').removeClass('show').addClass('hide')
     $('#currentUserDataPathModal .modalAlertWarning .alert').html('')
     $('#currentUserDataPathModal .modalAlertWarning').removeClass('show').addClass('hide')
-    $('#currentUserDataPathModal').removeData('doNextModal')
+    $('body').removeData('doNextModal')
 
     $('#currentUserDataPathModal').modal({
       keyboard: false,
       backdrop: 'static'
     })
 
-
-    /*
-    $('#currentUserDataItem').attr({
-      type: 'text',
-      title: 'Please enter a valid Email Address',
-      placeholder: 'Current Email Address'
-    })
-    
-    $('#newUserDataItem').attr({
-      type: 'text',
-      title: 'Please type a valid Email Address',
-      placeholder: 'New Email Address'
-    })
-    
-    $('#confirmNewUserDataItem').attr({
-      type: 'text',
-      title: 'Please type a valid Email Address',
-      placeholder: 'Confirm New Email Address'
-    })
-    */
-    
-    /*
-    $('#currentUserDataItem').attr({
-        type: 'text',
-        pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
-        title: 'Please enter a valid Email Address',
-        placeholder: 'Current Email Address',
-        required: true
-    })
-
-    $('#newUserDataItem').attr({
-        type: 'email',
-        title: 'Please type a valid Email Address',
-        placeholder: 'New Email Address',
-        required: true
-    })
-    
-    $('#confirmNewUserDataItem').attr({
-        type: 'email',
-        title: 'Please type a valid Email Address',
-        placeholder: 'Confirm New Email Address',
-        required: true
-    })
-
-    $('#hideCurrentUserData').removeClass('hideClass')
-    $('#hideCurrentUserData').css( 'display', '' )
-    $('#hideNewUserData').addClass('hideClass')
-    $('#hideNewUserData').css( 'display', 'none' )
-
-    $('body').data('whichformdataid', dataID)
-
-    $('#nextNewUserDataItemForm').removeClass('submit')
-    $('#nextNewUserDataItemForm').html('Next')
-
-    $('#currentUserDataItem').val('aaa2a@aaa.com')
-
-    $('#newUserDataItemModal').modal({
-      keyboard: false,
-      backdrop: 'static'
-    })
-    */
   },
 
 

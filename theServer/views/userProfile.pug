@@ -53,7 +53,7 @@ block content
           form(action="https://localhost:3000/api/evaluateuserprofile", id="editProfileForm", name="editProfileForm", method="put", enctype="application/x-www-form-urlencoded")
 
             .modalAlertWarning(style="display:none; margin-top: 0px; margin-bottom: 0px;")
-              .alert.alert-danger An Error occurred processing your request, please try again.
+              alert.alert-danger An Error occurred processing your request, please try again.
 
             div
               .form-group
@@ -95,9 +95,6 @@ block content
           .loading(style="display:none;")
 
 
-
-
-
   .modal.fade(id="currentUserDataPathModal", tabindex="-1")
     .modal-dialog
       .modal-content
@@ -107,8 +104,8 @@ block content
 
         .modal-body
 
-          .modalAlertWarning.hide(style="margin-top: 0px; margin-bottom: 0px;")
-            .alert.alert-danger
+          .modalAlertWarning.hide(style="margin-top: 0px; margin-bottom: 10px;")
+            alert.alert-danger
 
           div.required-fields
             .form-group
@@ -135,9 +132,6 @@ block content
           .loading(style="display:none;")
 
 
-
-
-
   .modal.fade(id="userDataEmailPathChangeModal", tabindex="-1")
     .modal-dialog
       .modal-content
@@ -147,10 +141,10 @@ block content
 
         .modal-body
 
-          .modalAlertWarning(style="display:none; margin-top: 0px; margin-bottom: 0px;")
-            .alert.alert-danger
+          .modalAlertWarning.hide(style="margin-top: 0px; margin-bottom: 10px;")
+            alert.alert-danger
 
-          form(action="https://localhost:3000/api/newuserdatapathchange", id="newUserDataPathChangeForm", method="put", enctype="application/x-www-form-urlencoded")
+          form(action="https://localhost:3000/api/newuserdatapathchange", id="userDataEmailPathChangeForm", method="put", enctype="application/x-www-form-urlencoded")
 
             div.required-fields
               .form-group
@@ -192,9 +186,6 @@ block content
           .loading(style="display:none;")
 
 
-
-
-
   .modal.fade(id="userDataPasswordPathChangeModal", tabindex="-1")
     .modal-dialog
       .modal-content
@@ -204,17 +195,17 @@ block content
 
         .modal-body
 
-          .modalAlertWarning(style="display:none; margin-top: 0px; margin-bottom: 0px;")
-            .alert.alert-danger
+          .modalAlertWarning.hide(style="margin-top: 0px; margin-bottom: 10px;")
+            alert.alert-danger
 
-          form(action="https://localhost:3000/api/newuserdatapathchange", id="newUserDataPathChangeForm", method="put", enctype="application/x-www-form-urlencoded")
+          form(action="https://localhost:3000/api/newuserdatapathchange", id="userDataPasswordPathChangeForm", method="put", enctype="application/x-www-form-urlencoded")
 
             div.required-fields
               .form-group
 
                 label.control-label(style="margin-top:6px;") Enter Your New Password:
 
-                input.form-control.input-md(type="password", id="password", name="password", pattern="[\\S]{4,}", tabindex="4", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Create Password", required) 
+                input.form-control.input-md(type="password", id="password", name="password", pattern="[\\S]{4,}", tabindex="1", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Create Password", required) 
 
                 span.hide.error(id="userDataPathChangeError") Please fill out this field.
 
@@ -224,7 +215,7 @@ block content
 
                 label.control-label(style="margin-top:6px;") Confirm The New Password:
 
-                input.form-control.input-md(type="password", id="confirmPassword", name="confirmPassword", pattern="[\\S]{4,}", tabindex="5", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Confirm Password", required)
+                input.form-control.input-md(type="password", id="confirmPassword", name="confirmPassword", pattern="[\\S]{4,}", tabindex="2", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Confirm Password", required)
 
                 span.hide.error(id="confirmUserDataPathChangeMatch") Passwords don't match
                 span.hide.error(id="confirmUserDataPathChangeError") Please fill out this field.
@@ -238,9 +229,7 @@ block content
             div(class="modalCancelSubmitBtns")
               button(class="btn btn-default btn-md cancelButton", data-dismiss="modal") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
-              button(class="btn btn-primary btn-md nextButton") Next
-              | &nbsp;&nbsp;&nbsp;&nbsp;
-              button.hide(type="submit", class="btn btn-primary btn-md submitButton") Submit
+              button(type="submit", class="btn btn-primary btn-md submitButton") Submit
 
 
         .modal-footer

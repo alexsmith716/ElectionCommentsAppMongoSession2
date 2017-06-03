@@ -3,11 +3,7 @@ var User = require('../theAPI/model/userSchema.js')
 
 module.exports = function (req, res, doUserValidatedPassword, cb) {
 
-  console.log('## evaluateUserPassword > res.locals.currentUser', res.locals.currentUser)
-  console.log('## evaluateUserPassword > type:', req.body.type)
-  console.log('## evaluateUserPassword > data:', req.body.data)
-  console.log('## evaluateUserPassword > expectedResponse:', req.body.expectedResponse)
-  console.log('## evaluateUserPassword > testUser:', req.body.testUser)
+  console.log('>>>>>>>>>>>>>>>>> evaluateUserPasswordVerify <<<<<<<<<<<<<<<<<')
 
   res.locals.currentUser.checkPassword(req.body.data, function(err, result) {
 
