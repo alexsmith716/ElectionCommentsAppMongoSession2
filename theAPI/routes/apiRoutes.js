@@ -11,9 +11,9 @@ var csrfProtection = csrf({ cookie: true })
 
 router.use(function (req, res, next) {
   if (req.isAuthenticated()) {
-    console.log('+++++++++++++ API ROUTES > AUTHENTICATED ++++++++++++')
+    console.log('>>>>>>>>>>>>>> apiRoutes > isAuthenticated > Yes <<<<<<<<<<<<<<<')
   }else{
-    console.log('+++++++++++++ API ROUTES > NOT AUTHENTICATED ++++++++++++')
+    console.log('>>>>>>>>>>>>>> apiRoutes > isAuthenticated > No <<<<<<<<<<<<<<<')
   }
   next()
 })
@@ -33,6 +33,7 @@ router.put('/evaluateuserprofile', csrfProtection, auth.ensureAuthenticated, api
 router.post('/evaluateuseremail', csrfProtection, apiControllers.ajaxEvaluateUserEmail)
 
 router.post('/validatenewuserdataservice', csrfProtection, auth.ensureAuthenticated, apiControllers.ajaxValidateNewUserDataService)
+
 router.put('/newuserdatapathchange', csrfProtection, auth.ensureAuthenticated, auth.ensureAuthenticatedNewUserDataItem, apiControllers.ajaxNewUserDataItem)
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

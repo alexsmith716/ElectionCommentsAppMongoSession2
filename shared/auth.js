@@ -8,10 +8,10 @@ var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https:/
 
 module.exports.ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
-    console.log('## auth > ensureAuthenticated +++++++++++ YES')
+    console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticated Yes <<<<<<<<<<<<<<<<<<<<<<<')
     return next()
   } else {
-    console.log('## auth > ensureAuthenticated +++++++++++ NO')
+    console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticated No <<<<<<<<<<<<<<<<<<<<<<<')
     // res.redirect('/loginorsignup')
     var newExceptionError = new Error('Bad Request')
     newExceptionError.status = 400
@@ -31,9 +31,6 @@ module.exports.basicAuthenticationAPI = function (req, res, next) {
 
 module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
-  console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem <<<<<<<<<<<<<<<<<<<<<<<')
-  console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem !!! <<<<<<<<<<<<<<<<<<<<<<<: ', req.session.userValidatedEmail)
-
   var u =  req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
   var nd = new Date()
 
@@ -44,18 +41,15 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
     var foo = 'foo'
 
     // if (foo === 'foo') {
-    if (dmillis.getMinutes() > 4) {
-    // if (dmillis.getMinutes() > 0) {
+    // if (dmillis.getMinutes() > 4) {
+    if (dmillis.getMinutes() > 0) {
 
       req.session.userValidatedEmail.isValidated = false
-
-      console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem > EMAIL > EXPIRED <<<<<<<<<<<<<<<<<<<<<<<')
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
       
-      console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem > EMAIL > GOOD <<<<<<<<<<<<<<<<<<<<<<<')
       return next()
 
     }
@@ -66,23 +60,21 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
     pmillis = new Date(pmillis)
 
     // if (foo === 'foo') {
-    if (pmillis.getMinutes() > 4) {
-    // if (pmillis.getMinutes() > 0) {
+    // if (pmillis.getMinutes() > 4) {
+    if (pmillis.getMinutes() > 0) {
 
       req.session.userValidatedEmail.isValidated = false
       req.session.userValidatedPassword.isValidated = false
-
-      console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem > PASS > EXPIRED <<<<<<<<<<<<<<<<<<<<<<<')
 
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticatedNewUserDataItem > PASS > GOOD <<<<<<<<<<<<<<<<<<<<<<<')
       return next()
 
     }
   } else {
+
     sendJSONresponse(res, 400, exceptionError)
 
   }

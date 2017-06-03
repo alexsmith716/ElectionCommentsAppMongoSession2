@@ -299,107 +299,82 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
     console.log('####### > API > ajaxNewUserDataItem 4 ++++++++++++++++++++')
 
-    evaluateUserEmailVerify(req, res, false, function (response) {
+    console.log('####### > API > ajaxNewUserDataItem 5 ++++++++++++++++++++')
 
-      if (response.response === 'success') {
+    // ==============================================================================================
 
-        console.log('####### > API > ajaxNewUserDataItem 5 ++++++++++++++++++++')
+    serverSideValidation(req, res, template, function (validatedResponse) {
 
-        // ==============================================================================================
+      console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse 1: ', validatedResponse)
 
-        serverSideValidation(req, res, template, function (validatedResponse) {
+      var validationErrors = false
 
-          console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse 1: ', validatedResponse)
+      if (validatedResponse.status === 'err') {
 
-          var validationErrors = false
-
-          if (validatedResponse.status === 'err') {
-
-            console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse2: ', validatedResponse)
-            return next(validatedResponse.message)
-
-          } else {
-
-            console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse3: ', validatedResponse)
-
-            for (var prop in validatedResponse) {
-
-              if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
-
-                console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse4: ', validatedResponse)
-                validationErrors = true
-                break
-
-              }
-            }
-          }
-
-          if (!validationErrors) {
-
-            // No errors, save user's new data change in Db
-            // return response success 201
-            req.session.userValidatedEmail.isValidated = false
-            console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse5 > req.body: ', req.body)
-            console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse5: ', validatedResponse)
-
-            User.findById(res.locals.currentUser.id).exec(function (err, user) {
-              if (err) {
-                return next(err)
-              }
-
-              if (!user) {
-                sendJSONresponse(res, 201, { 'response': 'error' })
-                return
-              }
-
-              user['email'] = req.body.email
-
-              user.save(function (err) {
-                if (err) {
-                  return next(err)
-
-                } else {
-                  sendJSONresponse(res, 201, { 'response': 'success' })
-
-                }
-              })
-
-            })
-
-          } else {
-
-            newUserDataItem ? validatedResponse['newUserDataItem'] = true : null
-            console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse6 > req.body: ', req.body)
-            console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse6: ', validatedResponse)
-
-            
-            sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
-
-          }
-
-        })
-
-        // ==============================================================================================
+        console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse2: ', validatedResponse)
+        return next(validatedResponse.message)
 
       } else {
 
-        req.session.userValidatedEmail.isValidated = false
+        console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse3: ', validatedResponse)
 
-        if (response.status === 'err') {
+        for (var prop in validatedResponse) {
 
-          console.log('####### > API > ajaxNewUserDataItem 6 ++++++++++++++++++++')
+          if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
 
-          return next(response.message)
+            console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse4: ', validatedResponse)
+            validationErrors = true
+            break
 
-        } else {
-
-          console.log('####### > API > ajaxNewUserDataItem 7 ++++++++++++++++++++')
-
-          sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
-
+          }
         }
       }
+
+      if (!validationErrors) {
+
+        // No errors, save user's new data change in Db
+        // return response success 201
+        req.session.userValidatedEmail.isValidated = false
+        console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse5 > req.body: ', req.body)
+        console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse5: ', validatedResponse)
+
+        User.findById(res.locals.currentUser.id).exec(function (err, user) {
+          if (err) {
+            return next(err)
+          }
+
+          if (!user) {
+            sendJSONresponse(res, 201, { 'response': 'error' })
+            return
+          }
+
+          user['email'] = req.body.email
+
+          user.save(function (err) {
+            if (err) {
+              return next(err)
+
+            } else {
+              sendJSONresponse(res, 201, { 'response': 'success' })
+
+            }
+          })
+
+        })
+
+      } else {
+
+        newUserDataItem ? validatedResponse['newUserDataItem'] = true : null
+        console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse6 > req.body: ', req.body)
+        console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse6: ', validatedResponse)
+
+        
+        sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
+
+      }
+
     })
+
   }
 
   // ==============================================================================================
@@ -408,66 +383,99 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
     console.log('####### > API > ajaxNewUserDataItem 8 ++++++++++++++++++++')
 
-    evaluateUserPasswordVerify(req, res, false, function (response) {
+    serverSideValidation(req, res, template, function (validatedResponse) {
 
-      if (response.response === 'success') {
+      console.log('####### > API > ajaxNewUserDataItem 9 > serverSideValidation > validatedResponse 1: ', validatedResponse)
 
-        console.log('####### > API > ajaxNewUserDataItem 9 ++++++++++++++++++++')
+      var validationErrors = false
 
-        serverSideValidation(req, res, template, function (validatedResponse) {
-
-          console.log('####### > API > ajaxNewUserDataItem 10 > serverSideValidation > validatedResponse 1: ', validatedResponse)
-
-          var validationErrors = false
-
-          if (validatedResponse.status === 'err') {
-
-            req.session.userValidatedEmail.isValidated = false
-            req.session.userValidatedPassword.isValidated = false
-
-            console.log('####### > API > ajaxNewUserDataItem 11 > serverSideValidation > validatedResponse2: ', validatedResponse)
-            return next(validatedResponse.message)
-
-          } else {
-
-            console.log('####### > API > ajaxNewUserDataItem 12 > serverSideValidation > validatedResponse3: ', validatedResponse)
-
-            for (var prop in validatedResponse) {
-
-              if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
-
-                console.log('####### > API > ajaxNewUserDataItem 13 > serverSideValidation > validatedResponse4: ', validatedResponse)
-                validationErrors = true
-                break
-
-              }
-            }
-
-          }
-
-          if (!validationErrors) {
-
-            // No errors, save user's new data in Db
-
-            req.session.userValidatedEmail.isValidated = false
-            req.session.userValidatedPassword.isValidated = false
-            console.log('####### > API > ajaxNewUserDataItem 14 > serverSideValidation > validatedResponse5: ', validatedResponse)
-
-          } else {
-
-            console.log('####### > API > ajaxNewUserDataItem 15 > serverSideValidation > validatedResponse6: ', validatedResponse)
-
-            newUserDataItem ? validatedResponse['newUserDataItem'] = true : null
-            sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
-
-          }
-
-        })
-
-      } else {
+      if (validatedResponse.status === 'err') {
 
         req.session.userValidatedEmail.isValidated = false
         req.session.userValidatedPassword.isValidated = false
+
+        console.log('####### > API > ajaxNewUserDataItem 10 > serverSideValidation > validatedResponse2: ', validatedResponse)
+        return next(validatedResponse.message)
+
+      } else {
+
+        console.log('####### > API > ajaxNewUserDataItem 11 > serverSideValidation > validatedResponse3: ', validatedResponse)
+
+        for (var prop in validatedResponse) {
+
+          if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+
+            console.log('####### > API > ajaxNewUserDataItem 12 > serverSideValidation > validatedResponse4: ', validatedResponse)
+            validationErrors = true
+            break
+
+          }
+        }
+
+      }
+
+      if (!validationErrors) {
+
+        // No errors, save user's new data in Db
+
+        req.session.userValidatedEmail.isValidated = false
+        req.session.userValidatedPassword.isValidated = false
+        console.log('####### > API > ajaxNewUserDataItem 14 > serverSideValidation > validatedResponse5: ', validatedResponse)
+
+      } else {
+
+        console.log('####### > API > ajaxNewUserDataItem 15 > serverSideValidation > validatedResponse6: ', validatedResponse)
+
+        newUserDataItem ? validatedResponse['newUserDataItem'] = true : null
+        sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
+
+      }
+
+    })
+  }
+}
+
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
+
+  if (req.body.type === 'email') {
+
+    evaluateUserEmailVerify(req, res, true, function (response) {
+
+      if (response.status === 'err') {
+
+        return next(response.message)
+
+      } else {
+        
+        sendJSONresponse(res, response.status, { 'response': response.response })
+
+      }
+    })
+  }
+
+  if (req.body.type === 'password' && req.session.userValidatedEmail.isValidated) {
+
+    var nd = new Date()
+    var millis = nd.getTime() - req.session.userValidatedEmail.timeStamp
+    var nds = new Date(millis)
+    var foo = 'foo'
+
+    if (foo === 'foo') {
+    // if (nds.getMinutes() > 4){
+    // if (nds.getMinutes() > 0) {
+    
+      req.session.userValidatedEmail.isValidated = false
+
+      var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
+
+      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
+
+    } else {
+
+      evaluateUserPasswordVerify(req, res, true, function (response) {
 
         if (response.status === 'err') {
 
@@ -475,13 +483,13 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
         } else {
 
-          sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' An Error occurred processing your request, please try changing your '+ u +' again.' })
+          sendJSONresponse(res, response.status, { 'response': response.response })
 
         }
-      }
-    })
-  }
+      })
+    }
 
+  }
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -588,66 +596,6 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
     newExceptionError = new Error('Bad Request')
     newExceptionError.status = 400
     return next(newExceptionError)
-  }
-}
-
-module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
-
-  console.log('## ajaxValidateNewUserDataService > type:', req.body.type)
-  console.log('## ajaxValidateNewUserDataService > data:', req.body.data)
-
-  if (req.body.type === 'email') {
-
-    evaluateUserEmailVerify(req, res, true, function (response) {
-
-      if (response.status === 'err') {
-
-        return next(response.message)
-
-      } else {
-
-        sendJSONresponse(res, response.status, { 'response': response.response })
-
-      }
-    })
-  }
-
-  if (req.body.type === 'password' && req.session.userValidatedEmail.isValidated) {
-
-    var nd = new Date()
-    var millis = nd.getTime() - req.session.userValidatedEmail.timeStamp
-    var nds = new Date(millis)
-    var foo = 'foo'
-
-    console.log('## ajaxValidateNewUserDataService > nds.getMinutes():', nds.getMinutes())
-
-    // if (foo === 'foo') {
-    if (nds.getMinutes() > 4){
-    // if (nds.getMinutes() > 0) {
-    
-      req.session.userValidatedEmail.isValidated = false
-
-      var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
-
-      sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
-
-
-    } else {
-
-      evaluateUserPasswordVerify(req, res, true, function (response) {
-
-        if (response.status === 'err') {
-
-          return next(response.message)
-
-        } else {
-
-          sendJSONresponse(res, response.status, { 'response': response.response })
-
-        }
-      })
-    }
-
   }
 }
 
