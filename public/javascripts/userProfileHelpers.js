@@ -433,12 +433,10 @@ var helper = {
       var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
       
       if (testFocusout.formValid !== undefined){
-
         console.log('+++++++++++ BAD FORM !!!!!!!!!!!')
         testFocusout.focusFirstElement.focus()
         $('.loading').hide()
         return false
-
       }
 
       var data = {
@@ -468,7 +466,8 @@ var helper = {
             console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > SUCCESS > SUCCESS <<<<<<<<<<: ', data)
 
             $('.loading').hide()
-            $('#userDataEmailPathChangeModal').modal('hide')
+            //$('#userDataEmailPathChangeModal').modal('hide')
+            $('#userDataEmailPathChangeModal .cancelButton').trigger('click')
             $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re Email has been successfully changed!')
             $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show')
             $('#editProfileModalAlert').modal('show')
@@ -480,16 +479,16 @@ var helper = {
 
               console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > SUCCESS > ERROR 1 <<<<<<<<<<: ', data)
 
+              $('#currentUserDataPathModal .modal-title').html('Change your Email:')
+              $('#currentUserDataPathLabel').html('Please Enter Your Current Email Address:')
               $('#currentUserDataPathModal .modalAlertWarning alert').html(data.alertDanger)
               $('#currentUserDataPathModal .modalAlertWarning').addClass('show')
 
-              $('#currentUserDataItemLabel').html('Please Enter Your Current Email Address:')
-
               $('#currentUserDataPath').attr({
-                  type: 'text',
-                  pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
-                  title: 'Please enter a valid Email Address',
-                  placeholder: 'Current Email Address'
+                type: 'text',
+                pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
+                title: 'Please enter a valid Email Address',
+                placeholder: 'Current Email Address'
               })
 
               $('body').data('doNextModal', 'currentUserDataPathModal')
@@ -505,17 +504,13 @@ var helper = {
             } else if (data.validatedData) {
 
               console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > SUCCESS > ERROR 2 <<<<<<<<<<: ', data)
-
               $('body').data('validatedData', data.validatedData)
               helper.handleErrorResponse(data.validatedData)
 
             } else {
 
               console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > SUCCESS > ERROR 3 <<<<<<<<<<: ', data)
-
-              // $('#currentUserDataItem').addClass('has-error')
-              // $('#currentUserDataItemError').removeClass('show').addClass('hide')
-              // $('#currentUserDataItemRegistered').removeClass('hide').addClass('show').html('Please Enter Your '+$('#currentUserDataItem').attr('placeholder'))
+              $('#userDataEmailPathChangeForm .formerror').removeClass('hide').addClass('show')
               
             }
 
@@ -554,12 +549,10 @@ var helper = {
       var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
       
       if (testFocusout.formValid !== undefined){
-
         console.log('+++++++++++ BAD FORM !!!!!!!!!!!')
         testFocusout.focusFirstElement.focus()
         $('.loading').hide()
         return false
-
       }
 
       var data = {
@@ -572,7 +565,6 @@ var helper = {
 
       console.log('>>>>>>>>>>>>>>>>>>>>>> userDataPasswordPathChangeForm > SUBMIT 2 <<<<<<<<<<<<<<<<<<<<<<<<<: ', data)
 
-      /*
       $.ajax({
 
         rejectUnauthorized: false,
@@ -587,9 +579,12 @@ var helper = {
 
           if (data.response === 'success') {
 
+            console.log('>>>>>>>>>> userDataPasswordPathChangeForm > ajax > SUCCESS > SUCCESS <<<<<<<<<<: ', data)
+
             $('.loading').hide()
-            $('#newUserDataItemModal').modal('hide')
-            $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re '+labelText+' has been successfully changed!')
+            //$('#userDataPasswordPathChangeModal').modal('hide')
+            $('#userDataPasswordPathChangeForm .cancelButton').trigger('click')
+            $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re Password has been successfully changed!')
             $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show')
             $('#editProfileModalAlert').modal('show')
 
@@ -597,46 +592,38 @@ var helper = {
 
             if (data.alertDanger) {
               
-              $('#newUserDataItemModal .modalAlertWarning .alert').html(data.alertDanger);
-              $('#newUserDataItemModal .modalAlertWarning').show();
-              $('#newUserDataItemModal').find('.error').removeClass('show').addClass('hide')
-              $('#newUserDataItemModal input').removeClass('has-error')
+              $('#currentUserDataPathModal .modal-title').html('Change your Password:')
+              $('#currentUserDataPathLabel').html('Please Enter Your Current Email Address:')
+              $('#currentUserDataPathModal .modalAlertWarning alert').html(data.alertDanger)
+              $('#currentUserDataPathModal .modalAlertWarning').addClass('show')
 
-              $('#currentUserDataItem').val('')
-              $('#newUserDataItem').val('')
-              $('#confirmNewUserDataItem').val('')
-              $('#currentUserDataPathModal').removeData('currentUserEmailVerified')
-
-              $('#currentUserDataItemLabel').html('Please Enter Your Current Email Address:')
-
-              $('#currentUserDataItem').attr({
-                  type: 'text',
-                  pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
-                  title: 'Please enter a valid Email Address',
-                  placeholder: 'Current Email Address'
+              $('#currentUserDataPath').attr({
+                type: 'text',
+                pattern: '\\s*(?=\\s*\\S)(.{1,})\\s*',
+                title: 'Please enter a valid Email Address',
+                placeholder: 'Current Email Address'
               })
 
-              $('#hideCurrentUserData').removeClass('hideClass')
-              $('#hideCurrentUserData').css( 'display', '' )
-              $('#hideNewUserData').addClass('hideClass')
-              $('#hideNewUserData').css( 'display', 'none' )
-              $('#nextNewUserDataItemForm').html('Next')
-
-              $('#currentUserDataItem').off('focusout')
-              $('#newUserDataItem').off('focusout')
-              $('#confirmNewUserDataItem').off('focusout')
+              $('body').data('doNextModal', 'currentUserDataPathModal')
+              $('#userDataPasswordPathChangeForm .cancelButton').trigger('click')
+ 
+              /*
+              $('#currentUserDataPath').off('focusout')
+              $('#email').off('focusout')
+              $('#confirmEmail').off('focusout')
               $('body').off('click')
+              */
 
             } else if (data.validatedData) {
 
+              console.log('>>>>>>>>>> userDataPasswordPathChangeForm > ajax > SUCCESS > ERROR 2 <<<<<<<<<<: ', data)
               $('body').data('validatedData', data.validatedData)
               helper.handleErrorResponse(data.validatedData)
 
             } else {
 
-              $('#currentUserDataItem').addClass('has-error')
-              $('#currentUserDataItemError').removeClass('show').addClass('hide')
-              $('#currentUserDataItemRegistered').removeClass('hide').addClass('show').html('Please Enter Your '+$('#currentUserDataItem').attr('placeholder'))
+              console.log('>>>>>>>>>> userDataPasswordPathChangeForm > ajax > SUCCESS > ERROR 3 <<<<<<<<<<: ', data)
+              $('#userDataPasswordPathChangeForm .formerror').removeClass('hide').addClass('show')
               
             }
 
@@ -656,7 +643,6 @@ var helper = {
 
         }
       })
-      */
     })
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
