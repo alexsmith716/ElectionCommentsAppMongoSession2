@@ -62,31 +62,15 @@ var helper = {
 
   initializeJqueryEvents:  function(){
 
-    $('#userDataEmailPathChangeModal').on('shown.bs.modal', function() {
-
-      $('body').data('modalShown', '#userDataEmailPathChangeModal')
-      // $('body').data('modalShown', '#userDataEmailPathChangeModal')
-      // var activeElementID = $('#editProfileForm').data('elementID')
-      // $('#'+activeElementID).focus()
+    $('#editProfileFormModal').on('shown.bs.modal', function() {
+      $('body').data('modalShown', '#editProfileFormModal')
+      var activeElementID = $('body').data('elementID')
+      $('#'+activeElementID).focus()
     })
 
-    $('#userDataEmailPathChangeModal').on('hidden.bs.modal', function () {
-
-      helper.resetNewUserDataItemModals()
-      var doNextModal = $('body').data('doNextModal')
-      $('body').removeData('doNextModal')
-
-      //setTimeout(function () {
-        
-        $('#'+doNextModal).modal({
-          keyboard: false,
-          backdrop: 'static'
-        })
-
-      //}, 100)
-      /*
+    $('#editProfileFormModal').on('hidden.bs.modal', function () {
       $('body').removeData('modalShown');
-      var activeElementID = $('#editProfileForm').data('elementID')
+      var activeElementID = $('body').data('elementID')
       $('#editProfileForm').get(0).reset()
       $('#editProfileForm').find('.error').removeClass('show ').addClass('hide')
       $('#'+activeElementID+'Error').removeClass('show').html('')
@@ -95,72 +79,72 @@ var helper = {
       $('.modalAlertDanger').hide()
       $('.modalOkayBtn').hide()
       $('.modalCancelSubmitBtns').show()
-      */
-    })
-
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    $('#userDataPasswordPathChangeModal').on('shown.bs.modal', function() {
-
-      $('body').data('modalShown', '#userDataPasswordPathChangeModal')
-      // $('body').data('modalShown', '#userDataEmailPathChangeModal')
-      // var activeElementID = $('#editProfileForm').data('elementID')
-      // $('#'+activeElementID).focus()
-    })
-
-    $('#userDataPasswordPathChangeModal').on('hidden.bs.modal', function () {
-
-      helper.resetNewUserDataItemModals()
-      var doNextModal = $('body').data('doNextModal')
-      $('body').removeData('doNextModal')
-
-      //setTimeout(function () {
-        
-        $('#'+doNextModal).modal({
-          keyboard: false,
-          backdrop: 'static'
-        })
-
-      //}, 100)
-      /*
-      $('body').removeData('modalShown');
-      var activeElementID = $('#editProfileForm').data('elementID')
-      $('#editProfileForm').get(0).reset()
-      $('#editProfileForm').find('.error').removeClass('show ').addClass('hide')
-      $('#'+activeElementID+'Error').removeClass('show').html('')
-      $('#'+activeElementID).removeClass('has-error')
-      $('.modalAlertSuccess').hide()
-      $('.modalAlertDanger').hide()
-      $('.modalOkayBtn').hide()
-      $('.modalCancelSubmitBtns').show()
-      */
     })
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     $('#currentUserDataPathModal').on('shown.bs.modal', function () {
-
       $('body').data('modalShown', '#currentUserDataPathModal')
-
     })
 
-
     $('#currentUserDataPathModal').on('hidden.bs.modal', function () {
-
       helper.resetNewUserDataItemModals()
       var doNextModal = $('body').data('doNextModal')
       $('body').removeData('doNextModal')
 
+      if(doNextModal){
       //setTimeout(function () {
-        
         $('#'+doNextModal).modal({
           keyboard: false,
           backdrop: 'static'
         })
-
       //}, 100)
+      }
+    })
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    $('#userDataEmailPathChangeModal').on('shown.bs.modal', function() {
+      $('body').data('modalShown', '#userDataEmailPathChangeModal')
+    })
+
+    $('#userDataEmailPathChangeModal').on('hidden.bs.modal', function () {
+      helper.resetNewUserDataItemModals()
+      var doNextModal = $('body').data('doNextModal')
+      $('body').removeData('doNextModal')
+
+      if(doNextModal){
+      //setTimeout(function () {
+        $('#'+doNextModal).modal({
+          keyboard: false,
+          backdrop: 'static'
+        })
+      //}, 100)
+      }
+    })
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    $('#userDataPasswordPathChangeModal').on('shown.bs.modal', function() {
+      $('body').data('modalShown', '#userDataPasswordPathChangeModal')
+    })
+
+    $('#userDataPasswordPathChangeModal').on('hidden.bs.modal', function () {
+      helper.resetNewUserDataItemModals()
+      var doNextModal = $('body').data('doNextModal')
+      $('body').removeData('doNextModal')
+
+      if(doNextModal){
+      //setTimeout(function () {
+        $('#'+doNextModal).modal({
+          keyboard: false,
+          backdrop: 'static'
+        })
+      //}, 100)
+      }
     })
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -247,8 +231,8 @@ var helper = {
             console.log('#editProfileForm > ajax > SUCCESS > SUCCESS: ')
             $('.loading').hide()
             $('#editProfileFormModal').modal('hide')
-            $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re '+labelText+' has been successfully edited!')
-            $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show')
+            $('#editProfileModalAlert .alertSuccess').html('You\'re '+labelText+' has been successfully changed!')
+            $('#editProfileModalAlert .alertSuccess').addClass('show').removeClass('hide')
             $('#editProfileModalAlert').modal('show')
             $('.'+whichformdataid).text(newVal)
 
@@ -468,8 +452,8 @@ var helper = {
             $('.loading').hide()
             //$('#userDataEmailPathChangeModal').modal('hide')
             $('#userDataEmailPathChangeModal .cancelButton').trigger('click')
-            $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re Email has been successfully changed!')
-            $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show')
+            $('#editProfileModalAlert .alertSuccess').html('You\'re Email has been successfully changed!')
+            $('#editProfileModalAlert .alertSuccess').addClass('show').removeClass('hide')
             $('#editProfileModalAlert').modal('show')
             $('.'+whichformdataid).text(newVal)
 
@@ -481,8 +465,8 @@ var helper = {
 
               $('#currentUserDataPathModal .modal-title').html('Change your Email:')
               $('#currentUserDataPathLabel').html('Please Enter Your Current Email Address:')
-              $('#currentUserDataPathModal .modalAlertWarning alert').html(data.alertDanger)
-              $('#currentUserDataPathModal .modalAlertWarning').addClass('show')
+              $('#currentUserDataPathModal .alertDanger').html(data.alertDanger)
+              $('#currentUserDataPathModal .alertDanger').addClass('show').removeClass('hide')
 
               $('#currentUserDataPath').attr({
                 type: 'text',
@@ -584,18 +568,20 @@ var helper = {
             $('.loading').hide()
             //$('#userDataPasswordPathChangeModal').modal('hide')
             $('#userDataPasswordPathChangeForm .cancelButton').trigger('click')
-            $('#editProfileModalAlert .editProfileModalAlertSuccess strong').html('You\'re Password has been successfully changed!')
-            $('#editProfileModalAlert .editProfileModalAlertSuccess').addClass('show')
+            $('#editProfileModalAlert .alertSuccess').html('You\'re Password has been successfully changed!')
+            $('#editProfileModalAlert .alertSuccess').addClass('show').removeClass('hide')
             $('#editProfileModalAlert').modal('show')
 
           } else {
 
             if (data.alertDanger) {
+
+              console.log('>>>>>>>>>> userDataPasswordPathChangeForm > ajax > SUCCESS > ERROR 1 <<<<<<<<<<: ', data)
               
               $('#currentUserDataPathModal .modal-title').html('Change your Password:')
               $('#currentUserDataPathLabel').html('Please Enter Your Current Email Address:')
-              $('#currentUserDataPathModal .modalAlertWarning alert').html(data.alertDanger)
-              $('#currentUserDataPathModal .modalAlertWarning').addClass('show')
+              $('#currentUserDataPathModal .alertDanger').html(data.alertDanger)
+              $('#currentUserDataPathModal .alertDanger').addClass('show').removeClass('hide')
 
               $('#currentUserDataPath').attr({
                 type: 'text',
@@ -814,7 +800,6 @@ var helper = {
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   resetNewUserDataItemModals: function () {
-
     $('body').removeData('modalShown')
 
     $('#currentUserDataPath').val('')
@@ -835,7 +820,6 @@ var helper = {
     $('#userDataPasswordPathChangeModal .modalAlertWarning').hide();
     $('#userDataPasswordPathChangeModal').find('.error').removeClass('show').addClass('hide')
     $('#userDataPasswordPathChangeModal input').removeClass('has-error')
-
   },
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

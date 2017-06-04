@@ -41,8 +41,8 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
     var foo = 'foo'
 
     // if (foo === 'foo') {
-    // if (dmillis.getMinutes() > 4) {
-    if (dmillis.getMinutes() > 0) {
+    if (dmillis.getMinutes() > 4) {
+    // if (dmillis.getMinutes() > 0) {
 
       req.session.userValidatedEmail.isValidated = false
 
@@ -60,8 +60,8 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
     pmillis = new Date(pmillis)
 
     // if (foo === 'foo') {
-    // if (pmillis.getMinutes() > 4) {
-    if (pmillis.getMinutes() > 0) {
+    if (pmillis.getMinutes() > 4) {
+    // if (pmillis.getMinutes() > 0) {
 
       req.session.userValidatedEmail.isValidated = false
       req.session.userValidatedPassword.isValidated = false

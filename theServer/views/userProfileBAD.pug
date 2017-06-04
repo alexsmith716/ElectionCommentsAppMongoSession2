@@ -68,7 +68,7 @@ block content
                     input.form-control.input-md
 
                   div.hide(id="editProfileSelectElementParent", style="position:absolute; width:100%; padding-right: 36px;")
-                    +selectStateFormControl()
+                    +selectStateFormControlBad()
 
                 span.hide.error
 
@@ -104,7 +104,7 @@ block content
 
               label.control-label(id="currentUserDataPathLabel", style="margin-top:1px;")
 
-              input.form-control.input-md(id="currentUserDataPath", required)
+              input.form-control.input-md(id="currentUserDataPath")
 
               span.hide.error(id="currentUserDataPathRegistered")
               span.hide.error(id="currentUserDataPathError") Please fill out this field. Please match the requested format.
@@ -142,7 +142,7 @@ block content
 
                 label.control-label(style="margin-top:6px;") Enter Your New Email Address:
 
-                input.form-control.input-md(type="email", id="email", name="email", tabindex="1", title="Please type a valid Email Address", placeholder="Email Address", required) 
+                input.form-control.input-md(type="text", id="email", name="email", tabindex="1", title="Please type a valid Email Address", placeholder="Email Address") 
 
                 span.hide.error(id="userDataEmailPathChangeImproper") Email is in improper format
                 span.hide.error(id="userDataEmailPathChangeRegistered") This email address is already in our system. Sign in, or enter a new email address
@@ -154,7 +154,7 @@ block content
 
                 label.control-label(style="margin-top:6px;") Confirm The New Email Address:
 
-                input.form-control.input-md(type="email", id="confirmEmail", name="confirmEmail", tabindex="2", title="Please type a valid Email Address", placeholder="Confirm Email Address", required)
+                input.form-control.input-md(type="text", id="confirmEmail", name="confirmEmail", tabindex="2", title="Please type a valid Email Address", placeholder="Confirm Email Address")
 
                 span.hide.error(id="confirmUserDataEmailPathChangeImproper") Confirm Email is in improper format
                 span.hide.error(id="confirmUserDataEmailPathChangeRegistered") This email address is already in our system. Sign in, or enter a new email address
@@ -195,7 +195,7 @@ block content
 
                 label.control-label(style="margin-top:6px;") Enter Your New Password:
 
-                input.form-control.input-md(type="password", id="password", name="password", pattern="[\\S]{4,}", tabindex="1", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Create Password", required) 
+                input.form-control.input-md(type="password", id="password", name="password", tabindex="1", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Create Password") 
 
                 span.hide.error(id="userDataPathChangeError") Please fill out this field.
 
@@ -205,7 +205,7 @@ block content
 
                 label.control-label(style="margin-top:6px;") Confirm The New Password:
 
-                input.form-control.input-md(type="password", id="confirmPassword", name="confirmPassword", pattern="[\\S]{4,}", tabindex="2", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Confirm Password", required)
+                input.form-control.input-md(type="password", id="confirmPassword", name="confirmPassword", tabindex="2", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Confirm Password")
 
                 span.hide.error(id="confirmUserDataPathChangeMatch") Passwords don't match
                 span.hide.error(id="confirmUserDataPathChangeError") Please fill out this field.
