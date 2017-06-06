@@ -16,6 +16,7 @@ var helper = {
     helper.initializeJqueryEvents()
   },
 
+  // handling pre-safari 10.1 & webkit 603.1.30
   testFormValidity: function (theForm, eventListener) {
 
     var boundEventTypes
@@ -29,10 +30,6 @@ var helper = {
       formElement = $(theForm[i])
       checkConstraints = formElement.get(0).checkValidity()
 
-      //console.log('### testFormValidity > formElement +++++++++++: ', formElement)
-      //console.log('### testFormValidity > formElement.validity +++++++++++: ', formElement.validity)
-      //console.log('### testFormValidity > checkConstraints ++++++++++++++++++ ', checkConstraints)
-
       if(!checkConstraints && formValid === null){
         formValid = false
         resp.formValid = false
@@ -43,14 +40,11 @@ var helper = {
       if(eventListener === 'change'){
         boundEventTypes = $._data( formElement[0], 'events' );
         for (var eType in boundEventTypes){
-          helper.handleFormEvents(formElement.attr('id'), eType, formElement.val())
+          formElement.trigger(eType)
         }
       }
       
       if(eventListener === 'focusout'){
-        formElement.on('focusout', function(e) {
-          helper.handleFormEvents(formElement.attr('id'), 'focusout', formElement.val());
-        })
         formElement.trigger('focusout')
       }
     }
@@ -59,6 +53,28 @@ var helper = {
 
 
   initializeJqueryEvents:  function(){
+
+    $('#editProfileModalAlert').on('shown.bs.modal', function () {
+      $('body').data('modalShown', '#currentUserDataPathModal')
+    })
+
+    $('#editProfileModalAlert').on('hidden.bs.modal', function () {
+      helper.resetNewUserDataItemModals()
+      var doNextModal = $('body').data('doNextModal')
+      $('body').removeData('doNextModal')
+
+      if(doNextModal){
+      //setTimeout(function () {
+        $('#'+doNextModal).modal({
+          keyboard: false,
+          backdrop: 'static'
+        })
+      //}, 100)
+      }
+    })
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     $('#editProfileFormModal').on('shown.bs.modal', function() {
       $('body').data('modalShown', '#editProfileFormModal')
@@ -105,6 +121,7 @@ var helper = {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     $('#userDataEmailPathChangeModal').on('shown.bs.modal', function() {
+      helper.turnOnSpecificEvents()
       $('body').data('modalShown', '#userDataEmailPathChangeModal')
     })
 
@@ -127,6 +144,7 @@ var helper = {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     $('#userDataPasswordPathChangeModal').on('shown.bs.modal', function() {
+      helper.turnOnSpecificEvents()
       $('body').data('modalShown', '#userDataPasswordPathChangeModal')
     })
 
@@ -172,12 +190,8 @@ var helper = {
       helper.doUserDataPathChange(this);
     })
 
-
-
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
 
     $('#editProfileForm').on('submit', function(e) {
 
@@ -248,7 +262,7 @@ var helper = {
             }else{
 
               console.log('#editProfileForm > ajax > SUCCESS > ERROR')
-              $('#editProfileForm .formerror').removeClass('hide').addClass('show')
+              $('#editProfileFormModal .alertDanger').addClass('show').removeClass('hide')
 
             }
 
@@ -517,9 +531,10 @@ var helper = {
 
     $('body').on('mousedown', function (e) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> BODY > MOUSEDOWN <<<<<<<<<<<<<<<<<<<<<<')
-
       var activeElement = $(document.activeElement)
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> BODY > MOUSEDOWN > activeElement <<<<<<<<<<<<<<<<<<<<<<: ', activeElement)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> BODY > MOUSEDOWN > e.target <<<<<<<<<<<<<<<<<<<<<<: ', e.target)
 
       if ($(e.target).hasClass('submit')) {
         if (activeElement.is( 'INPUT' )) {
@@ -528,7 +543,7 @@ var helper = {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> BODY > SUBMIT > MOUSEDOWN <<<<<<<<<<<<<<<<<<<<?: ', $('body').data('activeElement'))
       }
 
-      if (e.target.id === 'newUserDataItemModalCancel' || e.target.id === 'editProfileFormModalCancel') {
+      if (e.target.attributes['data-dismiss'] || $(e.target).hasClass('cancelButton') || e.target.innerHTML === 'Cancel') {
         helper.turnOffSpecificEvents()
       }
 
@@ -540,7 +555,7 @@ var helper = {
 
     $('#currentUserDataPathModal .nextButton').on('click', function(e) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> currentUserDataPathModal .nextButton <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> currentUserDataPathModal .nextButton 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
       var type = $('body').data('elementID')
       var currentUserEmailVerified = $('#currentUserDataPathModal').data('currentUserEmailVerified')
@@ -561,13 +576,13 @@ var helper = {
 
             } else {
 
+              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> currentUserDataPathModal .nextButton 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
               $('#currentUserDataPath').removeClass('has-error')
               $('#currentUserDataPathError').removeClass('show').addClass('hide')
               $('#currentUserDataPathRegistered').removeClass('show').addClass('hide')
 
               if(type === 'email'){
-
-                helper.turnOnSpecificEvents()
 
                 $('body').data('doNextModal', 'userDataEmailPathChangeModal')
                 $('#currentUserDataPathModal .cancelButton').trigger('click')
@@ -575,6 +590,8 @@ var helper = {
               }
 
               if(type === 'password'){
+
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> currentUserDataPathModal .nextButton 3 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
                 $('#currentUserDataPathModal').data('currentUserEmailVerified', true)
 
@@ -600,16 +617,23 @@ var helper = {
 
           if (type === 'password') {
 
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> currentUserDataPathModal .nextButton 4 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
             helper.validateNewUserDataService(data, type, 'true', function (err, response) {
 
               if (err) {
 
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> currentUserDataPathModal .nextButton 5 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
                 if(err.alertDanger){
+
+                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> currentUserDataPathModal .nextButton 5a <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
                   $('#currentUserDataPath').val('')
                   $('#currentUserDataPathModal').removeData('currentUserEmailVerified')
-                  $('#currentUserDataPathModal .modalAlertWarning .alert').html(err.alertDanger);
-                  $('#currentUserDataPathModal .modalAlertWarning').show();
+
+                  $('#currentUserDataPathModal .alertDanger').html(err.alertDanger)
+                  $('#currentUserDataPathModal .alertDanger').addClass('show').removeClass('hide')
 
                   $('#currentUserDataPathLabel').html('Please Enter Your Current Email Address:')
 
@@ -622,6 +646,8 @@ var helper = {
 
                 }else{
 
+                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> currentUserDataPathModal .nextButton 5b <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
                   $('#currentUserDataPath').addClass('has-error')
                   $('#currentUserDataPathError').removeClass('show').addClass('hide')
                   $('#currentUserDataPathRegistered').removeClass('hide').addClass('show').html('Please Enter Your '+$('#currentUserDataPath').attr('placeholder'))
@@ -630,13 +656,13 @@ var helper = {
 
               } else {
 
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> currentUserDataPathModal .nextButton 6 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
                 $('#currentUserDataPath').removeClass('has-error')
                 $('#currentUserDataPathError').removeClass('show').addClass('hide')
                 $('#currentUserDataPathRegistered').removeClass('show').addClass('hide')
                 
                 $('#currentUserDataPathModal').data('currentUserEmailVerified', true)
-
-                helper.turnOnSpecificEvents()
 
                 $('body').data('doNextModal', 'userDataPasswordPathChangeModal')
                 $('#currentUserDataPathModal .cancelButton').trigger('click') 
@@ -660,16 +686,68 @@ var helper = {
 
   },
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+  showLoading: function () {
+    $('.modal-backdrop').show()
+  },
+
+  hideLoading: function () {
+    $('.modal-backdrop').hide()
+  },
+
+  pattern: {
+    displayname: /^[A-Za-z0-9_]{4,21}$/,
+    email: /^\S+@\S+\.\S+/,
+    password: /^\S{4,}$/,
+    password2: /^[\S]{4,}$/,
+    basictextMaxLength: /^(?=\s*\S)(.{1,35})$/,
+    basictext: /^(?=\s*\S)(.{1,})$/
+  },
+
+  makeTitleFromElementID: function(whichID) {
+      whichID = whichID.replace(/-/g, ' ')
+      labelText = whichID.replace(/\b\w/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();})
+      return labelText
+  },
+
+  // AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
+  validateMaxLengthUserInput: function (val, maxlen) {
+    val = $.trim(val)
+    var newVal = (val.length) - maxlen
+    newVal = (val.length) - newVal
+    newVal = val.slice(0, newVal)
+    return newVal
+  },
+
+  elementIDtoTitleCase: function (whichID) {
+    whichID = whichID.replace(/([A-Z])/g, ' $1')
+    var labelText = whichID.replace(/^./, function (str) { return str.toUpperCase() })
+    return labelText
+  },
+
+
+// =================================================================================================================================
+// =================================================================================================================================
+
 
   resetNewUserDataItemModals: function () {
     $('body').removeData('modalShown')
 
     $('#currentUserDataPath').val('')
     $('#currentUserDataPath').removeClass('has-error')
-    $('#currentUserDataPathModal .modalAlertWarning .alert').html('')
-    $('#currentUserDataPathModal .modalAlertWarning').hide()
+    $('#currentUserDataPathModal .alertDanger').html('')
+    $('#currentUserDataPathModal .alertDanger').addClass('hide').removeClass('show')
+
     $('#currentUserDataPathModal').find('.error').removeClass('show').addClass('hide')
     $('#currentUserDataPathRegistered').html('')
 
@@ -713,95 +791,201 @@ var helper = {
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> turnOnSpecificEvents <<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
     $('#email').on('change', function (e) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> email > onChange <<<<<<<<<<<<<<<<<<<<<<<<<<<')
       //!interactiveFormValidationEnabled ? helper.turnOffSpecificEvents() : null
       $('body').data('elementID', 'email')
-      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
+      helper.emailElementValidation('email', e.type(), 'confirmEmail', $(this).val())
     })
 
     $('#confirmEmail').on('change', function (e) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> confirmEmail > onChange <<<<<<<<<<<<<<<<<<<<<<<<<<<')
       //!interactiveFormValidationEnabled ? helper.turnOffSpecificEvents() : null
       $('body').data('elementID', 'email')
-      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
+      helper.emailElementValidation('confirmEmail', e.type(), 'email', $(this).val())
     })
 
     $('#password').on('change', function (e) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> password > onChange <<<<<<<<<<<<<<<<<<<<<<<<<<<')
       //!interactiveFormValidationEnabled ? helper.turnOffSpecificEvents() : nul
       $('body').data('elementID', 'password')
-      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
+      helper.passwordElementValidation('password', e.type(), 'confirmPassword')
     })
 
     $('#confirmPassword').on('change', function (e) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> confirmPassword > onChange <<<<<<<<<<<<<<<<<<<<<<<<<<<')
       //!interactiveFormValidationEnabled ? helper.turnOffSpecificEvents() : null
       $('body').data('elementID', 'password')
-      helper.handleFormEvents($(this).attr('id'), e.type, $(this).val())
+      helper.passwordElementValidation('confirmPassword', e.type(), 'password')
     })
 
-    $('#firstname').on('change', function (e) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> firstname > !!!!!!!! 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<: ')
-      var fooob = document.getElementById('firstname')
-      // if( helper.handleFormEvents($(this).attr('id'), e.type) ){helper.textElementValidation(elementID, helper.pattern.basictext)
-      if( helper.textElementValidation($(this).attr('id'), helper.pattern.basictext) ){
-        if (fooob.validity.valid) {
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> firstname > !!!!!!!! 2aaaaa <<<<<<<<<<<<<<<<<<<<<<<<<<<: ')
-        } else {
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> firstname > !!!!!!!! 2bbbbbbbb <<<<<<<<<<<<<<<<<<<<<<<<<<<: ')
-        }
-        //return true
-      } else {
-        if (fooob.validity.valid) {
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> firstname > !!!!!!!! 3aaaaa <<<<<<<<<<<<<<<<<<<<<<<<<<<: ')
-          return false
-        } else {
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> firstname > !!!!!!!! 3bbbbbbbb <<<<<<<<<<<<<<<<<<<<<<<<<<<: ')
-        }
-        //return true
-      }
-      
+    $('#state').on('change', function (e) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> state > onChange <<<<<<<<<<<<<<<<<<<<<<<<<<<')
+      helper.selectElementValidation('state')
     })
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     if (!interactiveFormValidationEnabled) {
 
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> turnOnSpecificEvents > !interactiveFormValidationEnabled <<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
       $('#firstname').on('focusout', function (e) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> firstname > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.handleFormEvents($(this).attr('id'), e.type)
+        helper.textElementValidation($(this).attr('id'), helper.pattern.basictext)
       })
 
       $('#lastname').on('focusout', function (e) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> lastname > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.handleFormEvents($(this).attr('id'), e.type)
+        helper.textElementValidation($(this).attr('id'), helper.pattern.basictext)
       })
 
       $('#city').on('focusout', function (e) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> city > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.handleFormEvents($(this).attr('id'), e.type)
+        helper.textElementValidation($(this).attr('id'), helper.pattern.basictext)
       })
 
       $('#email').on('focusout', function (e) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> email > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.handleFormEvents($(this).attr('id'), e.type)
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> email! > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        helper.emailElementValidation($(this).attr('id'), 'focusout')
       })
 
       $('#confirmEmail').on('focusout', function (e) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> confirmEmail > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.handleFormEvents($(this).attr('id'), e.type)
+        helper.emailElementValidation($(this).attr('id'), 'focusout')
       })
 
       $('#password').on('focusout', function (e) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> password > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.handleFormEvents($(this).attr('id'), e.type)
+        helper.passwordElementValidation($(this).attr('id'), 'focusout')
       })
 
       $('#confirmPassword').on('focusout', function (e) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> confirmPassword > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.handleFormEvents($(this).attr('id'), e.type)
+        helper.passwordElementValidation($(this).attr('id'), 'focusout')
       })
 
     }
 
   },
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// =================================================================================================================================
+// =================================================================================================================================
+
+
+  emailElementValidation: function (elementID, eType, confirmElementID, elementVal) {
+
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> emailElementValidation <<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
+    if (eType === 'change') {
+
+      helper.validateEmailField(elementVal, elementID, confirmElementID)
+    }
+
+    if (eType === 'focusout') {
+
+      $('#' + elementID).on('input', function () {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> emailElementValidation > focusout > onInput <<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        helper.testUserInputEmail(elementID)
+      })
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> emailElementValidation > focusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
+      helper.testUserInputEmail(elementID)
+    }
+  },
+
+  passwordElementValidation: function (elementID, eType, confirmElementID) {
+
+    if (eType === 'change') {
+      if(helper.validateParams('password', 'confirmPassword')){
+
+          is_safari ? $('#'+confirmElementID).off('input') : null;
+      }
+    }
+
+    if (eType === 'focusout') {
+
+      var pattern = helper.pattern.password
+
+      $('#' + elementID).on('input', function () {
+        helper.testUserInput(elementID, pattern)
+      })
+
+      helper.testUserInput(elementID, pattern)
+    }
+  },
+
+
+  textElementValidation: function (elementID, pattern, err1) {
+
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> textElementValidation 1 <<<<<<<<<<<<<<<<<<<<<<<: ', $('#' + elementID))
+
+    var thisElementValue = $.trim($('#' + elementID).val())
+    var title = $('#' + elementID).attr('title')
+    err1 !== undefined && err1.error === 'empty' ? thisElementValue = '' : null
+
+    var patternTestValue = pattern.test(thisElementValue)
+    err1 !== undefined && err1.lengthError === 'maxlength' ? patternTestValue = false : null
+
+    if (thisElementValue !== '') {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> textElementValidation 2 <<<<<<<<<<<<<<<<<<<<<<<')
+      if (!patternTestValue) {
+        !interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('Invalid input. ' + $('#' + elementID).attr('title')) : null
+        err1 !== undefined && interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('Please match the requested format. ' + title) : null
+
+        if ((err1 !== undefined && interactiveFormValidationEnabled) || !interactiveFormValidationEnabled) {
+          $('#' + elementID + 'Error').removeClass('hide').addClass('show')
+        }
+
+        if (err1 !== undefined && err1.lengthError === 'maxlength') {
+          var newVal = helper.validateMaxLengthUserInput($('#' + elementID).val(), err1.stringValLength)
+          $('#' + elementID).val(newVal)
+        }
+      } else {
+        !interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('') : null
+        !interactiveFormValidationEnabled ? $('#' + elementID + 'Error').removeClass('show').addClass('hide') : null
+        $('#' + elementID).get(0).setCustomValidity('')
+      }
+    } else {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> textElementValidation 3 <<<<<<<<<<<<<<<<<<<<<<<')
+      !interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('Please fill out this field. ' + $('#' + elementID).attr('title')) : null
+      err1 !== undefined && interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('Please fill out this field.') : null
+
+      if ((err1 !== undefined && interactiveFormValidationEnabled) || !interactiveFormValidationEnabled) {
+        $('#' + elementID + 'Error').removeClass('hide').addClass('show')
+      }
+    }
+
+  },
+
+  selectElementValidation: function (elementID, err1) {
+    var thisElementValue = $('#' + elementID).val()
+    err1 !== undefined && err1.error === 'empty' ? thisElementValue = '' : null
+
+    if (thisElementValue !== '') {
+      if (!interactiveFormValidationEnabled) {
+        // ++++
+      }
+
+      $('#' + elementID + 'Error').text('')
+      $('#' + elementID + 'Error').removeClass('show').addClass('hide')
+
+      interactiveFormValidationEnabled ? $('#' + elementID).get(0).setCustomValidity('') : null
+    } else {
+      !interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('Please select an option. ' + $('#' + elementID).attr('title')) : null
+
+      err1 !== undefined && interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('Please select an item in the list.') : null
+
+      if ((err1 !== undefined && interactiveFormValidationEnabled) || !interactiveFormValidationEnabled) {
+        $('#' + elementID + 'Error').removeClass('hide').addClass('show')
+      }
+    }
+  },
+
+
+// =================================================================================================================================
+// =================================================================================================================================
+
 
   validateNewUserDataService: function (value, type, resp, callback) {
 
@@ -902,181 +1086,10 @@ var helper = {
 // =================================================================================================================================
 // =================================================================================================================================
 
-  handleFormEvents: function(elementID, eType, elementVal) {
-
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> handleFormEvents <<<<<<<<<<<<<<<<<<<<<<<: ', elementID, ' :: ', eType)
-
-    elementID === 'displayname' ? helper.displaynameElementValidation(elementID) : null
-
-    elementID === 'email' ? helper.emailElementValidation(elementID, 'confirmEmail', eType, elementVal) : null
-    elementID === 'confirmEmail' ? helper.emailElementValidation(elementID, 'email', eType, elementVal) : null
-
-    elementID === 'password' ? helper.passwordElementValidation(elementID, 'confirmPassword', eType) : null
-    elementID === 'confirmPassword' ? helper.passwordElementValidation(elementID, 'password', eType) : null
-
-    elementID === 'firstname' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
-    elementID === 'lastname' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
-    elementID === 'city' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
-    elementID === 'state' ? helper.selectElementValidation(elementID) : null
-  },
-
-  makeTitleFromElementID: function(whichID) {
-      whichID = whichID.replace(/-/g, ' ')
-      labelText = whichID.replace(/\b\w/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();})
-      return labelText
-  },
-
-// =================================================================================================================================
-// =================================================================================================================================
-
-  pattern: {
-    displayname: /^[A-Za-z0-9_]{4,21}$/,
-    email: /^\S+@\S+\.\S+/,
-    password: /^\S{4,}$/,
-    password2: /^[\S]{4,}$/,
-    basictextMaxLength: /^(?=\s*\S)(.{1,35})$/,
-    basictext: /^(?=\s*\S)(.{1,})$/
-  },
-
-  showLoading: function () {
-    $('.modal-backdrop').show()
-  },
-
-  hideLoading: function () {
-    $('.modal-backdrop').hide()
-  },
-
-  emailElementValidation: function (elementID, confirmElementID, eType, elementVal) {
-
-    if (eType === 'change') {
-
-      helper.validateEmailField(elementVal, elementID, confirmElementID)
-    }
-
-    if (eType === 'focusout') {
-
-      $('#' + elementID).on('input', function () {
-        helper.testUserInputEmail(elementID)
-      })
-
-      helper.testUserInputEmail(elementID)
-    }
-  },
-
-  passwordElementValidation: function (elementID, comparedElementID, eType) {
-
-    var c = /confirm/
-    var newElement
-    var confirmNewElement
-    c.test(comparedElementID) ? confirmNewElement = comparedElementID : confirmNewElement = elementID
-    !c.test(comparedElementID) ? newElement = comparedElementID : newElement = elementID
-
-    if (eType === 'change') {
-
-      if (helper.validateParams(newElement, confirmNewElement)) {
-
-        !interactiveFormValidationEnabled ? $('#' + comparedElementID).off('input') : null
-
-      }
-
-    }
-
-    if (eType === 'focusout') {
-
-      var pattern = helper.pattern.password
-
-      $('#' + elementID).on('input', function () {
-        helper.testUserInput(elementID, pattern)
-      })
-
-      helper.testUserInput(elementID, pattern)
-    }
-  },
-
-    // AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
-  validateMaxLengthUserInput: function (val, maxlen) {
-    val = $.trim(val)
-    var newVal = (val.length) - maxlen
-    newVal = (val.length) - newVal
-    newVal = val.slice(0, newVal)
-    return newVal
-  },
-
-  elementIDtoTitleCase: function (whichID) {
-    whichID = whichID.replace(/([A-Z])/g, ' $1')
-    var labelText = whichID.replace(/^./, function (str) { return str.toUpperCase() })
-    return labelText
-  },
-
-  textElementValidation: function (elementID, pattern, err1) {
-
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> textElementValidation 1 <<<<<<<<<<<<<<<<<<<<<<<: ', $('#' + elementID))
-
-    var thisElementValue = $.trim($('#' + elementID).val())
-    var title = $('#' + elementID).attr('title')
-    err1 !== undefined && err1.error === 'empty' ? thisElementValue = '' : null
-
-    var patternTestValue = pattern.test(thisElementValue)
-    err1 !== undefined && err1.lengthError === 'maxlength' ? patternTestValue = false : null
-
-    if (thisElementValue !== '') {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> textElementValidation 2 <<<<<<<<<<<<<<<<<<<<<<<')
-      if (!patternTestValue) {
-        !interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('Invalid input. ' + $('#' + elementID).attr('title')) : null
-        err1 !== undefined && interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('Please match the requested format. ' + title) : null
-
-        if ((err1 !== undefined && interactiveFormValidationEnabled) || !interactiveFormValidationEnabled) {
-          $('#' + elementID + 'Error').removeClass('hide').addClass('show')
-        }
-
-        if (err1 !== undefined && err1.lengthError === 'maxlength') {
-          var newVal = helper.validateMaxLengthUserInput($('#' + elementID).val(), err1.stringValLength)
-          $('#' + elementID).val(newVal)
-        }
-      } else {
-        !interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('') : null
-        !interactiveFormValidationEnabled ? $('#' + elementID + 'Error').removeClass('show').addClass('hide') : null
-        $('#' + elementID).get(0).setCustomValidity('')
-      }
-    } else {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> textElementValidation 3 <<<<<<<<<<<<<<<<<<<<<<<')
-      !interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('Please fill out this field. ' + $('#' + elementID).attr('title')) : null
-      err1 !== undefined && interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('Please fill out this field.') : null
-
-      if ((err1 !== undefined && interactiveFormValidationEnabled) || !interactiveFormValidationEnabled) {
-        $('#' + elementID + 'Error').removeClass('hide').addClass('show')
-      }
-    }
-
-  },
-
-  selectElementValidation: function (elementID, err1) {
-    var thisElementValue = $('#' + elementID).val()
-    err1 !== undefined && err1.error === 'empty' ? thisElementValue = '' : null
-
-    if (thisElementValue !== '') {
-      if (!interactiveFormValidationEnabled) {
-        // ++++
-      }
-
-      $('#' + elementID + 'Error').text('')
-      $('#' + elementID + 'Error').removeClass('show').addClass('hide')
-
-      interactiveFormValidationEnabled ? $('#' + elementID).get(0).setCustomValidity('') : null
-    } else {
-      !interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('Please select an option. ' + $('#' + elementID).attr('title')) : null
-
-      err1 !== undefined && interactiveFormValidationEnabled ? $('#' + elementID + 'Error').text('Please select an item in the list.') : null
-
-      if ((err1 !== undefined && interactiveFormValidationEnabled) || !interactiveFormValidationEnabled) {
-        $('#' + elementID + 'Error').removeClass('hide').addClass('show')
-      }
-    }
-  },
-
 
   testUserInput: function (elementID, pattern, err1) {
-    console.log('#testUserInput > no err1: ', elementID, ' :: ', pattern);
+
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> testUserInput <<<<<<<<<<<<<<<<<<<<<<<: ', elementID)
 
     var thisElementValue = $('#' + elementID).val()
     err1 !== undefined && err1.error === 'empty' ? thisElementValue = '' : null
@@ -1381,6 +1394,14 @@ var helper = {
 
 
 
+  // =================================================================================================================================
+  // =================================================================================================================================
+  // =================================================================================================================================
+  // =================================================================================================================================
+  // =================================================================================================================================
+  // =================================================================================================================================
+
+
   toggleEditBtn: function(whichTabs,displayTab) {
     var tabID, i, e
     tabID = document.getElementsByClassName(whichTabs)
@@ -1463,8 +1484,7 @@ var helper = {
                   type: 'text',
                   pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                   title: 'Please type a valid First Name. Maximum 35 characters',
-                  placeholder: 'First Name',
-                  required: true
+                  placeholder: 'First Name'
               })
               break
 
@@ -1473,8 +1493,7 @@ var helper = {
                   type: 'text',
                   pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                   title: 'Please type a valid Last Name. Maximum 35 characters',
-                  placeholder: 'Last Name',
-                  required: true
+                  placeholder: 'Last Name'
               })
               break
 
@@ -1483,8 +1502,7 @@ var helper = {
                   type: 'text',
                   pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
                   title: 'Please type a valid City. Maximum 35 characters',
-                  placeholder: 'City',
-                  required: true
+                  placeholder: 'City'
               })
               break
 
@@ -1564,7 +1582,7 @@ var helper = {
       }
     }
 
-    helper.turnOnSpecificEvents()
+    //helper.turnOnSpecificEvents()
 
     Object.keys(data).forEach(function(p) {
 

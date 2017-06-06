@@ -464,7 +464,11 @@ input.valid, textarea.valid{
   border: 1px solid #cccccc;
 }
 
-form span {
+form span .error {
+  font-size:12px;
+}
+
+.form-group .error {
   font-size:12px;
 }
 

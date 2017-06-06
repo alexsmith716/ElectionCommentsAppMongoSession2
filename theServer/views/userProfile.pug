@@ -44,9 +44,9 @@ block content
 
         .modal-body
 
-          form(action="https://localhost:3000/api/evaluateuserprofile", id="editProfileForm", name="editProfileForm", method="put", enctype="application/x-www-form-urlencoded")
+          .alertDanger.alert.alert-danger.hide(style="margin-top: 0px; margin-bottom: 10px;") An Error occurred processing your request, please try again.
 
-            .alertDanger.alert.alert-danger.hide(style="margin-top: 0px; margin-bottom: 10px;") An Error occurred processing your request, please try again.
+          form(action="https://localhost:3000/api/evaluateuserprofile", id="editProfileForm", name="editProfileForm", method="put", enctype="application/x-www-form-urlencoded")
 
             div
               .form-group
@@ -65,7 +65,7 @@ block content
                 div(style="height:40px; width:100%; style=margin-top:10px;")
 
                   div.hide(id="editProfileInputElementParent", style="position:absolute; width:100%; padding-right: 36px;")
-                    input.form-control.input-md
+                    input.form-control.input-md(tabindex="1", required)
 
                   div.hide(id="editProfileSelectElementParent", style="position:absolute; width:100%; padding-right: 36px;")
                     +selectStateFormControl()
@@ -79,13 +79,15 @@ block content
 
 
             div(class="modalCancelSubmitBtns")
-              button(class="btn btn-default btn-md" data-dismiss="modal", id="editProfileFormModalCancel") Cancel
+              button(class="btn btn-default btn-md cancelButton" data-dismiss="modal", id="editProfileFormModalCancel") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
               button(class="btn btn-primary btn-md", id="submitEditProfileBtn") Submit
 
 
         .modal-footer
           .loading(style="display:none;")
+
+
 
 
   .modal.fade(id="currentUserDataPathModal", tabindex="-1")
@@ -124,6 +126,9 @@ block content
           .loading(style="display:none;")
 
 
+
+
+
   .modal.fade(id="userDataEmailPathChangeModal", tabindex="-1")
     .modal-dialog
       .modal-content
@@ -144,9 +149,9 @@ block content
 
                 input.form-control.input-md(type="email", id="email", name="email", tabindex="1", title="Please type a valid Email Address", placeholder="Email Address", required) 
 
-                span.hide.error(id="userDataEmailPathChangeImproper") Email is in improper format
-                span.hide.error(id="userDataEmailPathChangeRegistered") This email address is already in our system. Sign in, or enter a new email address
-                span.hide.error(id="userDataEmailPathChangeError") Please enter an email address. Please type a valid Email Address
+                span.hide.error(id="emailImproper") Email is in improper format
+                span.hide.error(id="emailRegistered") This email address is already in our system. Sign in, or enter a new email address
+                span.hide.error(id="emailError") Please enter an email address. Please type a valid Email Address
 
 
             div.required-fields
@@ -156,10 +161,10 @@ block content
 
                 input.form-control.input-md(type="email", id="confirmEmail", name="confirmEmail", tabindex="2", title="Please type a valid Email Address", placeholder="Confirm Email Address", required)
 
-                span.hide.error(id="confirmUserDataEmailPathChangeImproper") Confirm Email is in improper format
-                span.hide.error(id="confirmUserDataEmailPathChangeRegistered") This email address is already in our system. Sign in, or enter a new email address
-                span.hide.error(id="confirmUserDataEmailPathChangeMatch") Emails don't match
-                span.hide.error(id="confirmUserDataEmailPathChangeError") Please enter an email address. Please type a valid Email Address
+                span.hide.error(id="confirmEmailImproper") Confirm Email is in improper format
+                span.hide.error(id="confirmEmailRegistered") This email address is already in our system. Sign in, or enter a new email address
+                span.hide.error(id="confirmEmailMatch") Emails don't match
+                span.hide.error(id="confirmEmailError") Please enter an email address. Please type a valid Email Address
 
 
             div(style="margin-bottom:8px;")
@@ -197,7 +202,7 @@ block content
 
                 input.form-control.input-md(type="password", id="password", name="password", pattern="\\S{4,}", tabindex="1", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Create Password", required) 
 
-                span.hide.error(id="userDataPathChangeError") Please fill out this field.
+                span.hide.error(id="passwordError") Please fill out this field.
 
 
             div.required-fields
@@ -207,8 +212,8 @@ block content
 
                 input.form-control.input-md(type="password", id="confirmPassword", name="confirmPassword", pattern="\\S{4,}", tabindex="2", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Confirm Password", required)
 
-                span.hide.error(id="confirmUserDataPathChangeMatch") Passwords don't match
-                span.hide.error(id="confirmUserDataPathChangeError") Please fill out this field.
+                span.hide.error(id="confirmPasswordMatch") Passwords don't match
+                span.hide.error(id="confirmPasswordError") Please fill out this field.
 
 
             div(style="margin-bottom:8px;")
