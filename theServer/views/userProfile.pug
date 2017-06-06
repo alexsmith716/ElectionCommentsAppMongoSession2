@@ -44,8 +44,6 @@ block content
 
         .modal-body
 
-          .alertDanger.alert.alert-danger.hide(style="margin-top: 0px; margin-bottom: 10px;") An Error occurred processing your request, please try again.
-
           form(action="https://localhost:3000/api/evaluateuserprofile", id="editProfileForm", name="editProfileForm", method="put", enctype="application/x-www-form-urlencoded")
 
             div
@@ -138,8 +136,6 @@ block content
 
         .modal-body
 
-          .alertDanger.alert.alert-danger.hide(style="margin-top: 0px; margin-bottom: 10px;")
-
           form(action="https://localhost:3000/api/newuserdatapathchange", id="userDataEmailPathChangeForm", method="put", enctype="application/x-www-form-urlencoded")
 
             div.required-fields
@@ -166,12 +162,6 @@ block content
                 span.hide.error(id="confirmEmailMatch") Emails don't match
                 span.hide.error(id="confirmEmailError") Please enter an email address. Please type a valid Email Address
 
-
-            div(style="margin-bottom:8px;")
-              .text-danger.hide.formerror
-                strong Could not update your information!
-
-
             div(class="modalCancelSubmitBtns")
               button(class="btn btn-default btn-md cancelButton", data-dismiss="modal") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
@@ -190,8 +180,6 @@ block content
           h4.modal-title Change your Password:
 
         .modal-body
-
-          .alertDanger.alert.alert-danger.hide(style="margin-top: 0px; margin-bottom: 10px;")
 
           form(action="https://localhost:3000/api/newuserdatapathchange", id="userDataPasswordPathChangeForm", method="put", enctype="application/x-www-form-urlencoded")
 
@@ -214,12 +202,6 @@ block content
 
                 span.hide.error(id="confirmPasswordMatch") Passwords don't match
                 span.hide.error(id="confirmPasswordError") Please fill out this field.
-
-
-            div(style="margin-bottom:8px;")
-              .text-danger.hide.formerror
-                strong Could not update your information!
-
 
             div(class="modalCancelSubmitBtns")
               button(class="btn btn-default btn-md cancelButton", data-dismiss="modal") Cancel
