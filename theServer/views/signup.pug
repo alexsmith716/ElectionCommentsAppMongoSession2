@@ -104,7 +104,7 @@ block content
   
                       label.control-label.sr-only(for="password") Password
   
-                      input.form-control.input-md(type="password", id="password", name="password", pattern="[\\S]{4,}", tabindex="4", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Create Password", required)
+                      input.form-control.input-md(type="password", id="password", name="password", pattern="\\S{4,}", tabindex="4", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Create Password", required)
   
                       span.hide.error(id="passwordError") Please fill out this field.
       
@@ -113,7 +113,7 @@ block content
                     .form-group
                       label.control-label.sr-only(for="confirmPassword") Confirm Password
   
-                      input.form-control.input-md(type="password", id="confirmPassword", name="confirmPassword", pattern="[\\S]{4,}", tabindex="5", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Confirm Password", required)
+                      input.form-control.input-md(type="password", id="confirmPassword", name="confirmPassword", pattern="\\S{4,}", tabindex="5", title="Password must be at least 4 characters long. No whitespace allowed", placeholder="Confirm Password", required)
                       
                       span.hide.error(id="confirmPasswordMatch") Passwords don't match
                       span.hide.error(id="confirmPasswordError") Please fill out this field.

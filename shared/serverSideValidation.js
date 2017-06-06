@@ -3,118 +3,103 @@ var evaluateUserEmail = require('./evaluateUserEmail.js')
 
 module.exports = function (req, res, validateTemplate, cb) {
 
-  console.log('####### > serverSideValidation > req.body > IN: ', req.body, ' :: ', validateTemplate)
-
-  /*
-      pattern: {
-        displayname: /^[A-Za-z0-9_]{4,21}$/,
-        email: /^\S+@\S+\.\S+/,
-        password: /^\S{4,}$/,
-        password2: /^[\S]{4,}$/,
-        basictext: /^(?=\s*\S)(.{1,35})$/
-    },
-  */
-
   var reqBody = req.body
   var match = {}
   var nomatch = {}
   var testName
   var emailPattern = /^\S+@\S+\.\S+/
   var passwordPattern = /^\S{4,}$/
-  var passwordPattern2 = /^[\S]{4,}$/
   var displaynamePattern = /^[A-Za-z0-9_]{4,21}$/
+  var basictextPatternExact = /^(?=\s*\S)(.{1,35})$/
   var basictextPattern = /(?=\s*\S)(.{1,35})/
   var validatedUserInput = {}
   var elementObject = {}
   var errorType
   var isDataValid
   var objName
-  var whitespace
   var emailIsValid
   var confirmEmailIsValid
   var passwordIsValid
   var confirmPasswordIsValid
 
-  for(var compareTemplateName in validateTemplate) {
-
+  for (var compareTemplateName in validateTemplate) {
     testName = compareTemplateName
 
-    for(compareTemplateName in reqBody) {
-
-      if(testName === compareTemplateName){
+    for (compareTemplateName in reqBody) {
+      if (testName === compareTemplateName) {
         testName = undefined
         break
       }
-
     }
 
-    if(testName !== undefined && testName !== 'expectedResponse'){
+    if (testName !== undefined && testName !== 'expectedResponse') {
       nomatch[testName] = 'empty'
       reqBody[testName] = ''
     }
 
   }
 
-  for (var objName in reqBody){
+  for (var objName in reqBody) {
 
     if (typeof reqBody[objName] !== 'function') {
 
-      if(objName === 'displayname'){
+      if (objName === 'displayname') {
 
         isDataValid = displaynamePattern.test(reqBody[objName])
         elementObject = {}
 
-        if(!isDataValid){
+        if (!isDataValid) {
 
           reqBody[objName].length === 0 ? errorType = 'empty' : errorType = 'invalid'
           elementObject.error = errorType
 
-          if(reqBody[objName].length > 0 && reqBody[objName].length < 4){
+          if (reqBody[objName].length > 0 && reqBody[objName].length < 4) {
             elementObject.stringValLength = reqBody[objName].length
             elementObject.lengthError = 'minlength'
-          } 
-          if(reqBody[objName].length > 21){
+          }
+
+          if (reqBody[objName].length > 21) {
             elementObject.stringValLength = 21
             elementObject.lengthError = 'maxlength'
           }
 
-        }else{
+        } else {
 
           elementObject.error = false
         }
 
         validatedUserInput[objName] = elementObject
 
-      }else if(objName === 'email'){
+      } else if (objName === 'email') {
 
         reqBody[objName] = reqBody[objName].trim()
         isDataValid = emailPattern.test(reqBody[objName])
         elementObject = {}
 
-        if(!isDataValid){
+        if (!isDataValid) {
 
           reqBody[objName] === '' ? errorType = 'empty' : errorType = 'invalid'
           elementObject.error = errorType
 
-        }else{
+        } else {
 
           elementObject.error = false
         }
 
         validatedUserInput[objName] = elementObject
 
-      }else if(objName === 'confirmEmail'){
+      } else if (objName === 'confirmEmail') {
 
         reqBody[objName] = reqBody[objName].trim()
         isDataValid = emailPattern.test(reqBody[objName])
         elementObject = {}
 
-        if(!isDataValid){
+        if (!isDataValid) {
 
           reqBody[objName] === '' ? errorType = 'empty' : errorType = 'invalid'
           elementObject.error = errorType
 
-        }else{
+        } else {
 
           elementObject.error = false
         }
@@ -122,82 +107,82 @@ module.exports = function (req, res, validateTemplate, cb) {
         validatedUserInput[objName] = elementObject
 
 
-      }else if(objName === 'password'){
+      } else if (objName === 'password') {
 
         isDataValid = passwordPattern.test(reqBody[objName])
         elementObject = {}
 
-        if(!isDataValid){
+        if (!isDataValid) {
 
           reqBody[objName].length === 0 ? errorType = 'empty' : errorType = 'invalid'
           elementObject.error = errorType
 
-          if(reqBody[objName].length > 0 && reqBody[objName].length < 4){
+          if (reqBody[objName].length > 0 && reqBody[objName].length < 4) {
             elementObject.stringValLength = reqBody[objName].length
           } 
 
-        }else{
+        } else {
 
           elementObject.error = false
         }
 
         validatedUserInput[objName] = elementObject
 
-      }else if(objName === 'confirmPassword'){
+      } else if (objName === 'confirmPassword') {
 
         isDataValid = passwordPattern.test(reqBody[objName])
         elementObject = {}
 
-        if(!isDataValid){
+        if (!isDataValid) {
 
           reqBody[objName].length === 0 ? errorType = 'empty' : errorType = 'invalid'
           elementObject.error = errorType
 
-        }else{
+        } else {
 
           elementObject.error = false
         }
 
         validatedUserInput[objName] = elementObject
 
-      }else if(objName === 'firstname'){
+      } else if (objName === 'firstname') {
 
         reqBody[objName] = reqBody[objName].trim()
         //isDataValid = basictextPattern.test(reqBody[objName])
         elementObject = {}
 
-        if(reqBody[objName] === ''){
+        if (reqBody[objName] === '') {
 
           elementObject.error = 'empty'
 
-        }else if(reqBody[objName].length > 35){
+        } else if (reqBody[objName].length > 35) {
 
           elementObject.stringValLength = 35
           elementObject.lengthError = 'maxlength'
 
-        }else{
+        } else {
 
           elementObject.error = false
         }
 
         validatedUserInput[objName] = elementObject
 
-      }else if(objName === 'lastname'){
+      } else if (objName === 'lastname') {
 
         reqBody[objName] = reqBody[objName].trim()
         //isDataValid = basictextPattern.test(reqBody[objName])
         elementObject = {}
 
-        if(reqBody[objName] === ''){
+        if (reqBody[objName] === '') {
 
           elementObject.error = 'empty'
 
-        }else if(reqBody[objName].length > 35){
+        } else if (reqBody[objName].length > 35) {
 
           elementObject.stringValLength = 35
           elementObject.lengthError = 'maxlength'
 
-        }else{
+        } else {
 
           elementObject.error = false
         }
@@ -205,37 +190,37 @@ module.exports = function (req, res, validateTemplate, cb) {
         validatedUserInput[objName] = elementObject
 
 
-      }else if(objName === 'city'){
+      } else if (objName === 'city') {
 
         reqBody[objName] = reqBody[objName].trim()
         //isDataValid = basictextPattern.test(reqBody[objName])
         elementObject = {}
 
-        if(reqBody[objName] === ''){
+        if (reqBody[objName] === '') {
 
           elementObject.error = 'empty'
 
-        }else if(reqBody[objName].length > 35){
+        } else if (reqBody[objName].length > 35) {
 
           elementObject.stringValLength = 35
           elementObject.lengthError = 'maxlength'
 
-        }else{
+        } else {
 
           elementObject.error = false
         }
 
         validatedUserInput[objName] = elementObject
 
-      }else if(objName === 'state'){
+      } else if (objName === 'state') {
 
         elementObject = {}
 
-        if(reqBody[objName] === ''){
+        if (reqBody[objName] === '') {
 
           elementObject.error = 'empty'
 
-        }else{
+        } else {
 
           elementObject.error = false
         }
@@ -245,27 +230,27 @@ module.exports = function (req, res, validateTemplate, cb) {
     }
   }
 
-  if(validatedUserInput['password']){
-    if(validatedUserInput['password'].error === false){
+  if (validatedUserInput['password']) {
+    if (validatedUserInput['password'].error === false) {
       passwordIsValid = true
     }
   }
 
-  if(validatedUserInput['confirmPassword']){
-    if(validatedUserInput['confirmPassword'].error === false){
+  if (validatedUserInput['confirmPassword']) {
+    if (validatedUserInput['confirmPassword'].error === false) {
       confirmPasswordIsValid = true
     }
   }
 
-  if(passwordIsValid && confirmPasswordIsValid){
+  if (passwordIsValid && confirmPasswordIsValid) {
 
     elementObject = {}
 
-    if(reqBody.password !== reqBody.confirmPassword){
+    if (reqBody.password !== reqBody.confirmPassword) {
 
         elementObject.error = 'nomatch'
 
-    }else{
+    } else {
 
       elementObject.error = 'match'
     }
@@ -275,19 +260,19 @@ module.exports = function (req, res, validateTemplate, cb) {
 
   }
 
-  if(validatedUserInput['email']){
-    if(validatedUserInput['email'].error === false){
+  if (validatedUserInput['email']) {
+    if (validatedUserInput['email'].error === false) {
       emailIsValid = true
     }
   }
 
-  if(validatedUserInput['confirmEmail']){
-    if(validatedUserInput['confirmEmail'].error === false){
+  if (validatedUserInput['confirmEmail']) {
+    if (validatedUserInput['confirmEmail'].error === false) {
       confirmEmailIsValid = true
     }
   }
 
-  if(emailIsValid || confirmEmailIsValid){
+  if (emailIsValid || confirmEmailIsValid) {
 
     var objValue
     var objName1
@@ -296,16 +281,15 @@ module.exports = function (req, res, validateTemplate, cb) {
     emailIsValid ? objValue = reqBody.email : objValue = reqBody.confirmEmail
     objValue === reqBody.email ? objName1 = 'email' : objName1 = 'confirmEmail'
 
-
     evaluateUserEmail(objValue, validateTemplate.expectedResponse, function(response) {
 
-      if(response.status === 'err'){
+      if (response.status === 'err') {
 
         cb(response)
 
-      }else{
+      } else {
 
-        if(response.response === 'error'){
+        if (response.response === 'error') {
 
           elementObject = {}
           elementObject.error = 'registered'
@@ -316,26 +300,26 @@ module.exports = function (req, res, validateTemplate, cb) {
         objName1 === 'email' ? objValue = reqBody.confirmEmail : objValue = reqBody.email
         objName1 === 'email' ? objName1 = 'confirmEmail' : objName1 = 'email'
 
-        if(validatedUserInput[objName1] && validatedUserInput[objName1].error === false){
+        if (validatedUserInput[objName1] && validatedUserInput[objName1].error === false) {
 
-          evaluateUserEmail(objValue, validateTemplate.expectedResponse, function(response) {
+          evaluateUserEmail(objValue, validateTemplate.expectedResponse, function (response) {
 
             objName1 === 'email' ? objName2 = 'confirmEmail' : objName2 = 'email'
 
             elementObject = {}
 
-            if(response.response === 'error'){
+            if (response.response === 'error') {
 
               elementObject.error = 'registered'
               validatedUserInput[objName1] = elementObject
 
-            }else if(validatedUserInput[objName2] && validatedUserInput[objName2].error === false){
+            } else if (validatedUserInput[objName2] && validatedUserInput[objName2].error === false) {
 
-              if(reqBody.email !== reqBody.confirmEmail){
+              if (reqBody.email !== reqBody.confirmEmail) {
 
                 elementObject.error = 'nomatch'
 
-              }else{
+              } else {
 
                 elementObject.error = 'match'
 
@@ -346,15 +330,12 @@ module.exports = function (req, res, validateTemplate, cb) {
 
             }
 
-            console.log('####### > serverSideValidation > req.body > OUT 1: ', req.body)
-            console.log('####### > serverSideValidation > callback1 > validatedUserInput: ', validatedUserInput)
             cb(validatedUserInput)
 
           })
 
-        }else{
-          console.log('####### > serverSideValidation > req.body > OUT 2: ', req.body)
-          console.log('####### > serverSideValidation > callback2 > validatedUserInput: ', validatedUserInput)
+        } else {
+
           cb(validatedUserInput)
 
         }
@@ -362,10 +343,9 @@ module.exports = function (req, res, validateTemplate, cb) {
 
     })
 
-  }else{
-    console.log('####### > serverSideValidation > req.body > OUT 3: ', req.body)
-    console.log('####### > serverSideValidation > callback3 > validatedUserInput: ', validatedUserInput)
-    cb(validatedUserInput)
+  } else {
 
+    cb(validatedUserInput)
+    
   }
 }

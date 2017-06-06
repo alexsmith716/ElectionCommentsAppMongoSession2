@@ -9,7 +9,7 @@ module.exports = function (req, res, doUserValidatedEmail, cb) {
 
   User.findOne( { email: email } ).exec(function (err, user) {
 
-    if(doUserValidatedEmail === false){
+    if(doUserValidatedEmail === true){
       // err = new Error('Bad Request')
       // err.status = 400
       // user = false
