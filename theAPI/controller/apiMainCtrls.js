@@ -471,6 +471,8 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 
       var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
 
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>> ajaxValidateNewUserDataService 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
