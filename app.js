@@ -213,9 +213,9 @@ if (app.get('env') === 'development') {
     res.status(err.status || 500)
 
     // res.locals.message = err.message
-    app.locals.notifyErrorMessageObject = err
-    app.locals.notifyErrorMessageReqXhr = req.xhr
-    app.locals.notifyErrorMessageReferer = req.headers['referer']
+    res.locals.notifyErrorMessageObject = err
+    res.locals.notifyErrorMessageReqXhr = req.xhr
+    res.locals.notifyErrorMessageReferer = req.headers['referer']
     res.locals.resLocalsBasicView = 'ResLocalsBasicView!!'
 
     console.log('DEV ERROR code: ', err.code)
