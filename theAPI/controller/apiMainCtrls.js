@@ -463,8 +463,8 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
     var nds = new Date(millis)
     var foo = 'foo'
 
-    if (foo === 'foo') {
-    // if (nds.getMinutes() > 4){
+    // if (foo === 'foo') {
+    if (nds.getMinutes() > 4){
     // if (nds.getMinutes() > 0) {
     
       req.session.userValidatedEmail.isValidated = false
@@ -552,7 +552,9 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
             console.log('####### > API > ajaxEvaluateUserProfile > validationErrors:', validationErrors)
 
             if (!validationErrors) {
+
               User.findById(res.locals.currentUser.id).exec(function (err, user) {
+
                 if (err) {
                   return next(err)
                 }
@@ -574,6 +576,7 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
                 user[reqBodyProp] = reqBodyValue
 
                 user.save(function (err) {
+
                   if (err) {
                     return next(err)
 
@@ -582,6 +585,7 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
                   }
                 })
+
               })
 
             }else{
