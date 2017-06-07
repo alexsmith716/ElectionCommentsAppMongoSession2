@@ -5,6 +5,7 @@ var bodyParser = require('body-parser')
 var express = require('express')
 var router = express.Router()
 var serverControllers = require('../controller/serverMainCtrls')
+var nocache = require('nocache')
 var auth = require('../../shared/auth')
 var csrfProtection = csrf({ cookie: true })
 

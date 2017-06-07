@@ -312,7 +312,7 @@ module.exports.getUserProfile = function (req, res, next) {
   var requestOptions, path
   path = '/api/userprofile/' + res.locals.currentUser.id
 
-  console.log('####### > SERVER > getUserProfile > auth: ', res.locals.currentUser.email, ' :: ', res.locals.currentUser.datecreated.toISOString())
+  console.log(console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<<'))
 
   requestOptions = {
     rejectUnauthorized: false,

@@ -54,7 +54,6 @@ block content
                   div(class="flex-containerSubProfile")
                     div.dont-break-out(id="modalFormElementValueCurrent", style="font-size: 1.0em;")
 
-
             div.required-fields
               .form-group
 
@@ -70,22 +69,17 @@ block content
 
                 span.hide.error
 
-
-            div(style="margin-bottom:8px;")
-              .text-danger.hide.formerror
-                strong Could not update your information!
-
-
             div(class="modalCancelSubmitBtns")
               button(class="btn btn-default btn-md cancelButton" data-dismiss="modal", id="editProfileFormModalCancel") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
               button(class="btn btn-primary btn-md", id="submitEditProfileBtn") Submit
 
+            div(style="margin-top:12px;")
+              .text-danger.hide.formerror
+                strong Could not update your information!
 
         .modal-footer
           .loading(style="display:none;")
-
-
 
 
   .modal.fade(id="currentUserDataPathModal", tabindex="-1")
@@ -109,22 +103,13 @@ block content
               span.hide.error(id="currentUserDataPathRegistered")
               span.hide.error(id="currentUserDataPathError") Please fill out this field. Please match the requested format.
 
-            div(style="margin-bottom:8px;")
-              .text-danger.hide.formerror
-                strong Could not update your information!
-
-
             div(class="modalCancelSubmitBtns")
               button(class="btn btn-default btn-md cancelButton", data-dismiss="modal") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
               button(type="submit", class="btn btn-primary btn-md nextButton") Next
 
-
         .modal-footer
           .loading(style="display:none;")
-
-
-
 
 
   .modal.fade(id="userDataEmailPathChangeModal", tabindex="-1")
@@ -149,7 +134,6 @@ block content
                 span.hide.error(id="emailRegistered") This email address is already in our system. Sign in, or enter a new email address
                 span.hide.error(id="emailError") Please enter an email address. Please type a valid Email Address
 
-
             div.required-fields
               .form-group
 
@@ -167,6 +151,9 @@ block content
               | &nbsp;&nbsp;&nbsp;&nbsp;
               button(type="submit", class="btn btn-primary btn-md submitButton") Submit
 
+            div(style="margin-top:12px;")
+              .text-danger.hide.formerror
+                strong Could not update your information!
 
         .modal-footer
           .loading(style="display:none;")
@@ -192,7 +179,6 @@ block content
 
                 span.hide.error(id="passwordError") Please fill out this field.
 
-
             div.required-fields
               .form-group
 
@@ -208,11 +194,12 @@ block content
               | &nbsp;&nbsp;&nbsp;&nbsp;
               button(type="submit", class="btn btn-primary btn-md submitButton") Submit
 
+            div(style="margin-top:12px;")
+              .text-danger.hide.formerror
+                strong Could not update your information!
 
         .modal-footer
           .loading(style="display:none;")
-
-
 
 
   .main
@@ -225,7 +212,7 @@ block content
       
         .col-xs-12.col-sm-3.col-md-3.col-md-3
           .text-center
-            img(src="/images/someUser.png")
+            <!-- img(src="/images/someUser.png") -->
       
       
         .col-xs-12.col-sm-7.col-md-7.col-md-7

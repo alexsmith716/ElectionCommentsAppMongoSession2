@@ -210,8 +210,118 @@ module.exports.deleteOneComment = function(req, res) {
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+// AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
+module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
+  console.log('####### > API > ajaxEvaluateUserProfile > req.body:', req.body)
+  console.log('####### > API > ajaxEvaluateUserProfile > Object.keys(req.body).length:', Object.keys(req.body).length)
+
+  var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'}
+  var newExceptionError
+  var reqBodyProp
+  var reqBodyValue
+  var template = {}
+
+  var templateMain = {firstname: 'required', 
+    lastname: 'required', 
+    city: 'required', 
+    state: 'required'}
+
+  for (var p in req.body) {
+
+    if (p !== '_csrf') {
+
+      reqBodyProp = p
+      reqBodyValue = req.body[reqBodyProp]
+
+      if (reqBodyProp in templateMain) {
+
+        template[reqBodyProp] = 'required'
+        template['expectedResponse'] = 'false'
+
+        console.log('####### > API > ajaxEvaluateUserProfile > template:', template)
+
+        serverSideValidation(req, res, template, function (validatedResponse) {
+
+          var validationErrors = false
+
+          console.log('####### > API > ajaxEvaluateUserProfile > validatedResponse:', validatedResponse)
+
+          if (validatedResponse.status === 'err') {
+            return next(validatedResponse.message)
+
+          } else {
+            for (var prop in validatedResponse) {
+              if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+
+                validationErrors = true
+                break
+
+              }
+            }
+          }
+
+          console.log('####### > API > ajaxEvaluateUserProfile > validationErrors:', validationErrors)
+
+          if (!validationErrors) {
+
+            User.findById(res.locals.currentUser.id).exec(function (err, user) {
+
+              if (err) {
+                return next(err)
+              }
+
+              if (!user) {
+                sendJSONresponse(res, 201, { 'response': 'error' })
+                return
+              }
+
+              if (reqBodyProp === 'state') {
+                var stateFull = stateNamer(req, res, reqBodyValue)
+
+                reqBodyValue = {
+                  full: stateFull,
+                  initials: reqBodyValue
+                }
+              }
+
+              user[reqBodyProp] = reqBodyValue
+
+              user.save(function (err) {
+
+                if (err) {
+                  return next(err)
+
+                } else {
+                  sendJSONresponse(res, 201, { 'response': 'success' })
+
+                }
+              })
+
+            })
+
+          }else{
+            sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
+          }
+        })
+      }
+    }
+    break
+  }
+}
+
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.getUserProfileResponse = function(req, res, next) {
+
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
   var newExceptionError
   var credentials = auth(req)
 
@@ -497,114 +607,6 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-// AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
-module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
-  console.log('####### > API > ajaxEvaluateUserProfile > req.body:', req.body)
-  console.log('####### > API > ajaxEvaluateUserProfile > Object.keys(req.body).length:', Object.keys(req.body).length)
-
-  var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'}
-  var newExceptionError
-  var reqBodyProp
-  var reqBodyValue
-  var template = {}
-
-  var templateMain = {firstname: 'required', 
-    lastname: 'required', 
-    city: 'required', 
-    state: 'required'}
-
-  if (Object.keys(req.body).length == 2) {
-    // delete req.body['_csrf']
-    // req.body = {firstnameXX:'Freddncsdlcscnsdcijdcsd'}
-
-    for (var p in req.body) {
-
-      if(p !== '_csrf') {
-
-        reqBodyProp = p
-        reqBodyValue = req.body[reqBodyProp]
-
-        if (reqBodyProp in templateMain) {
-          template[reqBodyProp] = 'required'
-          template['expectedResponse'] = 'false'
-
-          console.log('####### > API > ajaxEvaluateUserProfile > template:', template)
-
-          serverSideValidation(req, res, template, function (validatedResponse) {
-            var validationErrors = false
-
-            console.log('####### > API > ajaxEvaluateUserProfile > validatedResponse:', validatedResponse)
-
-            if (validatedResponse.status === 'err') {
-              return next(validatedResponse.message)
-
-            } else {
-              for (var prop in validatedResponse) {
-                if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
-
-                  validationErrors = true
-                  break
-
-                }
-              }
-            }
-
-            console.log('####### > API > ajaxEvaluateUserProfile > validationErrors:', validationErrors)
-
-            if (!validationErrors) {
-
-              User.findById(res.locals.currentUser.id).exec(function (err, user) {
-
-                if (err) {
-                  return next(err)
-                }
-
-                if (!user) {
-                  sendJSONresponse(res, 201, { 'response': 'error' })
-                  return
-                }
-
-                if (reqBodyProp === 'state') {
-                  var stateFull = stateNamer(req, res, reqBodyValue)
-
-                  reqBodyValue = {
-                    full: stateFull,
-                    initials: reqBodyValue
-                  }
-                }
-
-                user[reqBodyProp] = reqBodyValue
-
-                user.save(function (err) {
-
-                  if (err) {
-                    return next(err)
-
-                  } else {
-                    sendJSONresponse(res, 201, { 'response': 'success' })
-
-                  }
-                })
-
-              })
-
-            }else{
-              sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
-            }
-          })
-        }
-      }
-      break
-    }
-
-  }else{
-    // sendJSONresponse(res, 400, exceptionError)
-    newExceptionError = new Error('Bad Request')
-    newExceptionError.status = 400
-    return next(newExceptionError)
-  }
-}
-
 module.exports.ajaxEvaluateUserEmail = function (req, res, next) {
 
   evaluateUserEmail(req.body.email, req.body.expectedResponse, function (response) {
@@ -621,6 +623,9 @@ module.exports.ajaxEvaluateUserEmail = function (req, res, next) {
     }
   })
 }
+
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 // will include nodemailer for ForgotPassword later/last
 // for client, only testing if email is invalid, otherwise indicating instructions sent to reset password
