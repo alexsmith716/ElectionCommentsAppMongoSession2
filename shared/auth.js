@@ -81,7 +81,7 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 }
 
 module.exports.noCache = function (req, res, next) {
-  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0')
+  res.header('Cache-Control', 'no-store, no-cache, private, must-revalidate, proxy-revalidate, max-stale=0, post-check=0, pre-check=0')
   //res.header('Expires', '-1')
   //res.header('Pragma', 'no-cache')
   return next()

@@ -116,18 +116,18 @@ app.use(passport.session())
 
 app.use(function (req, res, next) {
   console.log('++++++++++++++++++++++++++++ APP.js +++++++++++++++++++++++++++++++++')
-  // console.log('REQ.baseUrl ++: ', req.baseUrl)
+  console.log('REQ.baseUrl ++: ', req.baseUrl)
   // console.log('REQ.cookies ++: ', req.cookies)
   // console.log('REQ.signedCookies ++: ', req.signedCookies)
   // console.log('REQ.secure ++: ', req.secure)
   // console.log('REQ.fresh ++: ', req.fresh)
   // console.log('REQ.stale ++: ', req.stale)
   // console.log('REQ.protocol ++: ', req.protocol)
-  // console.log('REQ.path ++: ', req.path)
-  // console.log('REQ.route ++: ', req.route)
-  console.log('REQ.method/url ++: ', req.method, ' :: ', req.url)
-  // console.log('REQ.url ++: ', req.url)
-  // console.log('REQ.originalUrl ++: ', req.originalUrl)
+  console.log('REQ.path ++: ', req.path)
+  console.log('REQ.route ++: ', req.route)
+  console.log('REQ.method ++: ', req.method)
+  console.log('REQ.url ++: ', req.url)
+  console.log('REQ.originalUrl ++: ', req.originalUrl)
   // console.log('REQ.headers.referer ++: ', req.headers['referer'])
   // console.log('REQ.headers.user-agent ++: ', req.headers['user-agent'])
   console.log('REQ.headers ++: ', req.headers)
@@ -140,6 +140,7 @@ app.use(function (req, res, next) {
   // console.log('REQ.query ++: ', req.query)
   console.log('REQ.body ++: ', req.body)
   // console.log('REQ.params ++: ', req.params)
+  console.log('RES.headersSent ++: ', res.headersSent)
   console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 
   var reqBody = sanitize(req.body)
@@ -208,7 +209,7 @@ app.use(function (req, res, next) {
 
 if (app.get('env') === 'development') {
   app.use(function (err, req, res, next) {
-    console.log('######### DEVELOPMENT ###########')
+    console.log('############################# DEVELOPMENT ' + err.status + ' ############################')
 
     res.status(err.status || 500)
 
@@ -218,20 +219,21 @@ if (app.get('env') === 'development') {
     res.locals.notifyErrorMessageReferer = req.headers['referer']
     res.locals.resLocalsBasicView = 'ResLocalsBasicView!!'
 
-    console.log('DEV ERROR code: ', err.code)
-    console.log('DEV ERROR status: ', err.status)
-    console.log('DEV ERROR name: ', err.name)
-    console.log('DEV ERROR message: ', err.message)
-    console.log('DEV ERROR xhr: ', req.xhr)
-    console.log('DEV ERR: ', err)
+    console.log('############################# DEV ERROR code: ', err.code)
+    console.log('############################# DEV ERROR status: ', err.status)
+    console.log('############################# DEV ERROR name: ', err.name)
+    console.log('############################# DEV ERROR message: ', err.message)
+    console.log('############################# DEV ERROR xhr: ', req.xhr)
+    console.log('############################# DEV ERR: ', err)
 
     req.logout()
 
     req.session.destroy(function () {
       if (req.xhr) {
+        console.log('############################# DEVELOPMENT > req.session.destroy > YES req.xhr ############################')
         res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'})
       } else {
-        console.log('######### DEVELOPMENT ########### REDIRECT ++++')
+        console.log('############################# DEVELOPMENT > req.session.destroy > NO req.xhr ############################')
         res.redirect('/notifyerror')
       }
     })

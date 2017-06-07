@@ -74,6 +74,7 @@ var helper = {
     $('#editProfileFormModal').on('hidden.bs.modal', function () {
       $('body').removeData('modalShown');
       var activeElementID = $('body').data('elementID')
+      $('#editProfileForm .formerror').removeClass('show').addClass('hide')
       $('#editProfileForm').get(0).reset()
       $('#editProfileForm').find('.error').removeClass('show ').addClass('hide')
       $('#'+activeElementID+'Error').removeClass('show').html('')
@@ -164,20 +165,18 @@ var helper = {
 
       e.preventDefault()
       $('.loading').show()
-
-      $('#editProfileForm .formerror').removeClass('show').addClass('hide')
-
+      
       var elementID = $('#editProfileForm').data('elementID')
       var whichformdataid = $('body').data('whichformdataid')
       var labelText = helper.makeTitleFromElementID(whichformdataid)
       var newVal;
       var s = document.getElementById(elementID)
-      elementID === 'state' ? newVal = s.options[s.selectedIndex].text : newVal = $('#'+elementID).val()
-      newVal = $.trim(newVal)
-
       var data = {}
       var serviceUrl = $(this).attr('action')
       var constrainedFormElements = document.getElementById('editProfileForm').querySelectorAll('[required]')
+
+      elementID === 'state' ? newVal = s.options[s.selectedIndex].text : newVal = $('#'+elementID).val()
+      newVal = $.trim(newVal)
 
       if(!interactiveFormValidationEnabled){
         var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
@@ -190,7 +189,6 @@ var helper = {
       }
 
       data[elementID] = $('#'+elementID).val()
-
       data['_csrf'] = $('meta[name="csrf-token"]').attr('content')
 
       console.log('>>>>>>>>>>>>>>>>>>>> editProfileForm > SUBMIT > data <<<<<<<<<<<<<<<<<<<<<<<: ', data)
@@ -223,6 +221,7 @@ var helper = {
             if(data.validatedData){
 
               console.log('#editProfileForm > ajax > SUCCESS > ERROR > validatedData: ', data)
+
               helper.handleErrorResponse(data.validatedData)
 
             }else{
@@ -235,7 +234,6 @@ var helper = {
               $('#editProfileFormModal .cancelButton').trigger('click')
 
             }
-
             $('.loading').hide()
             return false
           }
@@ -245,16 +243,15 @@ var helper = {
         error: function(xhr, status, error) {
 
           console.log('#editProfileForm > ajax > ERROR > ERROR: ', xhr)
-
+          
+          $('.loading').hide()
+          $('#editProfileFormModal .cancelButton').trigger('click')
           var parsedXHR = JSON.parse(xhr.responseText)
           location.href = parsedXHR.redirect
           return false
-
         }
       })
-
     })
-
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -269,7 +266,6 @@ var helper = {
 
       var whichformdataid = $('body').data('whichformdataid')
       var newVal = $.trim($('#email').val())
-
       var data = {}
       var serviceUrl = $(this).attr('action')
       var constrainedFormElements = document.getElementById('userDataEmailPathChangeForm').querySelectorAll('[required]')
@@ -373,6 +369,9 @@ var helper = {
 
           console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > ERROR > ERROR <<<<<<<<<<: ', xhr)
 
+          $('.loading').hide()
+          helper.resetNewUserDataItemModals()
+          $('#userDataEmailPathChangeModal .cancelButton').trigger('click')
           var parsedXHR = JSON.parse(xhr.responseText)
           location.href = parsedXHR.redirect
           return false
@@ -466,6 +465,7 @@ var helper = {
             } else if (data.validatedData) {
 
               console.log('>>>>>>>>>> userDataPasswordPathChangeForm > ajax > SUCCESS > ERROR 2 <<<<<<<<<<: ', data)
+
               $('body').data('validatedData', data.validatedData)
               helper.handleErrorResponse(data.validatedData)
 
@@ -490,6 +490,9 @@ var helper = {
 
           console.log('>>>>>>>>>> userDataPasswordPathChangeForm > ajax > ERROR > ERROR <<<<<<<<<<: ', xhr)
 
+          $('.loading').hide()
+          helper.resetNewUserDataItemModals()
+          $('#userDataPasswordPathChangeModal .cancelButton').trigger('click')
           var parsedXHR = JSON.parse(xhr.responseText)
           location.href = parsedXHR.redirect
           return false
@@ -732,12 +735,14 @@ var helper = {
     $('#currentUserDataPathModal').find('.error').removeClass('show').addClass('hide')
     $('#currentUserDataPathRegistered').html('')
 
+    $('#userDataEmailPathChangeForm .formerror').removeClass('show').addClass('hide')
     $('#userDataEmailPathChangeForm').get(0).reset()
     $('#userDataEmailPathChangeModal .modalAlertWarning .alert').html('')
     $('#userDataEmailPathChangeModal .modalAlertWarning').hide()
     $('#userDataEmailPathChangeModal input').removeClass('has-error')
     $('#userDataEmailPathChangeModal').find('.error').removeClass('show').addClass('hide')
 
+    $('#userDataPasswordPathChangeForm .formerror').removeClass('show').addClass('hide')
     $('#userDataPasswordPathChangeForm').get(0).reset()
     $('#userDataPasswordPathChangeModal .modalAlertWarning .alert').html('')
     $('#userDataPasswordPathChangeModal .modalAlertWarning').hide();
@@ -1570,55 +1575,34 @@ var helper = {
       switch (p) {
 
         case 'email':
-
-          newUserDataItem ? p = 'newUserDataItem' : null
-          newUserDataItem ? q = 'confirmNewUserDataItem' : q = 'confirmEmail'
-
-          helper.validateEmailField(null, p, q, data['email'])
+          helper.validateEmailField(null, 'email', 'confirmEmail', data[p])
           break
 
         case 'confirmEmail':
-
-          newUserDataItem ? p = 'confirmNewUserDataItem' : null
-          newUserDataItem ? q = 'newUserDataItem' : q = 'email'
-
-          helper.validateEmailField(null, p, q, data['confirmEmail'])
+          helper.validateEmailField(null, 'confirmEmail', 'email', data[p])
           break
 
         case 'password':
-
-          newUserDataItem ? p = 'newUserDataItem' : null
-          newUserDataItem ? q = 'confirmNewUserDataItem' : q = 'confirmPassword'
-
-          if (helper.validateParams(p, p, data['password'])) {
-            $('#'+q).off('input')
+          if (helper.validateParams('password', 'confirmPassword', data[p])) {
+            $('#confirmPassword').off('input')
           }
-
-          helper.testUserInput(p, helper.pattern.password, data['password'])
+          helper.testUserInput(p, helper.pattern.password, data[p])
           break
 
         case 'confirmPassword':
-
-          newUserDataItem ? p = 'confirmNewUserDataItem' : null
-          newUserDataItem ? q = 'newUserDataItem' : q = 'password'
-
-          if (helper.validateParams(p, p, data['confirmPassword'])) {
-            $('#'+q).off('input')
+          if (helper.validateParams('password', 'confirmPassword', data[p])) {
+            $('#password').off('input')
           }
-
-          helper.testUserInput(p, helper.pattern.password, data['confirmPassword'])
+          helper.testUserInput(p, helper.pattern.password, data[p])
           break
 
         case 'firstname':
         case 'lastname':
         case 'city':
-
-          console.log('### handleErrorResponse: ', p, ' :: ', data[p])
           helper.textElementValidation(p, helper.pattern.basictext, data[p])
           break
 
         case 'state':
-
           helper.selectElementValidation(p, data[p])
           break
 
