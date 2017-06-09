@@ -170,7 +170,7 @@ img.img-full-width{width:100%}
 .splash-main button:focus{outline:0}
 .splash-main .section{padding-top:50px;padding-bottom:50px}
 
-.splash-main .spotlight{background-image:url(/images/splashImage14.jpeg);background-size:cover;background-position-y:40%;height:640px}
+.splash-main .spotlight{background-image:url(/images/splashImage14.jpg);background-size:cover;background-position-y:40%;height:640px}
 
 @media (max-width:768px){.splash-main .spotlight{height:600px;background-position-y:35%}}
 
@@ -224,7 +224,7 @@ img.img-full-width{width:100%}
 
  @media (max-width:768px){.splash-main .section-uses img{padding:8px;margin-top:20px}}
 
- .splash-main .break-section{height:340px;background-image:url(/images/splashImage13.jpeg);background-size:cover;background-position-y:59%}
+ .splash-main .break-section{height:340px;background-image:url(/images/splashImage13.jpg);background-size:cover;background-position-y:59%}
 
  .splash-main .break-section .head{color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.3)}
 

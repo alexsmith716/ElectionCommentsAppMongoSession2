@@ -207,7 +207,19 @@ app.use(function (req, res, next) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+
+// Operational Errors +++++++++++++++++++++++++++
+
+
+
+// Programmer Errors +++++++++++++++++++++++++++
+
+// Handle uncaughtException
+
+
+
 if (app.get('env') === 'development') {
+
   app.use(function (err, req, res, next) {
     console.log('############################# DEVELOPMENT ' + err.status + ' ############################')
 
@@ -229,15 +241,22 @@ if (app.get('env') === 'development') {
     req.logout()
 
     req.session.destroy(function () {
+
       if (req.xhr) {
+
         console.log('############################# DEVELOPMENT > req.session.destroy > YES req.xhr ############################')
         res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'})
+
       } else {
+
         console.log('############################# DEVELOPMENT > req.session.destroy > NO req.xhr ############################')
         res.redirect('/notifyerror')
+
       }
+
     })
   })
+
 }
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
