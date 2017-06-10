@@ -1,3 +1,4 @@
+
 extends layout
 
 block metas
@@ -45,16 +46,6 @@ block content
 
             br
 
-
-            if currentUser
-              p CURRENT USER !!!!!!!!
-
-            br 
-
-            p Foooooo!!!!!!!
-
-            br
-
             p Please
               |&nbsp;
               a.highlight(href='/') visit our homepage
@@ -64,27 +55,23 @@ block content
               a.highlight(href='/signup') Sign Up
               |&nbsp;to start using Election App 2016.
 
-
             br
             hr
             br
 
-
             - if ( notifyErrorMessageObject )
-              - var appError = `${notifyErrorMessageObject}`
+              - var appError = `${notifyErrorMessageObject.err}`
               - var appErrorName = `${notifyErrorMessageObject.name}`
               - var appErrorMessage = `${notifyErrorMessageObject.message}`
               - var appErrorStatus = `${notifyErrorMessageObject.status}`
               - var appErrorCode = `${notifyErrorMessageObject.code}`
               - var appErrorReferer = `${notifyErrorMessageObject.referer}`
+              - var appErrorXHR = `${notifyErrorMessageObject.xhr}`
               - var appErrorStack = `${notifyErrorMessageObject.stack}`
-
 
 
             - if ( notifyErrorMessageObject )
               pre
-                | Error: #{`${notifyErrorMessageObject}`}
-                |
                 | Name: #{appErrorName}
                 |
                 | Message: #{appErrorMessage}
@@ -93,11 +80,8 @@ block content
                 |
                 | Code: #{appErrorCode}
                 |
+                | Xhr: #{appErrorXHR}
+                |
                 | Referer: #{appErrorReferer}
                 |
                 | Stack: #{appErrorStack}
-
-
-
-
-

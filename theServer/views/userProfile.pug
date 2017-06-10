@@ -15,8 +15,6 @@ block bodyScripts
 
 block content
 
-
-
   .modal.fade(id='userProfileModalAlert', tabindex='-1')
     .modal-dialog
       .modal-content
@@ -26,17 +24,15 @@ block content
 
         .modal-body
 
-          .alertSuccess.alert.alert-success.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;") 
-          .alertWarning.alert.alert-warning(role="alert", style="margin-top: 10px; margin-bottom: 22px;") Foooooobers
-          .alertDanger.alert.alert-danger(role="alert", style="margin-top: 10px; margin-bottom: 22px;") Foobers
+          .alertSuccess.alert.alert-success.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
+          .alertWarning.alert.alert-warning.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
+          .alertDanger.alert.alert-danger.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
 
-          .handleError
+          .eMessage
 
           button(class="btn btn-default btn-md" data-dismiss="modal") OK
 
         .modal-footer
-
-
 
 
   .modal.fade(id="editProfileFormModal", tabindex="-1")

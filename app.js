@@ -220,17 +220,24 @@ if (app.get('env') === 'development') {
     console.log('############################# DEV ERROR status: ', err.status)
     console.log('############################# DEV ERROR name: ', err.name)
     console.log('############################# DEV ERROR message: ', err.message)
-    console.log('############################# DEV ERROR xhr: ', req.xhr)
-    console.log('############################# DEV ERR: ', err)
+    console.log('############################# DEV ERROR xhr11: ', req.xhr)
+    console.log('############################# DEV ERR11: ', err)
 
     res.locals.resLocalsBasicView = 'ResLocalsBasicViewTrue'
 
     if (req.xhr) {
 
-      req.session.notifyErrorMessageObject = {'err': err, 'name': err.name, 'message': err.message, 'status': err.status, 'code': err.code, 'referer': req.headers['referer'], 'stack': err.stack}
+      req.session.notifyErrorMessageObject = {'name': err.name, 'message': err.message, 'status': err.status, 'code': err.code, 'referer': req.headers['referer'], 'stack': err.stack, 'xhr': req.xhr}
 
       console.log('############################# DEVELOPMENT > req.session.destroy > YES XHR ############################', typeof err)
-      res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'})
+
+      /*
+<p>If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com. Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p><br><hr><br><pre></pre>
+      */
+      var errMessage = '<pre>'+err.message+'</pre>'
+
+      // res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'})
+      res.json({'response': 'error', 'type': 'error', 'errAlert': 'A website error recently occurred, please try to Log In or Sign Up again.', 'errMessage': errMessage, 'err': req.session.notifyErrorMessageObject})
 
     } else {
 
