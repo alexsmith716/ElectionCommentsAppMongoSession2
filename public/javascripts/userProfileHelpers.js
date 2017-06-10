@@ -1013,25 +1013,39 @@ var helper = {
 
         if (data.response === 'success') {
 
-          console.log('validateNewUserDataService > SUCCESS: ', data)
-          callback(null, true)
+          console.log('validateNewUserDataService > SUCCESS > SUCCESS: ', data)
 
+          callback(null, true)
         } else {
 
           console.log('validateNewUserDataService > SUCCESS > ERROR: ', data)
+
           callback(data, false)
         }
 
         ms ? $(ms + ' .loading').hide() : helper.hideLoading()
-
       },
 
       error: function (xhr, status, error) {
 
-        console.log('validateNewUserDataService > ERROR: ', xhr)
-        var parsedXHR = JSON.parse(xhr.responseText)
+        console.log('validateNewUserDataService > ERROR > ERROR > xhr: ', xhr)
 
-        location.href = parsedXHR.redirect
+        var parsedXHR = JSON.parse(xhr.responseText)
+        //location.href = parsedXHR.redirect
+
+        console.log('validateNewUserDataService > ERROR > ERROR > parsedXHR 1:', parsedXHR)
+        console.log('validateNewUserDataService > ERROR > ERROR > parsedXHR 2:', parsedXHR.err.message)
+
+        ms ? $(ms + ' .loading').hide() : helper.hideLoading()
+        $('#userProfileModalAlert .alertDanger').html(parsedXHR.errAlert)
+        $('#userProfileModalAlert .eMessage').html(parsedXHR.errMessage)
+        $('#userProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
+        $('body').data('doNextModal', 'userProfileModalAlert')
+        $('#currentUserDataPathModal .cancelButton').trigger('click')
+        // var parsedXHR = JSON.parse(xhr.responseText)
+        // location.href = parsedXHR.redirect
+        return false
+
       }
     })
   },
