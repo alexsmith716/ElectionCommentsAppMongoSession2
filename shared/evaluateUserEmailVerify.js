@@ -7,7 +7,7 @@ module.exports = function (req, res, doUserValidatedEmail, cb) {
 
   var email = req.body.data.trim()
 
-  User.findOne( { email: email } ).exec(function (err, user) {
+  User.findOne( { emailXX: emailXX } ).exec(function (err, user) {
 
     if(doUserValidatedEmail === true){
       // err = new Error('Bad Request')
