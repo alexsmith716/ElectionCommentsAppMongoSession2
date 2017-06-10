@@ -23,25 +23,35 @@ block content
 
           .panel-body
 
-            - if(title != undefined)
+            - if (title != undefined)
               h3= title
 
             - if (message != undefined)
 
-              if(type === 'success')
-                .alert.alert-success(role="alert") #{message}
+              if (type === 'success')
+                .alert.alert-success #{message}
 
-              if(type === 'warning')
-                .alert.alert-warning(role="alert") #{message}
+              if (type === 'warning')
+                .alert.alert-warning #{message}
 
-              if(type === 'danger')
-                .alert.alert-danger(role="alert") #{message}
+              if (type === 'danger')
+                .alert.alert-danger #{message}
 
 
             p If this problem continues, please contact our Help Desk at 555-555-1234 or email customer.care@ThisGreatApp.com. Visit our
               |&nbsp;
               a.highlight(href='/customerservice') Customer Service
               |&nbsp;webpage for a full listing of helpful information.
+
+            br
+
+
+            if currentUser
+              p CURRENT USER !!!!!!!!
+
+            br 
+
+            p Foooooo!!!!!!!
 
             br
 
@@ -60,20 +70,22 @@ block content
             br
 
 
-            - if( notifyErrorMessageObject )
+            - if ( notifyErrorMessageObject )
               - var appError = `${notifyErrorMessageObject}`
               - var appErrorName = `${notifyErrorMessageObject.name}`
-              - var appErrorMessage = `${notifyErrorMessageObject.appErrorStack}`
+              - var appErrorMessage = `${notifyErrorMessageObject.message}`
               - var appErrorStatus = `${notifyErrorMessageObject.status}`
               - var appErrorCode = `${notifyErrorMessageObject.code}`
+              - var appErrorReferer = `${notifyErrorMessageObject.referer}`
               - var appErrorStack = `${notifyErrorMessageObject.stack}`
 
 
-            - if( notifyErrorMessageObject )
+
+            - if ( notifyErrorMessageObject )
               pre
                 | Error: #{`${notifyErrorMessageObject}`}
                 |
-                | Name: #{`${notifyErrorMessageObject.name}`}
+                | Name: #{appErrorName}
                 |
                 | Message: #{appErrorMessage}
                 |
@@ -81,9 +93,7 @@ block content
                 |
                 | Code: #{appErrorCode}
                 |
-                | Xhr: #{notifyErrorMessageReqXhr}
-                |
-                | Referer: #{notifyErrorMessageReferer}
+                | Referer: #{appErrorReferer}
                 |
                 | Stack: #{appErrorStack}
 

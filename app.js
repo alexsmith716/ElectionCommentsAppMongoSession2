@@ -3,6 +3,7 @@ require('dotenv').load()
 
 process.env.NODE_ENV = 'development'
 
+// var cluster = require('cluster')
 var express = require('express')
 var helmet = require('helmet')
 var https = require('https')
@@ -164,7 +165,7 @@ app.use(function (req, res, next) {
   res.locals.reqUrl = req.url
   res.locals.currentURL = req.url
 
-  console.log('######### Going through App Now #########')
+  console.log('>>>>>>>>>>>>>>>>>>>>>>> GOING THROUGH APP NOW <<<<<<<<<<<<<<<<<<<')
 
   // if(res.locals.currentUser){
     // req.session.paginateFrom = res.locals.sortDocsFrom;
@@ -208,28 +209,12 @@ app.use(function (req, res, next) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
-// Operational Errors +++++++++++++++++++++++++++
-
-
-
-// Programmer Errors +++++++++++++++++++++++++++
-
-// Handle uncaughtException
-
-
-
 if (app.get('env') === 'development') {
 
   app.use(function (err, req, res, next) {
     console.log('############################# DEVELOPMENT ' + err.status + ' ############################')
 
     res.status(err.status || 500)
-
-    // res.locals.message = err.message
-    res.locals.notifyErrorMessageObject = err
-    res.locals.notifyErrorMessageReqXhr = req.xhr
-    res.locals.notifyErrorMessageReferer = req.headers['referer']
-    res.locals.resLocalsBasicView = 'ResLocalsBasicView!!'
 
     console.log('############################# DEV ERROR code: ', err.code)
     console.log('############################# DEV ERROR status: ', err.status)
@@ -238,26 +223,27 @@ if (app.get('env') === 'development') {
     console.log('############################# DEV ERROR xhr: ', req.xhr)
     console.log('############################# DEV ERR: ', err)
 
-    req.logout()
+    res.locals.resLocalsBasicView = 'ResLocalsBasicViewTrue'
 
-    req.session.destroy(function () {
+    if (req.xhr) {
 
-      if (req.xhr) {
+      req.session.notifyErrorMessageObject = {'err': err, 'name': err.name, 'message': err.message, 'status': err.status, 'code': err.code, 'referer': req.headers['referer'], 'stack': err.stack}
 
-        console.log('############################# DEVELOPMENT > req.session.destroy > YES req.xhr ############################')
-        res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'})
+      console.log('############################# DEVELOPMENT > req.session.destroy > YES XHR ############################', typeof err)
+      res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'})
 
-      } else {
+    } else {
 
-        console.log('############################# DEVELOPMENT > req.session.destroy > NO req.xhr ############################')
-        res.redirect('/notifyerror')
+      res.locals.notifyErrorMessageObject = err
+      res.locals.notifyErrorMessageObject.referer = req.headers['referer']
 
-      }
+      console.log('############################# DEVELOPMENT > req.session.destroy > NO XHR ############################')
+      res.redirect('/notifyerror')
 
-    })
+    }
   })
-
 }
+
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */

@@ -54,12 +54,14 @@ var helper = {
 
   initializeJqueryEvents:  function(){
 
-    $('#editProfileModalAlert').on('shown.bs.modal', function () {
+    $('#userProfileModalAlert').on('shown.bs.modal', function () {
       //
     })
 
-    $('#editProfileModalAlert').on('hidden.bs.modal', function () {
-      //
+    $('#userProfileModalAlert').on('hidden.bs.modal', function () {
+      $('#userProfileModalAlert .modal-title').html('')
+      $('#userProfileModalAlert .alert').html('')
+      $('#userProfileModalAlert').find('.alert').removeClass('show').addClass('hide')
     })
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -85,7 +87,6 @@ var helper = {
       $('.modalCancelSubmitBtns').show()
       var nextModal = $('body').data('doNextModal')
       nextModal ? helper.doNextModal(nextModal) : null
-
     })
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -209,9 +210,10 @@ var helper = {
 
             console.log('#editProfileForm > ajax > SUCCESS > SUCCESS: ')
 
-            $('#editProfileModalAlert .alertSuccess').html('You\'re '+labelText+' has been successfully changed!')
-            $('#editProfileModalAlert .alertSuccess').addClass('show').removeClass('hide')
-            $('body').data('doNextModal', 'editProfileModalAlert')
+            $('#userProfileModalAlert .modal-title').html('Edit Profile Update Alert')
+            $('#userProfileModalAlert .alertSuccess').html('You\'re '+labelText+' has been successfully changed!')
+            $('#userProfileModalAlert .alertSuccess').addClass('show').removeClass('hide')
+            $('body').data('doNextModal', 'userProfileModalAlert')
             $('#editProfileFormModal .cancelButton').trigger('click')
             $('.'+whichformdataid).text(newVal)
             $('.loading').hide()
@@ -229,9 +231,9 @@ var helper = {
 
               console.log('#editProfileForm > ajax > SUCCESS > ERROR > ERR: ', data)
 
-              $('#editProfileModalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
-              $('#editProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
-              $('body').data('doNextModal', 'editProfileModalAlert')
+              $('#userProfileModalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
+              $('#userProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
+              $('body').data('doNextModal', 'userProfileModalAlert')
               $('#editProfileFormModal .cancelButton').trigger('click')
 
             }
@@ -246,9 +248,9 @@ var helper = {
           console.log('#editProfileForm > ajax > ERROR > ERROR: ', xhr)
           
           $('.loading').hide()
-          $('#editProfileModalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
-          $('#editProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
-          $('body').data('doNextModal', 'editProfileModalAlert')
+          $('#userProfileModalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
+          $('#userProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
+          $('body').data('doNextModal', 'userProfileModalAlert')
           $('#editProfileFormModal .cancelButton').trigger('click')
           // var parsedXHR = JSON.parse(xhr.responseText)
           // location.href = parsedXHR.redirect
@@ -311,9 +313,9 @@ var helper = {
 
             console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > SUCCESS > SUCCESS <<<<<<<<<<: ', data)
 
-            $('#editProfileModalAlert .alertSuccess').html('You\'re Email has been successfully changed!')
-            $('#editProfileModalAlert .alertSuccess').addClass('show').removeClass('hide')
-            $('body').data('doNextModal', 'editProfileModalAlert')
+            $('#userProfileModalAlert .alertSuccess').html('You\'re Email has been successfully changed!')
+            $('#userProfileModalAlert .alertSuccess').addClass('show').removeClass('hide')
+            $('body').data('doNextModal', 'userProfileModalAlert')
             $('#userDataEmailPathChangeModal .cancelButton').trigger('click')
             $('.'+whichformdataid).text(newVal)
             $('.loading').hide()
@@ -358,9 +360,9 @@ var helper = {
 
               console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > SUCCESS > ERROR 3 <<<<<<<<<<: ', data)
 
-              $('#editProfileModalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
-              $('#editProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
-              $('body').data('doNextModal', 'editProfileModalAlert')
+              $('#userProfileModalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
+              $('#userProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
+              $('body').data('doNextModal', 'userProfileModalAlert')
               $('#userDataEmailPathChangeModal .cancelButton').trigger('click')
               
             }
@@ -375,9 +377,9 @@ var helper = {
           console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > ERROR > ERROR <<<<<<<<<<: ', xhr)
 
           $('.loading').hide()
-          $('#editProfileModalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
-          $('#editProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
-          $('body').data('doNextModal', 'editProfileModalAlert')
+          $('#userProfileModalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
+          $('#userProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
+          $('body').data('doNextModal', 'userProfileModalAlert')
           $('#userDataEmailPathChangeModal .cancelButton').trigger('click')
           // var parsedXHR = JSON.parse(xhr.responseText)
           // location.href = parsedXHR.redirect
@@ -435,9 +437,9 @@ var helper = {
 
             console.log('>>>>>>>>>> userDataPasswordPathChangeForm > ajax > SUCCESS > SUCCESS <<<<<<<<<<: ', data)
 
-            $('#editProfileModalAlert .alertSuccess').html('You\'re Password has been successfully changed!')
-            $('#editProfileModalAlert .alertSuccess').addClass('show').removeClass('hide')
-            $('body').data('doNextModal', 'editProfileModalAlert')
+            $('#userProfileModalAlert .alertSuccess').html('You\'re Password has been successfully changed!')
+            $('#userProfileModalAlert .alertSuccess').addClass('show').removeClass('hide')
+            $('body').data('doNextModal', 'userProfileModalAlert')
             $('#userDataPasswordPathChangeModal .cancelButton').trigger('click')
             $('.loading').hide()
 
@@ -481,9 +483,9 @@ var helper = {
 
               console.log('>>>>>>>>>> userDataPasswordPathChangeForm > ajax > SUCCESS > ERROR 3 <<<<<<<<<<: ', data)
 
-              $('#editProfileModalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
-              $('#editProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
-              $('body').data('doNextModal', 'editProfileModalAlert')
+              $('#userProfileModalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
+              $('#userProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
+              $('body').data('doNextModal', 'userProfileModalAlert')
               $('#userDataPasswordPathChangeModal .cancelButton').trigger('click')
               
             }
@@ -498,9 +500,9 @@ var helper = {
           console.log('>>>>>>>>>> userDataPasswordPathChangeForm > ajax > ERROR > ERROR <<<<<<<<<<: ', xhr)
 
           $('.loading').hide()
-          $('#editProfileModalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
-          $('#editProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
-          $('body').data('doNextModal', 'editProfileModalAlert')
+          $('#userProfileModalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
+          $('#userProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
+          $('body').data('doNextModal', 'userProfileModalAlert')
           $('#userDataPasswordPathChangeModal .cancelButton').trigger('click')
           // var parsedXHR = JSON.parse(xhr.responseText)
           // location.href = parsedXHR.redirect

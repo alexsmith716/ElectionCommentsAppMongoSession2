@@ -15,6 +15,23 @@ block bodyScripts
 
 block content
 
+  .modal.fade(id='userProfileModalAlert', tabindex='-1')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type="button" data-dismiss="modal") &times;
+          h4.modal-title
+
+        .modal-body
+
+          .alertSuccess.alert.alert-success.hide(style="margin-top: 10px; margin-bottom: 22px;")
+          .alertWarning.alert.alert-warning.hide(style="margin-top: 10px; margin-bottom: 22px;")
+          .alertDanger.alert.alert-danger.hide(style="margin-top: 10px; margin-bottom: 22px;")
+
+          button(class="btn btn-default btn-md" data-dismiss="modal") OK
+
+        .modal-footer
+
   .modal.fade(id="forgotPasswordFormModal", name="forgotPasswordFormModal", tabindex='-1')
     .modal-dialog
       .modal-content
