@@ -231,13 +231,10 @@ if (app.get('env') === 'development') {
 
       console.log('############################# DEVELOPMENT > req.session.destroy > YES XHR ############################', typeof err)
 
-      /*
-<p>If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com. Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p><br><hr><br><pre></pre>
-      */
-      var errMessage = '<pre>'+err.message+'</pre>'
+      var errMessage = '<pre><p>Name:&nbsp;'+err.name+'</p><p>Message:&nbsp;'+err.message+'</p><p>Status:&nbsp;'+err.status+'</p><p>Code:&nbsp;'+err.code+'</p><p>Xhr:&nbsp;'+err.xhr+'</p><p>Referer:&nbsp;'+err.referer+'</p><p>Stack:&nbsp;'+err.stack+'</p></pre>'
 
       // res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'})
-      res.json({'response': 'error', 'type': 'error', 'errAlert': 'A website error recently occurred, please try to Log In or Sign Up again.', 'errMessage': errMessage, 'err': req.session.notifyErrorMessageObject})
+      res.json({'response': 'error', 'type': 'error', 'errAlert': 'A website error recently occurred. If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com. Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.', 'errMessage': errMessage, 'err': req.session.notifyErrorMessageObject})
 
     } else {
 

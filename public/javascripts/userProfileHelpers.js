@@ -13,6 +13,10 @@ var helper = {
     console.log('### userProfileHelpers > isSafari: ', isSafari)
     console.log('### userProfileHelpers > interactiveFormValidationEnabled??: ', interactiveFormValidationEnabled)
 
+    //var windowHeight = $(window).height();
+    var windowHeight = ($(window).height() - 150);
+    $('#modalScrollbox').css('max-height', windowHeight+'px');
+
     helper.initializeJqueryEvents()
   },
 
@@ -1037,8 +1041,9 @@ var helper = {
         console.log('validateNewUserDataService > ERROR > ERROR > parsedXHR 2:', parsedXHR.err.message)
 
         ms ? $(ms + ' .loading').hide() : helper.hideLoading()
+        $('#userProfileModalAlert .modal-title').html('Notify Website Error')
         $('#userProfileModalAlert .alertDanger').html(parsedXHR.errAlert)
-        $('#userProfileModalAlert .eMessage').html(parsedXHR.errMessage)
+        $('#userProfileModalAlert #modalScrollbox').html(parsedXHR.errMessage)
         $('#userProfileModalAlert .alertDanger').addClass('show').removeClass('hide')
         $('body').data('doNextModal', 'userProfileModalAlert')
         $('#currentUserDataPathModal .cancelButton').trigger('click')
