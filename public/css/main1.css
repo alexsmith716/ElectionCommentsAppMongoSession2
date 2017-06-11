@@ -532,3 +532,8 @@ top: 0px;
 left: 0px;
 }
 
+
+#modalScrollbox{
+    overflow-y: auto;
+}
+
