@@ -1,22 +1,21 @@
 
-var fs  = require('fs');
-var https   = require('https');
-var request = require('request');
-var passport = require('passport');
-var pugCompiler = require('../../shared/pugCompiler.js');
-var mailer = require('../../shared/mailer.js');
-var sanitizeInputModule = require('../../shared/sanitizeInput.js');
-require('../../shared/sessionPrototype');
-var serverSideValidation = require('../../shared/serverSideValidation.js');
-
-var createError   = require('http-errors');
+var fs  = require('fs')
+var https   = require('https')
+var request = require('request')
+var passport = require('passport')
+var pugCompiler = require('../../shared/pugCompiler.js')
+var mailer = require('../../shared/mailer.js')
+var sanitizeInputModule = require('../../shared/sanitizeInput.js')
+require('../../shared/sessionPrototype')
+var customError = require('../../shared/customError.js')
+var serverSideValidation = require('../../shared/serverSideValidation.js')
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 var apiOptions = {
   server : 'https://localhost:3000'
-};
+}
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -85,7 +84,7 @@ module.exports.getIndex = function (req, res, next) {
 }
 /*
 module.exports.getIndex = function(req, res, next){
-  var newExceptionError;
+  var newCustomError;
   var requestOptions, path;
   path = '/api/index';
 
@@ -118,9 +117,9 @@ module.exports.getIndex = function(req, res, next){
       })
 
     }else{
-      newExceptionError = new Error('Bad Request');
-      newExceptionError.status = 400;
-      return next(newExceptionError);
+      newCustomError = new Error('Bad Request');
+      newCustomError.status = 400;
+      return next(newCustomError);
 
     }
   });
@@ -131,8 +130,14 @@ module.exports.getIndex = function(req, res, next){
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.getUserHome = function (req, res) {
-  res.render('userHome')
-
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 1 >>>>>>>>>>>>>>>>>>>>>>>>>>')
+  if (req.query.err) {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 2 >>>>>>>>>>>>>>>>>>>>>>>>>>: ', req.query.err)
+  }
+  res.render('userHome', {
+    err: req.query.err
+  })
+  //res.render('userHome')
 };
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -307,39 +312,82 @@ module.exports.getSignup = function (req, res, next) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+
+
+
+
+
+
+
 module.exports.getUserProfile = function (req, res, next) {
-  var newExceptionError
+  var newCustomError
   var requestOptions, path
   path = '/api/userprofile/' + res.locals.currentUser.id
 
-  console.log(console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<<'))
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 1<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
   requestOptions = {
     rejectUnauthorized: false,
     url : apiOptions.server + path,
     method : 'GET',
     auth : { 'username': res.locals.currentUser.email, 'password': res.locals.currentUser.datecreated.toISOString()},
-    json : {}
+    json : {'referer': req.headers['referer']}
   }
 
   request(requestOptions, function (err, response, body) {
+
+    if (response.statusCode === 200) {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+      res.render('userProfile', {
+        csrfToken: req.csrfToken(),
+        responseBody: body
+      })
+
+    } else if (err) {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4<<<<<<<<<<<<<<<<<<<<<<<<<<<<1: ', err)
+      res.redirect('/userhome/?err='+err)
+
+    } else {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 5<<<<<<<<<<<<<<<<<<<<<<<<<<<<body: ', body)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 5<<<<<<<<<<<<<<<<<<<<<<<<<<<<body.stack: ', body.stack)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 5<<<<<<<<<<<<<<<<<<<<<<<<<<<<body.Stack: ', body.Stack)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 6<<<<<<<<<<<<<<<<<<<<<<<<<<<<body.name: ', body.name)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 7<<<<<<<<<<<<<<<<<<<<<<<<<<<<body.message: ', body.message)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 8<<<<<<<<<<<<<<<<<<<<<<<<<<<<body.status: ', body.status)
+      res.redirect('/userhome/?err='+body)
+
+    }
+    /*
     if (err) {
+
       return next(err)
 
     } else if (response.statusCode === 200) {
+
       res.render('userProfile', {
         csrfToken: req.csrfToken(),
         responseBody: body
       })
 
     } else {
-      newExceptionError = new Error('Bad Request')
-      newExceptionError.status = 400
-      return next(newExceptionError)
+
+      newCustomError = new customError('Bad Request', 400, req.body.referer)
+      return next(newCustomError)
 
     }
+    */
   })
 }
+
+
+
+
+
+
+
+
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -357,8 +405,10 @@ module.exports.getMembersOnly = function (req, res) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.renderNotifyError = function (req, res) {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> renderNotifyError > 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', req.session.notifyErrorMessageObject.name)
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> renderNotifyError > 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<< req.user: ', req.user)
 
+  res.render('userHome')
+  /*
   if (req.session.notifyErrorMessageObject) {
     res.locals.notifyErrorMessageObject = req.session.notifyErrorMessageObject
   }
@@ -372,6 +422,7 @@ module.exports.renderNotifyError = function (req, res) {
     message: notifyMessage,
     type: notifyMessageType
   })
+  */
 }
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */

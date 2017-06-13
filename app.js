@@ -25,6 +25,7 @@ var createError = require('http-errors')
 require('./theAPI/model/dbConnector')
 var sanitize = require('./shared/sanitizeInput.js')
 require('./shared/sessionPrototype')
+var onFinished = require('on-finished')
 
 var app = express()
 
@@ -129,17 +130,16 @@ app.use(function (req, res, next) {
   console.log('REQ.method ++: ', req.method)
   console.log('REQ.url ++: ', req.url)
   console.log('REQ.originalUrl ++: ', req.originalUrl)
+  console.log('REQ.headers ++: ', req.headers)
   // console.log('REQ.headers.referer ++: ', req.headers['referer'])
   // console.log('REQ.headers.user-agent ++: ', req.headers['user-agent'])
-  console.log('REQ.headers ++: ', req.headers)
   // console.log('REQ.query ++: ', req.query)
   // console.log('REQ.query.token ++: ', req.query.token)
   // console.log('REQ.session ++: ', req.session)
   // console.log('REQ.sessionID ++: ', req.sessionID)
   // console.log('REQ.user ++: ', req.user)
-  req.user ? console.log('REQ.user._id: ', req.user._id) : null
-  // console.log('REQ.query ++: ', req.query)
-  console.log('REQ.body ++: ', req.body)
+  // req.user ? console.log('REQ.user._id: ', req.user._id) : null
+  // console.log('REQ.body ++: ', req.body)
   // console.log('REQ.params ++: ', req.params)
   console.log('RES.headersSent ++: ', res.headersSent)
   console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
@@ -153,6 +153,7 @@ app.use(function (req, res, next) {
     err.status = 400
     return next(err)
   } else {
+    req.headers['referer'] ? req.session.referer = req.headers['referer'] : null
     next()
   }
 })
@@ -200,6 +201,7 @@ app.use('/api', apiRoutes)
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 app.use(function (req, res, next) {
+  console.log('############################# DEVELOPMENT ERR HANDLER 1 ############################')
   var err = new Error('Not Found')
   err.status = 404
   next(err)
@@ -212,38 +214,35 @@ app.use(function (req, res, next) {
 if (app.get('env') === 'development') {
 
   app.use(function (err, req, res, next) {
-    console.log('############################# DEVELOPMENT ' + err.status + ' ############################')
+    console.log('############################# DEVELOPMENT ERR HANDLER 2 ############################')
 
     res.status(err.status || 500)
 
-    console.log('############################# DEV ERROR code: ', err.code)
-    console.log('############################# DEV ERROR status: ', err.status)
-    console.log('############################# DEV ERROR name: ', err.name)
-    console.log('############################# DEV ERROR message: ', err.message)
-    console.log('############################# DEV ERROR xhr11: ', req.xhr)
-    console.log('############################# DEV ERR11: ', err)
-
+    console.log('############################# DEV ERR: ', err)
+    console.log('############################# DEV ERR.code: ', err.code)
+    console.log('############################# DEV ERR.status: ', err.status)
+    console.log('############################# DEV ERR.name: ', err.name)
+    console.log('############################# DEV ERR.message: ', err.message)
+    console.log('############################# DEV ERR.referer: ', err.referer)
+    console.log('############################# ++++++++++++++++++++++++++++++++++++++++')
+    console.log('############################# DEV REQ.HEADERS.referer: ', req.headers['referer'])
+    console.log('############################# DEV REQ.xhr: ', req.xhr)
     res.locals.resLocalsBasicView = 'ResLocalsBasicViewTrue'
-
-    if (req.xhr) {
 
       req.session.notifyErrorMessageObject = {'name': err.name, 'message': err.message, 'status': err.status, 'code': err.code, 'referer': req.headers['referer'], 'stack': err.stack, 'xhr': req.xhr}
 
-      console.log('############################# DEVELOPMENT > req.session.destroy > YES XHR ############################', typeof err)
-
       var errMessage = '<pre><p>Name:&nbsp;'+err.name+'</p><p>Message:&nbsp;'+err.message+'</p><p>Status:&nbsp;'+err.status+'</p><p>Code:&nbsp;'+err.code+'</p><p>Xhr:&nbsp;'+err.xhr+'</p><p>Referer:&nbsp;'+err.referer+'</p><p>Stack:&nbsp;'+err.stack+'</p></pre>'
 
+    if (req.xhr) {
+
+      console.log('############################# DEVELOPMENT ERR HANDLER 2 > YES XHR ############################')
+
       // res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'})
-      res.json({'response': 'error', 'type': 'error', 'errAlert': 'A website error recently occurred. If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com. Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.', 'errMessage': errMessage, 'err': req.session.notifyErrorMessageObject})
+      res.json({'response': 'error', 'type': 'error', 'errAlert': '<p>A website error recently occurred.</p><p>If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com.</p><p>Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p>', 'errMessage': errMessage, 'err': req.session.notifyErrorMessageObject})
 
     } else {
-
-      res.locals.notifyErrorMessageObject = err
-      res.locals.notifyErrorMessageObject.referer = req.headers['referer']
-
-      console.log('############################# DEVELOPMENT > req.session.destroy > NO XHR ############################')
-      res.redirect('/notifyerror')
-
+      console.log('############################# DEVELOPMENT ERR HANDLER 2 > NO XHR ############################')
+      // res.redirect('/notifyerror')
     }
   })
 }

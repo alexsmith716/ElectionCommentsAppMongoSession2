@@ -13,11 +13,37 @@ block bodyScripts
 
 block content
 
+  .modal.fade(id='modalAlert', tabindex='-1')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type="button" data-dismiss="modal") &times;
+          h4.modal-title
+
+        .modal-body
+
+          .alertSuccess.alert.alert-success.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
+          .alertWarning.alert.alert-warning.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
+          .alertDanger.alert.alert-danger.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
+
+          div(id="modalScrollbox")
+
+          button(class="btn btn-default btn-md", data-dismiss="modal", style="margin-top: 6px;") OK
+
+        .modal-footer
+
   .main
     br
     br
 
     .container
+
+
+      - if (err)
+        script.
+          $('#modalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
+          $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
+          $('#modalAlert').modal({keyboard: false,backdrop: 'static'})
 
       .row
       

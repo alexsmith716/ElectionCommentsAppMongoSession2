@@ -1,5 +1,6 @@
 
 var User = require('../theAPI/model/userSchema.js')
+var customError = require('./customError.js')
 
 module.exports = function (req, res, doUserValidatedEmail, cb) {
 
