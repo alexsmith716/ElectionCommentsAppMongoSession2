@@ -11,8 +11,8 @@ var evaluateUserEmail = require('../../shared/evaluateUserEmail.js')
 var evaluateUserEmailVerify = require('../../shared/evaluateUserEmailVerify.js')
 var evaluateUserPasswordVerify = require('../../shared/evaluateUserPasswordVerify.js')
 var stateNamer = require('../../shared/stateNamer.js')
-var createError = require('http-errors')
 var auth = require('basic-auth')
+var customError = require('../../shared/customError.js')
 var sortKey = 'time'
 var sort = '-' + sortKey
 var sortDocsFrom = 0
@@ -223,7 +223,7 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
   console.log('####### > API > ajaxEvaluateUserProfile > Object.keys(req.body).length:', Object.keys(req.body).length)
 
   var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'}
-  var newExceptionError
+  var newError
   var reqBodyProp
   var reqBodyValue
   var template = {}
@@ -319,42 +319,64 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-module.exports.getUserProfileResponse = function(req, res, next) {
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-  var newExceptionError
+module.exports.getUserProfileResponse = function (req, res, next) {
+
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 1<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ')
+  var newCustomError
   var credentials = auth(req)
 
   if (req.params && req.params.userid) {
 
-    User.findById(req.params.userid).exec(function(err, user) {
+    User.findById(req.params.userid).exec(function (err, user) {
 
-      if(err){
-        return next(err)
-      } 
+      // err = new Error('Bad Request')
+      // err.status = 400
+      user = false
 
-      if (!user) {
-        newExceptionError = new Error('Bad Request')
-        newExceptionError.status = 400
-        return next(newExceptionError)
-      }
+      if (err) {
 
-      if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
-        newExceptionError = new Error('Bad Request')
-        newExceptionError.status = 400
-        return next(newExceptionError)
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > ERR <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
 
-      }else{
+        sendJSONresponse(res, 400, err)
+
+      } else if (!user) {
+
+        err = new customError('userid not found', 404)
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > !USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
+
+        var voo
+        for (var p in err) {
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > err[p] <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', p, ' :: ', err[p])
+        }
+
+        sendJSONresponse(res, 404, err)
+
+      } else if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > !credentials <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
+        err = new customError('Unauthorized', 401)
+        sendJSONresponse(res, 401, err)
+
+      } else {
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > ELSE <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
         sendJSONresponse(res, 200, user)
+
       }
+
     })
 
   } else {
-    newExceptionError = new Error('Bad Request')
-    newExceptionError.status = 400
-    return next(newExceptionError)
+
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 6<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ')
+    err = new customError('Not found, userid required', 404)
+    sendJSONresponse(res, 404, err)
+
   }
 }
+
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
