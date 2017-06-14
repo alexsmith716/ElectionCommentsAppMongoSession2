@@ -107,5 +107,9 @@ userSchema.methods.name = function() {
     return this.displayname || this.email;
 };
 
-var User = mongoose.model('User', userSchema);
-module.exports = User;
+//var User = mongoose.model('User', userSchema);
+//module.exports = User;
+mongoose.model('User', userSchema)
+
+
+

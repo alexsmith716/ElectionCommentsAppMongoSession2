@@ -336,6 +336,8 @@ module.exports.getUserProfile = function (req, res, next) {
 
   request(requestOptions, function (err, response, body) {
 
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR: ', err)
+
     if (response.statusCode === 200) {
 
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
@@ -346,16 +348,16 @@ module.exports.getUserProfile = function (req, res, next) {
 
     } else if (err) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4<<<<<<<<<<<<<<<<<<<<<<<<<<<<1: ', err)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR: ', err)
       res.redirect('/userhome/?err='+err)
 
     } else {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 5<<<<<<<<<<<<<<<<<<<<<<<<<<<<body: ', body)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 5<<<<<<<<<<<<<<<<<<<<<<<<<<<<body.stack: ', body.stack)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 5<<<<<<<<<<<<<<<<<<<<<<<<<<<<body.Stack: ', body.Stack)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 6<<<<<<<<<<<<<<<<<<<<<<<<<<<<body.name: ', body.name)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 7<<<<<<<<<<<<<<<<<<<<<<<<<<<<body.message: ', body.message)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 8<<<<<<<<<<<<<<<<<<<<<<<<<<<<body.status: ', body.status)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 5<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY: ', body)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 6<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.stack: ', body.stack)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 7<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.Stack: ', body.Stack)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 8<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.name: ', body.name)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 9<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.message: ', body.message)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 10<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.status: ', body.status)
       res.redirect('/userhome/?err='+body)
 
     }

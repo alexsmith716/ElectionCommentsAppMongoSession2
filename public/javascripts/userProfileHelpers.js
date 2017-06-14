@@ -252,12 +252,12 @@ var helper = {
           console.log('#editProfileForm > ajax > ERROR > ERROR: ', xhr)
           
           $('.loading').hide()
-          $('#modalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
+          $('#modalAlert .modal-title').html(parsedXHR.errTitle)
+          $('#modalAlert .alertDanger').html(parsedXHR.errAlert)
+          $('#modalAlert #modalScrollbox').html(parsedXHR.errMessage)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('body').data('doNextModal', 'modalAlert')
           $('#editProfileFormModal .cancelButton').trigger('click')
-          // var parsedXHR = JSON.parse(xhr.responseText)
-          // location.href = parsedXHR.redirect
           return false
 
         }
@@ -381,12 +381,12 @@ var helper = {
           console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > ERROR > ERROR <<<<<<<<<<: ', xhr)
 
           $('.loading').hide()
-          $('#modalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
+          $('#modalAlert .modal-title').html(parsedXHR.errTitle)
+          $('#modalAlert .alertDanger').html(parsedXHR.errAlert)
+          $('#modalAlert #modalScrollbox').html(parsedXHR.errMessage)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('body').data('doNextModal', 'modalAlert')
           $('#userDataEmailPathChangeModal .cancelButton').trigger('click')
-          // var parsedXHR = JSON.parse(xhr.responseText)
-          // location.href = parsedXHR.redirect
           return false
 
         }
@@ -504,12 +504,12 @@ var helper = {
           console.log('>>>>>>>>>> userDataPasswordPathChangeForm > ajax > ERROR > ERROR <<<<<<<<<<: ', xhr)
 
           $('.loading').hide()
-          $('#modalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
+          $('#modalAlert .modal-title').html(parsedXHR.errTitle)
+          $('#modalAlert .alertDanger').html(parsedXHR.errAlert)
+          $('#modalAlert #modalScrollbox').html(parsedXHR.errMessage)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('body').data('doNextModal', 'modalAlert')
           $('#userDataPasswordPathChangeModal .cancelButton').trigger('click')
-          // var parsedXHR = JSON.parse(xhr.responseText)
-          // location.href = parsedXHR.redirect
           return false
 
         }
@@ -1018,13 +1018,12 @@ var helper = {
         if (data.response === 'success') {
 
           console.log('validateNewUserDataService > SUCCESS > SUCCESS: ', data)
-
           callback(null, true)
         } else {
 
           console.log('validateNewUserDataService > SUCCESS > ERROR: ', data)
-
           callback(data, false)
+
         }
 
         ms ? $(ms + ' .loading').hide() : helper.hideLoading()
@@ -1035,20 +1034,13 @@ var helper = {
         console.log('validateNewUserDataService > ERROR > ERROR > xhr: ', xhr)
 
         var parsedXHR = JSON.parse(xhr.responseText)
-        //location.href = parsedXHR.redirect
-
-        console.log('validateNewUserDataService > ERROR > ERROR > parsedXHR 1:', parsedXHR)
-        console.log('validateNewUserDataService > ERROR > ERROR > parsedXHR 2:', parsedXHR.err.message)
-
         ms ? $(ms + ' .loading').hide() : helper.hideLoading()
-        $('#modalAlert .modal-title').html('Notify Website Error')
+        $('#modalAlert .modal-title').html(parsedXHR.errTitle)
         $('#modalAlert .alertDanger').html(parsedXHR.errAlert)
         $('#modalAlert #modalScrollbox').html(parsedXHR.errMessage)
         $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
         $('body').data('doNextModal', 'modalAlert')
         $('#currentUserDataPathModal .cancelButton').trigger('click')
-        // var parsedXHR = JSON.parse(xhr.responseText)
-        // location.href = parsedXHR.redirect
         return false
 
       }
@@ -1092,8 +1084,12 @@ var helper = {
 
       error: function (xhr, status, error) {
         var parsedXHR = JSON.parse(xhr.responseText)
-
-        location.href = parsedXHR.redirect
+        $('#modalAlert .modal-title').html(parsedXHR.errTitle)
+        $('#modalAlert .alertDanger').html(parsedXHR.errAlert)
+        $('#modalAlert #modalScrollbox').html(parsedXHR.errMessage)
+        $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
+        $('#modalAlert').modal({ keyboard: false,backdrop: 'static' })
+        return false
       }
     })
   },

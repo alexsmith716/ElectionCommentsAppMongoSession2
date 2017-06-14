@@ -1,6 +1,5 @@
 
 require('dotenv').load()
-
 process.env.NODE_ENV = 'development'
 
 // var cluster = require('cluster')
@@ -17,16 +16,14 @@ var rfs = require('rotating-file-stream')
 var passport = require('passport')
 var session = require('express-session')
 var MongoStore = require('connect-mongo')(session)
-var setUpAuthentication = require('./theAPI/model/authentication')
-var serverRoutes = require('./theServer/routes/serverRoutes')
-var apiRoutes = require('./theAPI/routes/apiRoutes')
 var createError = require('http-errors')
-
 require('./theAPI/model/dbConnector')
 var sanitize = require('./shared/sanitizeInput.js')
 require('./shared/sessionPrototype')
 var onFinished = require('on-finished')
-
+var setUpAuthentication = require('./theAPI/model/authentication')
+var serverRoutes = require('./theServer/routes/serverRoutes')
+var apiRoutes = require('./theAPI/routes/apiRoutes')
 var app = express()
 
 app.use(helmet())
@@ -187,7 +184,8 @@ if (app.get('env') === 'development') {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 app.use(function (req, res, next) {
-  // return next(createError(401, 'Please login to view this page.'))
+// app.use('/userprofile', function (req, res, next) {
+  // return next(createError(400, 'Bad Request!'))
   next()
 })
 
@@ -209,7 +207,6 @@ app.use(function (req, res, next) {
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
 
 if (app.get('env') === 'development') {
 
@@ -238,15 +235,15 @@ if (app.get('env') === 'development') {
       console.log('############################# DEVELOPMENT ERR HANDLER 2 > YES XHR ############################')
 
       // res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'})
-      res.json({'response': 'error', 'type': 'error', 'errAlert': '<p>A website error recently occurred.</p><p>If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com.</p><p>Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p>', 'errMessage': errMessage, 'err': req.session.notifyErrorMessageObject})
+      res.json({'response': 'error', 'type': 'error', 'errTitle': 'Notify Application Error', 'errAlert': '<p>A error recently occurred with the application.</p><p>If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com.</p><p>Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p>', 'errMessage': errMessage, 'err': req.session.notifyErrorMessageObject})
 
     } else {
-      console.log('############################# DEVELOPMENT ERR HANDLER 2 > NO XHR ############################')
-      // res.redirect('/notifyerror')
+      console.log('############################# DEVELOPMENT ERR HANDLER 2 > NO XHR ############################ ERR: ', err)
+      console.log('############################# DEVELOPMENT ERR HANDLER 2 > NO XHR ############################ errMessage: ', errMessage)
+      res.json({'response': 'error', 'type': 'error', 'errAlert': '<p>A website error recently occurred.</p><p>If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com.</p><p>Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p>', 'errMessage': errMessage, 'err': req.session.notifyErrorMessageObject})
     }
   })
 }
-
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */

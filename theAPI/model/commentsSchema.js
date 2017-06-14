@@ -70,5 +70,10 @@ var commentsSchema = new mongoose.Schema({
     subComments: [subCommentsSchema]
 });
 
-var Comment = mongoose.model('Comment', commentsSchema);
-module.exports = Comment;
+// var Comment = mongoose.model('Comment', commentsSchema);
+// module.exports = Comment;
+mongoose.model('Comment', commentsSchema)
+
+
+
+

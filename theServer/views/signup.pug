@@ -27,11 +27,13 @@ block content
 
         .modal-body
 
-          .alertSuccess.alert.alert-success.hide(style="margin-top: 10px; margin-bottom: 22px;")
-          .alertWarning.alert.alert-warning.hide(style="margin-top: 10px; margin-bottom: 22px;")
-          .alertDanger.alert.alert-danger.hide(style="margin-top: 10px; margin-bottom: 22px;")
+          .alertSuccess.alert.alert-success.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
+          .alertWarning.alert.alert-warning.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
+          .alertDanger.alert.alert-danger.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
 
-          button(class="btn btn-default btn-md" data-dismiss="modal") OK
+          div(id="modalScrollbox")
+
+          button(class="btn btn-default btn-md", data-dismiss="modal", style="margin-top: 6px;") OK
 
         .modal-footer
 

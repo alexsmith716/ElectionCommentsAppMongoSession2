@@ -3,22 +3,20 @@ var mongoose = require('mongoose');
 var gracefulShutdown;
 var dbURI = 'mongodb://localhost/pec2016';
 
-
-
 // MongoLab documentation: http://docs.mongolab.com/
 // connection string: mongodb://adbuser:mydbpassword@ds5342322.mongolab.com:5342322/myproj-dev
 // set string in terminal: $ heroku config:set MONGOLAB_URI=your_db_uri
-
-
 
 if (process.env.NODE_ENV === 'production') {
     dbURI = process.env.MONGOLAB_URI;
 }
 
-
 mongoose.Promise  = global.Promise;
 mongoose.connect(dbURI);
 
+// SCHEMAS & MODELS
+require('./userSchema');
+require('./commentsSchema');
 
 // CONNECTION EVENTS
 mongoose.connection.on('connected', function() {
@@ -31,8 +29,6 @@ mongoose.connection.on('disconnected', function() {
     console.log('####### > Mongoose disconnected');
 });
 
-
-
 // Handle Mongoose/Node connections
 gracefulShutdown = function(msg, callback) {
     mongoose.connection.close(function() {
@@ -40,7 +36,6 @@ gracefulShutdown = function(msg, callback) {
         callback();
     });
 };
-
 
 // For app termination
 process.on('SIGINT', function() {
@@ -50,8 +45,6 @@ process.on('SIGINT', function() {
     });
 });
 
-
-
 // For nodemon restarts
 process.once('SIGUSR2', function() {
     gracefulShutdown('nodemon restart', function() {
@@ -59,7 +52,6 @@ process.once('SIGUSR2', function() {
         process.kill(process.pid, 'SIGUSR2');
     });
 });
-
 
 // For Heroku app termination
 process.on('SIGTERM', function() {
@@ -70,7 +62,4 @@ process.on('SIGTERM', function() {
 });
 
 
-// SCHEMAS & MODELS
-require('./userSchema');
-require('./commentsSchema');
 
