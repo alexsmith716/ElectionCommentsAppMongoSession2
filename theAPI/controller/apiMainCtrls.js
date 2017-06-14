@@ -1,11 +1,15 @@
 
-var User = require('../model/userSchema.js')
-var Comment = require('../model/commentsSchema')
+var mongoose = require('mongoose')
+var Comment = mongoose.model('Comment')
+var User = mongoose.model('User')
+
+//var User = require('../model/userSchema.js')
+//var Comment = require('../model/commentsSchema')
 var paginate = require('mongoose-range-paginate')
 var pugCompiler = require('../../shared/pugCompiler')
 var nodemailer = require('nodemailer')
 var passport = require('passport')
-var mongoose = require('mongoose')
+//var mongoose = require('mongoose')
 var serverSideValidation = require('../../shared/serverSideValidation.js')
 var evaluateUserEmail = require('../../shared/evaluateUserEmail.js')
 var evaluateUserEmailVerify = require('../../shared/evaluateUserEmailVerify.js')
@@ -13,6 +17,7 @@ var evaluateUserPasswordVerify = require('../../shared/evaluateUserPasswordVerif
 var stateNamer = require('../../shared/stateNamer.js')
 var auth = require('basic-auth')
 var customError = require('../../shared/customError.js')
+var createError = require('http-errors')
 var sortKey = 'time'
 var sort = '-' + sortKey
 var sortDocsFrom = 0
@@ -219,8 +224,7 @@ module.exports.deleteOneComment = function(req, res) {
 
 // AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
 module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
-  console.log('####### > API > ajaxEvaluateUserProfile > req.body:', req.body)
-  console.log('####### > API > ajaxEvaluateUserProfile > Object.keys(req.body).length:', Object.keys(req.body).length)
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>> > API > ajaxEvaluateUserProfile > req.body:', req.body)
 
   var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'}
   var newError
@@ -245,13 +249,9 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
         template[reqBodyProp] = 'required'
         template['expectedResponse'] = 'false'
 
-        console.log('####### > API > ajaxEvaluateUserProfile > template:', template)
-
         serverSideValidation(req, res, template, function (validatedResponse) {
 
           var validationErrors = false
-
-          console.log('####### > API > ajaxEvaluateUserProfile > validatedResponse:', validatedResponse)
 
           if (validatedResponse.status === 'err') {
             return next(validatedResponse.message)
@@ -266,8 +266,6 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
               }
             }
           }
-
-          console.log('####### > API > ajaxEvaluateUserProfile > validationErrors:', validationErrors)
 
           if (!validationErrors) {
 
@@ -293,12 +291,23 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
               user[reqBodyProp] = reqBodyValue
 
-              user.save(function (err) {
+              console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 02aaaa:', reqBodyProp)
+              console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 02:', reqBodyValue)
+
+              user.save(function (err, user) {
+
+                err = user.validateSync()
+
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 1:', err)
 
                 if (err) {
+
+                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 2:')
                   return next(err)
 
                 } else {
+
+                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 3:')
                   sendJSONresponse(res, 201, { 'response': 'success' })
 
                 }
@@ -322,7 +331,7 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
 module.exports.getUserProfileResponse = function (req, res, next) {
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 1<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ')
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ')
   var newCustomError
   var credentials = auth(req)
 
@@ -330,9 +339,10 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
     User.findById(req.params.userid).exec(function (err, user) {
 
+      // return next(createError(400, 'Bad Request!'))
       // err = new Error('Bad Request')
       // err.status = 400
-      user = false
+      // user = false
 
       if (err) {
 
@@ -345,7 +355,6 @@ module.exports.getUserProfileResponse = function (req, res, next) {
         err = new customError('userid not found', 404)
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > !USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
 
-        var voo
         for (var p in err) {
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > err[p] <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', p, ' :: ', err[p])
         }
@@ -577,6 +586,8 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
     evaluateUserEmailVerify(req, res, true, function (response) {
 
       if (response.status === 'err') {
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>> ajaxValidateNewUserDataService >  evaluateUserEmailVerify > ERR <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', response.message)
 
         return next(response.message)
 

@@ -10,6 +10,8 @@ module.exports = function (req, res, doUserValidatedEmail, cb) {
 
   User.findOne( { emailXX: emailXX } ).exec(function (err, user) {
 
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmailVerify > ERR 1<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
+
     if(doUserValidatedEmail === true){
       // err = new Error('Bad Request')
       // err.status = 400
@@ -17,6 +19,8 @@ module.exports = function (req, res, doUserValidatedEmail, cb) {
     }
 
     if (err) {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmailVerify > ERR 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
 
       cb({status: 'err', response: 'error', message: err})
 

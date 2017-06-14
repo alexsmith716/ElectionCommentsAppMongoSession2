@@ -1,7 +1,9 @@
 
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
-var User = require('./userSchema.js')
+var mongoose = require('mongoose')
+// var User = require('./userSchema.js')
+var User = mongoose.model('User')
 
 module.exports = function() {
   // serialize user into session
