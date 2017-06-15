@@ -10,8 +10,9 @@ module.exports = function (req, res, validateTemplate, cb) {
   var emailPattern = /^\S+@\S+\.\S+/
   var passwordPattern = /^\S{4,}$/
   var displaynamePattern = /^[A-Za-z0-9_]{4,21}$/
-  var basictextPatternExact = /^(?=\s*\S)(.{1,35})$/
-  var basictextPattern = /(?=\s*\S)(.{1,35})/
+  var basicTextMaxLengthPattern = /^(?=\s*\S)(.{1,35})$/
+  var basicTextPattern = /^(?=\s*\S)(.{1,})$/
+  var textSpaceMaxLengthOnlyPattern = /^[a-zA-Z ]{1,35}$/
   var validatedUserInput = {}
   var elementObject = {}
   var errorType
@@ -148,7 +149,7 @@ module.exports = function (req, res, validateTemplate, cb) {
       } else if (objName === 'firstname') {
 
         reqBody[objName] = reqBody[objName].trim()
-        //isDataValid = basictextPattern.test(reqBody[objName])
+        //isDataValid = basicTextPattern.test(reqBody[objName])
         elementObject = {}
 
         if (reqBody[objName] === '') {
@@ -170,7 +171,7 @@ module.exports = function (req, res, validateTemplate, cb) {
       } else if (objName === 'lastname') {
 
         reqBody[objName] = reqBody[objName].trim()
-        //isDataValid = basictextPattern.test(reqBody[objName])
+        //isDataValid = basicTextPattern.test(reqBody[objName])
         elementObject = {}
 
         if (reqBody[objName] === '') {
@@ -193,7 +194,7 @@ module.exports = function (req, res, validateTemplate, cb) {
       } else if (objName === 'city') {
 
         reqBody[objName] = reqBody[objName].trim()
-        //isDataValid = basictextPattern.test(reqBody[objName])
+        //isDataValid = basicTextPattern.test(reqBody[objName])
         elementObject = {}
 
         if (reqBody[objName] === '') {

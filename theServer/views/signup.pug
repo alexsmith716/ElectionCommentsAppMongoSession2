@@ -78,7 +78,7 @@ block content
                     .form-group
                       label.control-label.sr-only(for="displayname") Username
   
-                      input.form-control.input-md(type="text", id="displayname", name="displayname", pattern="[A-Za-z0-9_]{4,21}", title="Username must be 4-21   characters long. Letters, numbers, underscores only, no whitespace", tabindex="1",  placeholder="Username", required)
+                      input.form-control.input-md(type="text", id="displayname", name="displayname", pattern="\\s*^[A-Za-z0-9_]{4,21}$\\s*", title="Username must be 4-21   characters long. Letters, numbers, underscores only, no whitespace", tabindex="1",  placeholder="Username", required)
                       .text-muted(style="margin-top:3px;")
                         i *Username cannot be changed after sign up
   
@@ -144,7 +144,7 @@ block content
                     .form-group
                       label.control-label.sr-only(for="firstname") First Name
   
-                      input.form-control.input-md(type="text", id="firstname", name="firstname", pattern="\\s*(?=\\s*\\S)(.{1,35})\\s*", tabindex="6", title="Please type a valid First Name. Maximum 35 characters", placeholder="First Name", required)
+                      input.form-control.input-md(type="text", id="firstname", name="firstname", pattern="\\s*^(?=\s*\S)(.{1,35})$\\s*", tabindex="6", title="Please type a valid First Name. Maximum 35 characters", placeholder="First Name", required)
                       
                       span.hide.error(id="firstnameError")
   
@@ -153,7 +153,7 @@ block content
                     .form-group
                       label.control-label.sr-only(for="lastname") Last Name
   
-                      input.form-control.input-md(type="text", id="lastname", name="lastname", pattern="\\s*(?=\\s*\\S)(.{1,35})\\s*", tabindex="7", title="Please type a valid Last Name. Maximum 35 characters", placeholder="Last Name", required)
+                      input.form-control.input-md(type="text", id="lastname", name="lastname", pattern="\\s*^(?=\s*\S)(.{1,35})$\\s*", tabindex="7", title="Please type a valid Last Name. Maximum 35 characters", placeholder="Last Name", required)
   
                       span.hide.error(id="lastnameError")
 
@@ -166,7 +166,7 @@ block content
                     .form-group
                       label.control-label.sr-only(for="city") City
   
-                      input.form-control.input-md(type="text", id="city", name="city", pattern="\\s*(?=\\s*\\S)(.{1,35})\\s*", tabindex="8", title="Please type a valid City. Maximum 35 characters", placeholder="City", required)
+                      input.form-control.input-md(type="text", id="city", name="city", pattern="\\s*^(?=\s*\S)(.{1,35})$\\s*", tabindex="8", title="Please type a valid City. Maximum 35 characters", placeholder="City", required)
   
                       span.hide.error(id="cityError")
     

@@ -1,5 +1,6 @@
 
-var User = require('../theAPI/model/userSchema.js')
+var mongoose = require('mongoose')
+var User = mongoose.model('User')
 
 module.exports = function (req, res, doUserValidatedPassword, cb) {
 

@@ -226,6 +226,51 @@ module.exports.deleteOneComment = function(req, res) {
 module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>> > API > ajaxEvaluateUserProfile > req.body:', req.body)
 
+  var Userr = mongoose.model('User')
+  Userr.findById(res.locals.currentUser.id).exec(function (err, user) {
+  //User.findOne({email : res.locals.currentUser.email}).exec(function(err, user) {
+
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 0000000000 1')
+
+    var voo = parseInt('771111777', 10)
+
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 0000000000 2: ', typeof voo)
+
+    user.firstname = '21113333333'
+
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 0000000000 3: ', typeof user.firstname)
+
+    user.save(function (err) {
+      if (err) {
+        // error handled in the callback
+        console.error('Error:', err);
+      } else {
+        console.log('Success:');
+      }
+    })
+
+
+    /*
+    user.save(function (err, user) {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 1XXXXXXXXXXXX:', err)
+
+      if (err) {
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 2XXXXXXXXXXXX:')
+        return next(err)
+
+      } else {
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 3XXXXXXXXXXXX:')
+        sendJSONresponse(res, 201, { 'response': 'success' })
+
+      }
+    })
+    */
+
+  })
+  /*
   var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'}
   var newError
   var reqBodyProp
@@ -323,6 +368,7 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
     }
     break
   }
+  */
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
