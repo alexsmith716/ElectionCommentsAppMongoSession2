@@ -248,6 +248,7 @@ var helper = {
           console.log('#editProfileForm > ajax > ERROR > ERROR: ', xhr)
           
           $('.loading').hide()
+          var parsedXHR = JSON.parse(xhr.responseText)
           $('#modalAlert .modal-title').html(parsedXHR.errTitle)
           $('#modalAlert .alertDanger').html(parsedXHR.errAlert)
           $('#modalAlert #modalScrollbox').html(parsedXHR.errMessage)
@@ -377,6 +378,7 @@ var helper = {
           console.log('>>>>>>>>>> userDataEmailPathChangeForm > ajax > ERROR > ERROR <<<<<<<<<<: ', xhr)
 
           $('.loading').hide()
+          var parsedXHR = JSON.parse(xhr.responseText)
           $('#modalAlert .modal-title').html(parsedXHR.errTitle)
           $('#modalAlert .alertDanger').html(parsedXHR.errAlert)
           $('#modalAlert #modalScrollbox').html(parsedXHR.errMessage)
@@ -500,6 +502,7 @@ var helper = {
           console.log('>>>>>>>>>> userDataPasswordPathChangeForm > ajax > ERROR > ERROR <<<<<<<<<<: ', xhr)
 
           $('.loading').hide()
+          var parsedXHR = JSON.parse(xhr.responseText)
           $('#modalAlert .modal-title').html(parsedXHR.errTitle)
           $('#modalAlert .alertDanger').html(parsedXHR.errAlert)
           $('#modalAlert #modalScrollbox').html(parsedXHR.errMessage)

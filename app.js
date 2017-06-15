@@ -20,9 +20,6 @@ var createError = require('http-errors')
 
 require('./theAPI/model/dbConnector')
 
-var mongoose = require('mongoose')
-mongoose.Promise = global.Promise
-
 var sanitize = require('./shared/sanitizeInput.js')
 require('./shared/sessionPrototype')
 var onFinished = require('on-finished')
