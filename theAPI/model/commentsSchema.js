@@ -1,5 +1,5 @@
 
-var mongoose = require('mongoose');
+var mongoose = require('mongoose')
 
 /*
 User
@@ -9,71 +9,65 @@ User
 
 var subCommentsSchema = new mongoose.Schema({
     displayname: {
-        type: String, 
+        type: String,
         required: true
     },
     commenterId: {
-        type: String, 
+        type: String,
         required: true
     },
     city: {
-        type: String, 
+        type: String,
         required: true
     },
     state: {
-        type: Object, 
+        type: Object,
         required: true
     },
     datecreated: {
-        type: Date, 
+        type: Date,
         default: Date.now
     },
     comment: {
-        type: String, 
+        type: String,
         required: true
     }
-});
+})
 
 var commentsSchema = new mongoose.Schema({
     displayname: {
-        type: String, 
+        type: String,
         required: true
     },
     commenterId: {
-        type: String, 
+        type: String,
         required: true
     },
     city: {
-        type: String, 
+        type: String,
         required: true
     },
     state: {
-        type: Object, 
+        type: Object,
         required: true
     },
     datecreated: {
-        type: Date, 
+        type: Date,
         default: Date.now
     },
     candidate: {
-        type: String, 
+        type: String,
         required: true
     },
     comment: {
-        type: String, 
+        type: String,
         required: true
     },
     recommended: {
-        type: Boolean, 
+        type: Boolean,
         required: false
     },
     subComments: [subCommentsSchema]
-});
+})
 
-// var Comment = mongoose.model('Comment', commentsSchema);
-// module.exports = Comment;
 mongoose.model('Comment', commentsSchema)
-
-
-
-

@@ -551,7 +551,7 @@ var helper = {
       var type = $('body').data('elementID')
       var currentUserEmailVerified = $('#currentUserDataPathModal').data('currentUserEmailVerified')
       var data = $('#currentUserDataPath').val()
-      var testData = helper.pattern.basictext.test(data)
+      var testData = helper.pattern.basicText.test(data)
 
       if (testData) {
 
@@ -709,8 +709,9 @@ var helper = {
     email: /^\S+@\S+\.\S+/,
     password: /^\S{4,}$/,
     password2: /^[\S]{4,}$/,
-    basictextMaxLength: /^(?=\s*\S)(.{1,35})$/,
-    basictext: /^(?=\s*\S)(.{1,})$/
+    basicTextMaxLength: /^(?=\s*\S)(.{1,35})$/,
+    basicText: /^(?=\s*\S)(.{1,})$/,
+    textSpaceMaxLengthOnly: /^[a-zA-Z ]{1,35}$/
   },
 
   makeTitleFromElementID: function(whichID) {
@@ -832,17 +833,17 @@ var helper = {
 
       $('#firstname').on('focusout', function (e) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> firstname > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.textElementValidation($(this).attr('id'), helper.pattern.basictext)
+        helper.textElementValidation($(this).attr('id'), helper.pattern.basicText)
       })
 
       $('#lastname').on('focusout', function (e) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> lastname > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.textElementValidation($(this).attr('id'), helper.pattern.basictext)
+        helper.textElementValidation($(this).attr('id'), helper.pattern.basicText)
       })
 
       $('#city').on('focusout', function (e) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> city > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.textElementValidation($(this).attr('id'), helper.pattern.basictext)
+        helper.textElementValidation($(this).attr('id'), helper.pattern.basicText)
       })
 
       $('#email').on('focusout', function (e) {
@@ -1494,7 +1495,7 @@ var helper = {
           case 'first-name':
               $('#firstname').attr({ 
                   type: 'text',
-                  pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                  pattern: '\\s*^(?=\s*\S)(.{1,35})$\\s*',
                   title: 'Please type a valid First Name. Maximum 35 characters',
                   placeholder: 'First Name'
               })
@@ -1503,7 +1504,7 @@ var helper = {
           case 'last-name':
               $('#lastname').attr({ 
                   type: 'text',
-                  pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                  pattern: '\\s*^(?=\s*\S)(.{1,35})$\\s*',
                   title: 'Please type a valid Last Name. Maximum 35 characters',
                   placeholder: 'Last Name'
               })
@@ -1512,7 +1513,7 @@ var helper = {
           case 'city':
               $('#city').attr({ 
                   type: 'text',
-                  pattern: '\\s*(?=\\s*\\S)(.{1,35})\\s*',
+                  pattern: '\\s*^(?=\s*\S)(.{1,35})$\\s*',
                   title: 'Please type a valid City. Maximum 35 characters',
                   placeholder: 'City'
               })
@@ -1625,7 +1626,7 @@ var helper = {
         case 'firstname':
         case 'lastname':
         case 'city':
-          helper.textElementValidation(p, helper.pattern.basictext, data[p])
+          helper.textElementValidation(p, helper.pattern.basicText, data[p])
           break
 
         case 'state':
