@@ -226,9 +226,8 @@ module.exports.deleteOneComment = function(req, res) {
 module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>> > API > ajaxEvaluateUserProfile > req.body:', req.body)
 
-  var Userr = mongoose.model('User')
-  Userr.findById(res.locals.currentUser.id).exec(function (err, user) {
-  //User.findOne({email : res.locals.currentUser.email}).exec(function(err, user) {
+  User.findById(res.locals.currentUser.id).exec(function (err, user) {
+  // User.findOne({email : res.locals.currentUser.email}).exec(function(err, user) {
 
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 0000000000 1')
 
@@ -236,38 +235,27 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 0000000000 2: ', typeof voo)
 
-    user.firstname = '21113333333'
+    user.firstname = ''
+    // user[reqBodyProp] = reqBodyValue
 
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 0000000000 3: ', typeof user.firstname)
 
-    user.save(function (err) {
-      if (err) {
-        // error handled in the callback
-        console.error('Error:', err);
-      } else {
-        console.log('Success:');
-      }
-    })
-
-
-    /*
     user.save(function (err, user) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 1XXXXXXXXXXXX:', err)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 1:', err)
 
       if (err) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 2XXXXXXXXXXXX:')
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 2:')
         return next(err)
 
       } else {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 3XXXXXXXXXXXX:')
-        sendJSONresponse(res, 201, { 'response': 'success' })
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 3:')
+        sendJSONresponse(res, 201, { 'response': 'success', 'updatedData': user.firstname })
 
       }
     })
-    */
 
   })
   /*
@@ -337,8 +325,6 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
               console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 02:', reqBodyValue)
 
               user.save(function (err, user) {
-
-                err = user.validateSync()
 
                 console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 1:', err)
 

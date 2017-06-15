@@ -83,12 +83,10 @@ var userSchema = new mongoose.Schema({
 // crypto.pbkdf2(  password,    salt,     iterations,   keylen,    digest,        callback
 // crypto.pbkdf2(  password,  self.salt,    100000,       512,    'sha512',   function(err, key)
 
-/*
 userSchema.pre('save', function (next) {
-  console.log('++++++++++++++++++++++++++++++++++++++++++++++ ---- +++++++++++++++++++++++++++++++++++')
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>> userSchema.pre > SAVE <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
   next()
 })
-*/
 
 userSchema.methods.setPassword = function (password, callback) {
     if (!password) {
