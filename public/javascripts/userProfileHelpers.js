@@ -174,14 +174,10 @@ var helper = {
       var elementID = $('#editProfileForm').data('elementID')
       var whichformdataid = $('body').data('whichformdataid')
       var labelText = helper.makeTitleFromElementID(whichformdataid)
-      var newVal;
       var s = document.getElementById(elementID)
       var data = {}
       var serviceUrl = $(this).attr('action')
       var constrainedFormElements = document.getElementById('editProfileForm').querySelectorAll('[required]')
-
-      elementID === 'state' ? newVal = s.options[s.selectedIndex].text : newVal = $('#'+elementID).val()
-      newVal = $.trim(newVal)
 
       if(!interactiveFormValidationEnabled){
         var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout')
@@ -219,7 +215,7 @@ var helper = {
             $('#modalAlert .alertSuccess').addClass('show').removeClass('hide')
             $('body').data('doNextModal', 'modalAlert')
             $('#editProfileFormModal .cancelButton').trigger('click')
-            $('.'+whichformdataid).text(newVal)
+            $('.'+whichformdataid).text(data.updatedData)
             $('.loading').hide()
 
           } else {
@@ -551,7 +547,7 @@ var helper = {
       var type = $('body').data('elementID')
       var currentUserEmailVerified = $('#currentUserDataPathModal').data('currentUserEmailVerified')
       var data = $('#currentUserDataPath').val()
-      var testData = helper.pattern.basicText.test(data)
+      var testData = helper.pattern.basicTextMaxLength.test(data)
 
       if (testData) {
 
@@ -833,17 +829,17 @@ var helper = {
 
       $('#firstname').on('focusout', function (e) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> firstname > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.textElementValidation($(this).attr('id'), helper.pattern.basicText)
+        helper.textElementValidation($(this).attr('id'), helper.pattern.basicTextMaxLength)
       })
 
       $('#lastname').on('focusout', function (e) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> lastname > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.textElementValidation($(this).attr('id'), helper.pattern.basicText)
+        helper.textElementValidation($(this).attr('id'), helper.pattern.basicTextMaxLength)
       })
 
       $('#city').on('focusout', function (e) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> city > onFocusout <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-        helper.textElementValidation($(this).attr('id'), helper.pattern.basicText)
+        helper.textElementValidation($(this).attr('id'), helper.pattern.basicTextMaxLength)
       })
 
       $('#email').on('focusout', function (e) {
@@ -1495,7 +1491,7 @@ var helper = {
           case 'first-name':
               $('#firstname').attr({ 
                   type: 'text',
-                  pattern: '\\s*^(?=\s*\S)(.{1,35})$\\s*',
+                  pattern: '\\s*^(?=\\s*\\S)(.{1,35})$\\s*',
                   title: 'Please type a valid First Name. Maximum 35 characters',
                   placeholder: 'First Name'
               })
@@ -1504,7 +1500,7 @@ var helper = {
           case 'last-name':
               $('#lastname').attr({ 
                   type: 'text',
-                  pattern: '\\s*^(?=\s*\S)(.{1,35})$\\s*',
+                  pattern: '\\s*^(?=\\s*\\S)(.{1,35})$\\s*',
                   title: 'Please type a valid Last Name. Maximum 35 characters',
                   placeholder: 'Last Name'
               })
@@ -1513,7 +1509,7 @@ var helper = {
           case 'city':
               $('#city').attr({ 
                   type: 'text',
-                  pattern: '\\s*^(?=\s*\S)(.{1,35})$\\s*',
+                  pattern: '\\s*^(?=\\s*\\S)(.{1,35})$\\s*',
                   title: 'Please type a valid City. Maximum 35 characters',
                   placeholder: 'City'
               })
@@ -1626,7 +1622,7 @@ var helper = {
         case 'firstname':
         case 'lastname':
         case 'city':
-          helper.textElementValidation(p, helper.pattern.basicText, data[p])
+          helper.textElementValidation(p, helper.pattern.basicTextMaxLength, data[p])
           break
 
         case 'state':

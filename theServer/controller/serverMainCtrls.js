@@ -9,6 +9,7 @@ var sanitizeInputModule = require('../../shared/sanitizeInput.js')
 require('../../shared/sessionPrototype')
 var customError = require('../../shared/customError.js')
 var serverSideValidation = require('../../shared/serverSideValidation.js')
+var stateNamer = require('../../shared/stateNamer.js')
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -313,12 +314,6 @@ module.exports.getSignup = function (req, res, next) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
-
-
-
-
-
-
 module.exports.getUserProfile = function (req, res, next) {
   var newCustomError
   var requestOptions, path
@@ -341,6 +336,9 @@ module.exports.getUserProfile = function (req, res, next) {
     if (response.statusCode === 200) {
 
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+      
+      res.locals.currentUser.stateFull = stateNamer(req, res, body.state)
+
       res.render('userProfile', {
         csrfToken: req.csrfToken(),
         responseBody: body
@@ -382,13 +380,6 @@ module.exports.getUserProfile = function (req, res, next) {
     */
   })
 }
-
-
-
-
-
-
-
 
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */

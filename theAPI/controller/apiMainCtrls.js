@@ -276,6 +276,7 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
   var reqBodyProp
   var reqBodyValue
   var template = {}
+  var updatedData
 
   var templateMain = {firstname: 'required', 
     lastname: 'required', 
@@ -325,16 +326,12 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
                 return
               }
 
-              if (reqBodyProp === 'state') {
-                var stateFull = stateNamer(req, res, reqBodyValue)
-
-                reqBodyValue = {
-                  full: stateFull,
-                  initials: reqBodyValue
-                }
-              }
-
               user[reqBodyProp] = reqBodyValue
+
+              if (reqBodyProp === 'state') {
+                updatedData = stateNamer(req, res, reqBodyValue)
+                reqBodyValue = updatedData
+              }
 
               console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 02aaaa:', reqBodyProp)
               console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 02:', reqBodyValue)
@@ -353,7 +350,7 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
                 } else {
 
                   console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 3:')
-                  sendJSONresponse(res, 201, { 'response': 'success' })
+                  sendJSONresponse(res, 201, { 'response': 'success', 'updatedData': reqBodyValue })
 
                 }
               })
@@ -842,7 +839,7 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
                     firstname: '          Abcdefghijklmnopqrst             ',
                     lastname: '   Ccccc Cityyyyyyyy     ',
                     city: '               AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz          ',
-                    state: 'New York'}
+                    state: 'NY'}
 
   var testerJOB2 = {displayname: ' displaynameABC123',
                     email: 'aaa1@aaa.com',
@@ -870,12 +867,12 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
     if (!validationErrors) {
       var newUser = new User()
 
-      var stateFull = stateNamer(req, res, req.body.state)
+      // var stateFull = stateNamer(req, res, req.body.state)
 
-      req.body.state = {
-        full: stateFull,
-        initials: req.body.state
-      }
+      // req.body.state = {
+        // full: stateFull,
+        // initials: req.body.state
+      // }
 
       newUser.displayname = req.body.displayname
       newUser.email = req.body.email

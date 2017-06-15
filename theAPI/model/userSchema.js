@@ -17,7 +17,9 @@ var pattern = {
   password2: /^[\S]{4,}$/,
   basicTextMaxLength: /^(?=\s*\S)(.{1,35})$/,
   basicText: /^(?=\s*\S)(.{1,})$/,
-  textSpaceMaxLengthOnly: /^[a-zA-Z ]{1,35}$/
+  textSpaceMaxLengthOnly: /^[a-zA-Z ]{1,35}$/,
+  tester1: /\d{2,4}/,
+  tester2: /abc/
 }
 
 var userSchema = new mongoose.Schema({
@@ -70,6 +72,7 @@ var userSchema = new mongoose.Schema({
     salt: String
 })
 
+
 // randomBytes:     create salt
 // pbkdf2:          create hash from password & salt (asynch)
 // pbkdf2Sync:      create hash from password & salt (synch)
@@ -79,11 +82,13 @@ var userSchema = new mongoose.Schema({
 
 // crypto.pbkdf2(  password,    salt,     iterations,   keylen,    digest,        callback
 // crypto.pbkdf2(  password,  self.salt,    100000,       512,    'sha512',   function(err, key)
+
 /*
-userSchema.pre('save', function(next) {
+userSchema.pre('save', function (next) {
   console.log('++++++++++++++++++++++++++++++++++++++++++++++ ---- +++++++++++++++++++++++++++++++++++')
   next()
-})*/
+})
+*/
 
 userSchema.methods.setPassword = function (password, callback) {
     if (!password) {
