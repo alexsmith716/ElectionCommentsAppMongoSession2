@@ -165,7 +165,9 @@ var helper = {
     email: /^\S+@\S+\.\S+/,
     password: /^\S{4,}$/,
     password2: /^[\S]{4,}$/,
-    basictext: /^(?=\s*\S)(.{1,35})$/
+    basicTextMaxLength: /^(?=\s*\S)(.{1,35})$/,
+    basicText: /^(?=\s*\S)(.{1,})$/,
+    textSpaceMaxLengthOnly: /^[a-zA-Z ]{1,35}$/
   },
 
   showLoading: function () {
@@ -185,9 +187,9 @@ var helper = {
     elementID === 'password' ? helper.passwordElementValidation(elementID, 'confirmPassword', eType) : null
     elementID === 'confirmPassword' ? helper.passwordElementValidation(elementID, 'password', eType) : null
 
-    elementID === 'firstname' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
-    elementID === 'lastname' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
-    elementID === 'city' ? helper.textElementValidation(elementID, helper.pattern.basictext) : null
+    elementID === 'firstname' ? helper.textElementValidation(elementID, helper.pattern.basicTextMaxLength) : null
+    elementID === 'lastname' ? helper.textElementValidation(elementID, helper.pattern.basicTextMaxLength) : null
+    elementID === 'city' ? helper.textElementValidation(elementID, helper.pattern.basicTextMaxLength) : null
     elementID === 'state' ? helper.selectElementValidation(elementID) : null
   },
 
@@ -674,7 +676,7 @@ var helper = {
         case 'firstname':
         case 'lastname':
         case 'city':
-          helper.textElementValidation(p, helper.pattern.basictext, data[p])
+          helper.textElementValidation(p, helper.pattern.basicTextMaxLength, data[p])
           break
 
         case 'state':
