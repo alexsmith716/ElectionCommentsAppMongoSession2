@@ -4,7 +4,7 @@ extends layout
 block metas
 
 block title
-  title Notify Error
+  title Notify Application Error
   
 block links
 
@@ -37,14 +37,6 @@ block content
 
               if (type === 'danger')
                 .alert.alert-danger #{message}
-
-
-            p If this problem continues, please contact our Help Desk at 555-555-1234 or email customer.care@ThisGreatApp.com. Visit our
-              |&nbsp;
-              a.highlight(href='/customerservice') Customer Service
-              |&nbsp;webpage for a full listing of helpful information.
-
-            br
 
             p Please
               |&nbsp;

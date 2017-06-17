@@ -23,7 +23,7 @@ module.exports = function (reqEmail, expectedResponse, cb) {
 
         if (user) {
 
-          cb({status: 201, response: 'error'})
+          cb({status: 201, response: 'error', message: 'user email already exists'})
 
         } else {
 
@@ -35,7 +35,7 @@ module.exports = function (reqEmail, expectedResponse, cb) {
 
         if (!user) {
 
-          cb({status: 201, response: 'error'})
+          cb({status: 201, response: 'error', message: 'user email not registered'})
 
         } else {
 

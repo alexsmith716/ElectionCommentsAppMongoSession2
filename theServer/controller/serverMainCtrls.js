@@ -398,15 +398,11 @@ module.exports.getMembersOnly = function (req, res) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.renderNotifyError = function (req, res) {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> renderNotifyError > 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<< req.user: ', req.user)
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> renderNotifyError <<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
-  res.render('userHome')
-  /*
   if (req.session.notifyErrorMessageObject) {
     res.locals.notifyErrorMessageObject = req.session.notifyErrorMessageObject
   }
-
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> renderNotifyError > 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', res.locals.notifyErrorMessageObject.name)
 
   var notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.'
   var notifyMessageType = 'danger'
@@ -415,7 +411,7 @@ module.exports.renderNotifyError = function (req, res) {
     message: notifyMessage,
     type: notifyMessageType
   })
-  */
+
 }
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -423,11 +419,8 @@ module.exports.renderNotifyError = function (req, res) {
 
 module.exports.getNotifyError = function (req, res, next) {
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> getNotifyError > notifyErrorMessageObject <<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', req.session.notifyErrorMessageObject.name)
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> getNotifyError > notifyErrorMessageObject <<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
-  res.redirect('/rendernotifyerror')
-
-  /*
   req.logout()
   req.session.destroy(function (err) {
     if (err) {
@@ -436,7 +429,6 @@ module.exports.getNotifyError = function (req, res, next) {
       res.redirect('/rendernotifyerror')
     }
   })
-  */
 }
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */

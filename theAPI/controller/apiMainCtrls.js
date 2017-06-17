@@ -226,39 +226,34 @@ module.exports.deleteOneComment = function(req, res) {
 module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>> > API > ajaxEvaluateUserProfile > req.body:', req.body)
 
-  User.findById(res.locals.currentUser.id).exec(function (err, user) {
+  /*
+  User.findById(res.locals.currentUser.id).select('firstname').exec(function (err, user) {
   // User.findOne({email : res.locals.currentUser.email}).exec(function(err, user) {
-
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 0000000000 1')
-
-    var voo = parseInt('771111777', 10)
-
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 0000000000 2: ', typeof voo)
-
-    user.firstname = ''
+    if (err) {
+      return next(err)
+    }
+    if (!user) {
+      sendJSONresponse(res, 201, { 'response': 'error' })
+      return
+    }
+    user.firstname = 'Wcscscdd'
     // user[reqBodyProp] = reqBodyValue
-
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 0000000000 3: ', typeof user.firstname)
-
     user.save(function (err, user) {
-
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 1:', err)
-
       if (err) {
-
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 2:')
-        return next(err)
-
+        sendJSONresponse(res, 404, err)
+        // return next(err)
       } else {
-
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 3:')
         sendJSONresponse(res, 201, { 'response': 'success', 'updatedData': user.firstname })
-
       }
     })
-
   })
-  /*
+  */
+
   var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'}
   var newError
   var reqBodyProp
@@ -288,7 +283,9 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
           var validationErrors = false
 
           if (validatedResponse.status === 'err') {
-            return next(validatedResponse.message)
+
+            sendJSONresponse(res, 400, validatedResponse.message)
+            return
 
           } else {
             for (var prop in validatedResponse) {
@@ -303,10 +300,11 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
           if (!validationErrors) {
 
-            User.findById(res.locals.currentUser.id).exec(function (err, user) {
+            User.findById(res.locals.currentUser.id).select(reqBodyProp).exec(function (err, user) {
 
               if (err) {
-                return next(err)
+                sendJSONresponse(res, 400, err)
+                return
               }
 
               if (!user) {
@@ -314,6 +312,7 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
                 return
               }
 
+              reqBodyValue = ''
               user[reqBodyProp] = reqBodyValue
 
               if (reqBodyProp === 'state') {
@@ -351,7 +350,7 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
     }
     break
   }
-  */
+
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -375,31 +374,31 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
       if (err) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > ERR <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > 400 <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
 
         sendJSONresponse(res, 400, err)
 
       } else if (!user) {
 
         err = new customError('userid not found', 404)
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > !USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > 404 <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
 
         for (var p in err) {
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > err[p] <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', p, ' :: ', err[p])
+          //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > 404<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', p, ' :: ', err[p])
         }
 
         sendJSONresponse(res, 404, err)
 
       } else if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > !credentials <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > 401 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
         err = new customError('Unauthorized', 401)
         sendJSONresponse(res, 401, err)
 
       } else {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > ELSE <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > 200 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
         sendJSONresponse(res, 200, user)
 
       }
