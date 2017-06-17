@@ -8,7 +8,9 @@ module.exports = function (req, res, doUserValidatedEmail, cb) {
 
   var email = req.body.data.trim()
 
-  User.findOne( { emailXX: emailXX } ).exec(function (err, user) {
+  email = ''
+
+  User.findOne( { email: email } ).exec(function (err, user) {
 
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmailVerify > ERR 1<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
 

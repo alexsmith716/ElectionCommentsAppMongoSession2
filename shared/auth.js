@@ -8,10 +8,10 @@ var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https:/
 
 module.exports.ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
-    console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticated Yes <<<<<<<<<<<<<<<<<<<<<<<')
+    console.log('+++++++++++++++++++++ AUTH ensureAuthenticated Yes +++++++++++++++++++++')
     return next()
   } else {
-    console.log('>>>>>>>>>>>>>>>>>>>>> ensureAuthenticated No <<<<<<<<<<<<<<<<<<<<<<<')
+    console.log('+++++++++++++++++++++ AUTH ensureAuthenticated No +++++++++++++++++++++')
     // res.redirect('/loginorsignup')
     var newExceptionError = new Error('Bad Request')
     newExceptionError.status = 400

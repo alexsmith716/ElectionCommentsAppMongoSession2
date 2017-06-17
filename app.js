@@ -36,6 +36,16 @@ app.use(helmet())
 
 var logDirectory = path.join(__dirname, 'httpRequestLog')
 
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
+
+var accessLogStream = rfs('access.log', {
+  interval: '1d',
+  path: logDirectory
+})
+
+// app.use(morgan('dev'))
+app.use(morgan('combined', {stream: accessLogStream}))
+
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
@@ -57,19 +67,6 @@ app.set('view engine', 'pug')
 
 // app.use(favicon(__dirname + '/public/images/favicon.ico'))
 app.use(express.static(path.join(__dirname, 'public')))
-
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
-
-var accessLogStream = rfs('access.log', {
-  interval: '1d',
-  path: logDirectory
-})
-
-app.use(morgan('dev'))
-// app.use(morgan('combined', {stream: accessLogStream}))
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -116,8 +113,8 @@ app.use(passport.session())
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 app.use(function (req, res, next) {
-  console.log('++++++++++++++++++++++++++++ APP.js +++++++++++++++++++++++++++++++++')
-  console.log('REQ.baseUrl ++: ', req.baseUrl)
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GOING THROUGH APP NOW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+  // console.log('REQ.baseUrl ++: ', req.baseUrl)
   // console.log('REQ.cookies ++: ', req.cookies)
   // console.log('REQ.signedCookies ++: ', req.signedCookies)
   // console.log('REQ.secure ++: ', req.secure)
@@ -125,12 +122,12 @@ app.use(function (req, res, next) {
   // console.log('REQ.stale ++: ', req.stale)
   // console.log('REQ.protocol ++: ', req.protocol)
   console.log('REQ.path ++: ', req.path)
-  console.log('REQ.route ++: ', req.route)
+  // console.log('REQ.route ++: ', req.route)
   console.log('REQ.method ++: ', req.method)
-  console.log('REQ.url ++: ', req.url)
-  console.log('REQ.originalUrl ++: ', req.originalUrl)
-  console.log('REQ.headers ++: ', req.headers)
-  // console.log('REQ.headers.referer ++: ', req.headers['referer'])
+  // console.log('REQ.url ++: ', req.url)
+  // console.log('REQ.originalUrl ++: ', req.originalUrl)
+  // console.log('REQ.headers ++: ', req.headers)
+  console.log('REQ.headers.referer ++: ', req.headers['referer'])
   // console.log('REQ.headers.user-agent ++: ', req.headers['user-agent'])
   // console.log('REQ.query ++: ', req.query)
   // console.log('REQ.query.token ++: ', req.query.token)
@@ -140,8 +137,7 @@ app.use(function (req, res, next) {
   // req.user ? console.log('REQ.user._id: ', req.user._id) : null
   // console.log('REQ.body ++: ', req.body)
   // console.log('REQ.params ++: ', req.params)
-  console.log('RES.headersSent ++: ', res.headersSent)
-  console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+  // console.log('RES.headersSent ++: ', res.headersSent)
 
   var reqBody = sanitize(req.body)
   var reqQuery = sanitize(req.query)
@@ -165,7 +161,7 @@ app.use(function (req, res, next) {
   res.locals.reqUrl = req.url
   res.locals.currentURL = req.url
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>> GOING THROUGH APP NOW <<<<<<<<<<<<<<<<<<<')
+  console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ GOING THROUGH APP NOW ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
 
   // if(res.locals.currentUser){
     // req.session.paginateFrom = res.locals.sortDocsFrom;
@@ -191,6 +187,26 @@ app.use(function (req, res, next) {
   next()
 })
 
+app.use(function (req, res, next) {
+
+  // setTimeout(function () {
+    // console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ APP End Too Long Request ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+    // res.status(504).end() 
+  // }, 30000)
+
+  onFinished(req, function () {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> APP onFinished REQ <<<<<<<<<<<<<<<<<<<<<<<: ', req.method)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> APP onFinished REQ <<<<<<<<<<<<<<<<<<<<<<<: ', req.url)
+  })
+
+  onFinished(res, function () {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> APP onFinished RES <<<<<<<<<<<<<<<<<<<<<<<: ', req.method)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> APP onFinished RES <<<<<<<<<<<<<<<<<<<<<<<: ', req.url)
+  })
+
+  next()
+})
+
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
@@ -201,7 +217,7 @@ app.use('/api', apiRoutes)
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 app.use(function (req, res, next) {
-  console.log('############################# DEVELOPMENT ERR HANDLER 1 ############################')
+  console.log('############################# APP UNCAUGHT ERR HANDLER 404 #####################################')
   var err = new Error('Not Found')
   err.status = 404
   next(err)
@@ -210,10 +226,11 @@ app.use(function (req, res, next) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+
 if (app.get('env') === 'development') {
 
   app.use(function (err, req, res, next) {
-    console.log('############################# DEVELOPMENT ERR HANDLER 2 ############################')
+    console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT ############################')
 
     res.status(err.status || 500)
 
@@ -228,21 +245,30 @@ if (app.get('env') === 'development') {
     console.log('############################# DEV REQ.xhr: ', req.xhr)
     res.locals.resLocalsBasicView = 'ResLocalsBasicViewTrue'
 
-      req.session.notifyErrorMessageObject = {'name': err.name, 'message': err.message, 'status': err.status, 'code': err.code, 'referer': req.headers['referer'], 'stack': err.stack, 'xhr': req.xhr}
+    var notifyErrorMessageObject = {'name': err.name, 'message': err.message, 'status': err.status, 'code': err.code, 'referer': req.headers['referer'], 'stack': err.stack, 'xhr': req.xhr}
 
-      var errMessage = '<pre><p>Name:&nbsp;'+err.name+'</p><p>Message:&nbsp;'+err.message+'</p><p>Status:&nbsp;'+err.status+'</p><p>Code:&nbsp;'+err.code+'</p><p>Xhr:&nbsp;'+err.xhr+'</p><p>Referer:&nbsp;'+err.referer+'</p><p>Stack:&nbsp;'+err.stack+'</p></pre>'
+    // req.session.notifyErrorMessageObject
+
+    var errTitle = 'Application Error Notice'
+
+    var errAlert = '<p>A error recently occurred with the application.</p><p>If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com.</p><p>Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p><p>We appreciate your patience!</p>'
+
+    var errMessage = '<pre><p>Name:&nbsp;'+err.name+'</p><p>Message:&nbsp;'+err.message+'</p><p>Status:&nbsp;'+err.status+'</p><p>Code:&nbsp;'+err.code+'</p><p>Xhr:&nbsp;'+err.xhr+'</p><p>Referer:&nbsp;'+err.referer+'</p><p>Stack:&nbsp;'+err.stack+'</p></pre>'
 
     if (req.xhr) {
 
-      console.log('############################# DEVELOPMENT ERR HANDLER 2 > YES XHR ############################')
+      console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > YES XHR ############################')
 
-      // res.json({'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'})
-      res.json({'response': 'error', 'type': 'error', 'errTitle': 'Notify Application Error', 'errAlert': '<p>A error recently occurred with the application.</p><p>If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com.</p><p>Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p>', 'errMessage': errMessage, 'err': req.session.notifyErrorMessageObject})
+      // res.json({'response': 'error', 'type': 'error', 'errTitle': errTitle, 'errAlert': errAlert})
+      res.json({'response': 'error', 'type': 'error', 'errTitle': errTitle, 'errAlert': errAlert, 'errMessage': errMessage, 'err': notifyErrorMessageObject})
 
     } else {
-      console.log('############################# DEVELOPMENT ERR HANDLER 2 > NO XHR ############################ ERR: ', err)
-      console.log('############################# DEVELOPMENT ERR HANDLER 2 > NO XHR ############################ errMessage: ', errMessage)
-      res.json({'response': 'error', 'type': 'error', 'errAlert': '<p>A website error recently occurred.</p><p>If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com.</p><p>Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p>', 'errMessage': errMessage, 'err': req.session.notifyErrorMessageObject})
+
+      console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR #############################')
+
+      // res.json({'response': 'error', 'type': 'error', 'errTitle': errTitle, 'errAlert': errAlert})
+      res.json({'response': 'error', 'type': 'error', 'errTitle': errTitle, 'errAlert': errAlert, 'errMessage': errMessage, 'err': notifyErrorMessageObject})
+
     }
   })
 }
