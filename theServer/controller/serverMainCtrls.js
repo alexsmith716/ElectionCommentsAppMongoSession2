@@ -29,29 +29,7 @@ if (process.env.NODE_ENV === 'production') {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 var handleError = function (req, res, statusCode) {
-  var title
-  var content
-  var addInfo = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.'
-
-  if (statusCode === 404) {
-    title = '404, Page not found:'
-    content = addInfo + '\n\nThe page you requested cannot be found. Please try again.'
-
-  } else if (statusCode === 500) {
-    title = '500, Internal server error:'
-    content = addInfo + '\n\nThere is a problem with our server. Please try again.'
-
-  } else {
-    title = statusCode + ', Error processing request:'
-    content = addInfo + '\n\nAn Error has occurred processing your request. Please try again.'
-
-  }
-
-  res.status(statusCode)
-  res.render('notifyExceptionError', {
-    message : title + '\n\n' + content,
-    type : 'danger'
-  })
+  // ++++++++++++++++++++++++++++++++++++++
 }
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -325,7 +303,7 @@ module.exports.getUserProfile = function (req, res, next) {
     rejectUnauthorized: false,
     url : apiOptions.server + path,
     method : 'GET',
-    auth : { 'username': res.locals.currentUser.email, 'password': res.locals.currentUser.datecreated.toISOString()},
+    auth : { 'username': 'asas@asasaa.com', 'password': res.locals.currentUser.datecreated.toISOString()},
     json : {'referer': req.headers['referer']}
   }
 

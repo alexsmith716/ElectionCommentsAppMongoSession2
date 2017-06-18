@@ -1,4 +1,6 @@
 
+var customError = require('./customError.js')
+
 var sendJSONresponse = function(res, status, content) {
   res.status(status)
   res.json(content)
@@ -20,12 +22,15 @@ module.exports.ensureAuthenticated = function (req, res, next) {
 }
 
 module.exports.basicAuthenticationAPI = function (req, res, next) {
+  console.log('+++++++++++++++++++++ AUTH basicAuthenticationAPI +++++++++++++++++++++: ', req.headers)
   var hAuth = req.headers['authorization']
   var expr = /Basic/
+  var err
   if (hAuth !== undefined && expr.test(hAuth)) {
     return next()
   } else {
-    sendJSONresponse(res, 400, exceptionError)
+    err = new customError('Unauthorized', 401)
+    sendJSONresponse(res, 401, err)
   }
 }
 
