@@ -126,7 +126,7 @@ app.use(function (req, res, next) {
   console.log('REQ.method ++: ', req.method)
   // console.log('REQ.url ++: ', req.url)
   // console.log('REQ.originalUrl ++: ', req.originalUrl)
-  // console.log('REQ.headers ++: ', req.headers)
+  console.log('REQ.headers ++: ', req.headers)
   console.log('REQ.headers.referer ++: ', req.headers['referer'])
   // console.log('REQ.headers.user-agent ++: ', req.headers['user-agent'])
   // console.log('REQ.query ++: ', req.query)
@@ -139,6 +139,7 @@ app.use(function (req, res, next) {
   // console.log('REQ.params ++: ', req.params)
   // console.log('RES.headersSent ++: ', res.headersSent)
 
+  console.log('REQ.json ++: ', req.json)
   var reqBody = sanitize(req.body)
   var reqQuery = sanitize(req.query)
   var reqParams = sanitize(req.params)

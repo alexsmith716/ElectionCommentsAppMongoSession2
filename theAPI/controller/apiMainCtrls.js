@@ -2,25 +2,22 @@
 var mongoose = require('mongoose')
 var Comment = mongoose.model('Comment')
 var User = mongoose.model('User')
-
-//var User = require('../model/userSchema.js')
-//var Comment = require('../model/commentsSchema')
 var paginate = require('mongoose-range-paginate')
 var pugCompiler = require('../../shared/pugCompiler')
 var nodemailer = require('nodemailer')
 var passport = require('passport')
-//var mongoose = require('mongoose')
 var serverSideValidation = require('../../shared/serverSideValidation.js')
 var evaluateUserEmail = require('../../shared/evaluateUserEmail.js')
 var evaluateUserEmailVerify = require('../../shared/evaluateUserEmailVerify.js')
 var evaluateUserPasswordVerify = require('../../shared/evaluateUserPasswordVerify.js')
 var stateNamer = require('../../shared/stateNamer.js')
 var auth = require('basic-auth')
-var customError = require('../../shared/customError.js')
 var createError = require('http-errors')
 var sortKey = 'time'
 var sort = '-' + sortKey
 var sortDocsFrom = 0
+var customError = require('../../shared/customError.js')
+var customObjectEnumerable = require('../../shared/customObjectEnumerable.js')
 
 var sendJSONresponse = function (res, status, content) {
   res.status(status)
@@ -359,9 +356,9 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
 module.exports.getUserProfileResponse = function (req, res, next) {
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ')
-  var newCustomError
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
   var credentials = auth(req)
+  var referer = req.body.referer
 
   if (req.params && req.params.userid) {
 
@@ -374,41 +371,28 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
       if (err) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > 400 <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
-
         sendJSONresponse(res, 400, err)
 
       } else if (!user) {
 
-        err = new customError('userid not found', 404)
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > 404 <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
-
-        for (var p in err) {
-          //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > 404<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', p, ' :: ', err[p])
-        }
-
+        err = customObjectEnumerable( new customError('userid not found', 404) )
         sendJSONresponse(res, 404, err)
 
       } else if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > 401 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-
-        err = new customError('Unauthorized', 401)
+        err = customObjectEnumerable( new customError('Unauthorized', 401) )
         sendJSONresponse(res, 401, err)
 
       } else {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse > 200 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
         sendJSONresponse(res, 200, user)
 
       }
-
     })
 
   } else {
 
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 6<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ')
-    err = new customError('Not found, userid required', 404)
+    err = customObjectEnumerable( new customError('Not found, userid required', 404) )
     sendJSONresponse(res, 404, err)
 
   }
