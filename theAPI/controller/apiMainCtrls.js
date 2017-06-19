@@ -15,6 +15,7 @@ var auth = require('basic-auth')
 var createError = require('http-errors')
 var customError = require('../../shared/customError.js')
 var customObjectEnumerable = require('../../shared/customObjectEnumerable.js')
+var url = require('url')
 
 var sortKey = 'time'
 var sort = '-' + sortKey
@@ -363,7 +364,7 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
   if (req.params && req.params.userid) {
 
-    User.findById(req.params.userid).exec(function (err, user) {
+    User.findById('req.params.userid').exec(function (err, user) {
 
       // return next(createError(400, 'Bad Request!'))
       // err = new Error('Bad Request')
@@ -372,30 +373,28 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
       if (err) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2222222222222 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< err: ', err)
 
-        //err.referer = referer
+        err.referer = referer
         sendJSONresponse(res, 400, err)
 
       } else if (!user) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 3 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-
         err = customObjectEnumerable( new customError('userid not found', 404) )
-        //err.referer = referer
+        err.referer = referer
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 3 <<<<<<<<<<<<<<<<<<<<<<<<<<<< !user: ', err)
         sendJSONresponse(res, 404, err)
 
       } else if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 4 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-
         err = customObjectEnumerable( new customError('Unauthorized', 401) )
-        //err.referer = referer
+        err.referer = referer
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 4 <<<<<<<<<<<<<<<<<<<<<<<<<<<< !credentials: ', err)
         sendJSONresponse(res, 401, err)
 
       } else {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 5 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 5 <<<<<<<<<<<<<<<<<<<<<<<<<<<< GOOD')
 
         sendJSONresponse(res, 200, user)
 
@@ -404,8 +403,10 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
   } else {
 
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 6 <<<<<<<<<<<<<<<<<<<<<<<<<<<< missing params')
+
     err = customObjectEnumerable( new customError('Not found, userid required', 404) )
-    //err.referer = referer
+    err.referer = referer
     sendJSONresponse(res, 404, err)
 
   }
