@@ -26,6 +26,8 @@ var onFinished = require('on-finished')
 var setUpAuthentication = require('./theAPI/model/authentication')
 var serverRoutes = require('./theServer/routes/serverRoutes')
 var apiRoutes = require('./theAPI/routes/apiRoutes')
+var customError = require('./shared/customError.js')
+var customObjectEnumerable = require('./shared/customObjectEnumerable.js')
 var app = express()
 
 app.use(helmet())
@@ -219,8 +221,7 @@ app.use('/api', apiRoutes)
 
 app.use(function (req, res, next) {
   console.log('############################# APP UNCAUGHT ERR HANDLER 404 #####################################')
-  var err = new Error('Not Found')
-  err.status = 404
+  var err = customObjectEnumerable( new customError('Page Not Found', 404) )
   next(err)
 })
 
@@ -234,7 +235,7 @@ if (app.get('env') === 'development') {
     console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT ############################')
 
     res.status(err.status || 500)
-    /*
+
     console.log('############################# DEV ERR: ', err)
     console.log('############################# DEV ERR.code: ', err.code)
     console.log('############################# DEV ERR.status: ', err.status)
@@ -245,14 +246,10 @@ if (app.get('env') === 'development') {
     console.log('############################# DEV REQ.HEADERS.referer: ', req.headers['referer'])
     console.log('############################# DEV REQ.xhr: ', req.xhr)
     res.locals.resLocalsBasicView = 'ResLocalsBasicViewTrue'
-    */
 
-    console.log('############################# DEV REQ.HEADERS.pathname: ', req.pathname)
-    var reqHeadersReferer = req.headers['referer']
+    var referer = url.parse(req.headers['referer']).pathname
 
     var notifyErrorMessageObject = {'name': err.name, 'message': err.message, 'status': err.status, 'code': err.code, 'referer': req.headers['referer'], 'stack': err.stack, 'xhr': req.xhr}
-
-    // req.session.notifyErrorMessageObject
 
     var errTitle = 'Application Error Notice'
 
@@ -269,14 +266,23 @@ if (app.get('env') === 'development') {
 
     } else {
 
-      console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR #############################')
+      // server-side error - headers referer
+      if (referer) {
 
-      if (reqHeadersReferer) {
+        console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR 1 #############################')
+        res.redirect(referer+'/?err='+err)
 
+      // api-side error - err.referer
+      } else if (err.referer) {
 
+        console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR 2 #############################')
+        res.redirect(err.referer+'/?err='+err)
+
+      // unhandled error but not XHR - redirect '/notifyerror'
       } else {
 
-
+        console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR 3 #############################')
+        res.redirect('/notifyerror')
 
       }
 

@@ -10,6 +10,9 @@ require('../../shared/sessionPrototype')
 var customError = require('../../shared/customError.js')
 var serverSideValidation = require('../../shared/serverSideValidation.js')
 var stateNamer = require('../../shared/stateNamer.js')
+var customError = require('../../shared/customError.js')
+var customObjectEnumerable = require('../../shared/customObjectEnumerable.js')
+var url = require('url')
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -296,6 +299,7 @@ module.exports.getUserProfile = function (req, res, next) {
   var newCustomError
   var requestOptions, path
   path = '/api/userprofile/' + res.locals.currentUser.id
+  var referer = url.parse(req.headers['referer']).pathname
 
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 1<<<<<<<<<<<<<<<<<<<<<<<<<<<< req.headers: ', req.headers)
 
@@ -303,16 +307,25 @@ module.exports.getUserProfile = function (req, res, next) {
     rejectUnauthorized: false,
     url : apiOptions.server + path,
     method : 'GET',
-    auth : { 'username': res.locals.currentUser.email, 'password': res.locals.currentUser.datecreated.toISOString()},
-    json : {'referer': req.headers['referer']}
+    auth : {'username': res.locals.currentUser.email, 'password': res.locals.currentUser.datecreated.toISOString()},
+    json : {'referer': referer}
   }
   // res.locals.currentUser.email
 
   request('requestOptions', function (err, response, body) {
 
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR: ', err)
 
-    if (response.statusCode === 200) {
+    // server-side error 
+    if (err) {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR referer: ', referer)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR err.referer: ', err.referer)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR err: ', err)
+      // res.redirect('/userhome/?err='+err)
+      res.redirect(referer+'/?err='+err)
+
+
+    } else if (response.statusCode === 200) {
 
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
       
@@ -323,25 +336,20 @@ module.exports.getUserProfile = function (req, res, next) {
         responseBody: body
       })
 
-    } else if (err) {
-
-      // var voo = err.referer.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 444444<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR: ', err)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4444444<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERRvoo: ')
-      res.redirect('/userhome/?err='+err)
-      // res.redirect('/'+err.referer+'/?err='+err)
-      // https://localhost:3000/userhome
-
+    // api-side error 
     } else {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 5555555<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY: ', body)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 6<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.stack: ', body.stack)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 8<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.name: ', body.name)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 9<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.message: ', body.message)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 10<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.status: ', body.status)
-      res.redirect('/userhome/?err='+body)
-      // res.redirect('/'+err.referer+'/?err='+err)
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY: ', body)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.referer: ', body.referer)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.stack: ', body.stack)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.name: ', body.name)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.message: ', body.message)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.status: ', body.status)
+      // res.redirect('/userhome/?err='+body)
+      res.redirect(referer+'/?err='+body)
 
     }
+
   })
 }
 
