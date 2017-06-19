@@ -41,7 +41,10 @@ block content
 
       - if (err)
         script.
-          $('#modalAlert .alertDanger').html('Could not update your information! Please try again or contact Customer Service.')
+          console.log('HBJHJHBHBJHBJHBHHJ: ', !{err.title} )
+          $('#modalAlert .modal-title').html()
+          $('#modalAlert .alertDanger').html()
+          $('#modalAlert #modalScrollbox').html()
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('#modalAlert').modal({keyboard: false,backdrop: 'static'})
 
