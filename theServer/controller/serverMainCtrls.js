@@ -3,15 +3,16 @@ var fs  = require('fs')
 var https   = require('https')
 var request = require('request')
 var passport = require('passport')
-var pugCompiler = require('../../shared/pugCompiler.js')
-var mailer = require('../../shared/mailer.js')
-var sanitizeInputModule = require('../../shared/sanitizeInput.js')
+var pugCompiler = require('../../shared/pugCompiler')
+var mailer = require('../../shared/mailer')
+var sanitizeInputModule = require('../../shared/sanitizeInput')
 require('../../shared/sessionPrototype')
-var customError = require('../../shared/customError.js')
-var serverSideValidation = require('../../shared/serverSideValidation.js')
-var stateNamer = require('../../shared/stateNamer.js')
-var customError = require('../../shared/customError.js')
-var customObjectEnumerable = require('../../shared/customObjectEnumerable.js')
+var customError = require('../../shared/customError')
+var serverSideValidation = require('../../shared/serverSideValidation')
+var stateNamer = require('../../shared/stateNamer')
+var customError = require('../../shared/customError')
+var customObjectEnumerable = require('../../shared/customObjectEnumerable')
+var renderableErrorObject = require('../../shared/renderableErrorObject')
 var url = require('url')
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -108,19 +109,6 @@ module.exports.getIndex = function(req, res, next){
 };
 */
 
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-module.exports.getUserHome = function (req, res) {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 1 >>>>>>>>>>>>>>>>>>>>>>>>>>')
-  if (req.query.err) {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 2 >>>>>>>>>>>>>>>>>>>>>>>>>>: ', req.query.err)
-  }
-  res.render('userHome', {
-    err: req.query.err
-  })
-  //res.render('userHome')
-};
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -291,9 +279,24 @@ module.exports.getSignup = function (req, res, next) {
   })
 }
 
+
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+module.exports.getUserHome = function (req, res) {
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 1 >>>>>>>>>>>>>>>>>>>>>>>>>>')
+  if (req.query.err) {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 2 >>>>>>>>>>>>>>>>>>>>>>>>>>1: ', req.params.err.title)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 2 >>>>>>>>>>>>>>>>>>>>>>>>>>2: ', req.query.err.title)
+  }
+  res.render('userHome', {
+    err: req.query.err
+  })
+
+}
+
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.getUserProfile = function (req, res, next) {
   var newCustomError
@@ -318,11 +321,13 @@ module.exports.getUserProfile = function (req, res, next) {
     // server-side error 
     if (err) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR referer: ', referer)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR err.referer: ', err.referer)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR err: ', err)
+      //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR referer: ', referer)
+      //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR err.referer: ', err.referer)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR err1: ', err)
       // res.redirect('/userhome/?err='+err)
-      res.redirect(referer+'/?err='+err)
+      var errX = renderableErrorObject(err)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR err2: ', errX.title)
+      res.redirect(referer+'/?err='+errX)
 
 
     } else if (response.statusCode === 200) {
@@ -370,6 +375,18 @@ module.exports.getMembersOnly = function (req, res) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.renderNotifyError = function (req, res) {
+
+}
+
+module.exports.getNotifyError = function (req, res, next) {
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> getNotifyError > notifyErrorMessageObject <<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
+  res.render('notifyError', {
+    //
+  })
+}
+/*
+module.exports.renderNotifyError = function (req, res) {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> renderNotifyError <<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
   if (req.session.notifyErrorMessageObject) {
@@ -386,11 +403,7 @@ module.exports.renderNotifyError = function (req, res) {
 
 }
 
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
 module.exports.getNotifyError = function (req, res, next) {
-
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> getNotifyError > notifyErrorMessageObject <<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
   req.logout()
@@ -402,7 +415,7 @@ module.exports.getNotifyError = function (req, res, next) {
     }
   })
 }
-
+*/
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
