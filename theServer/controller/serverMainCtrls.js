@@ -297,17 +297,18 @@ module.exports.getUserProfile = function (req, res, next) {
   var requestOptions, path
   path = '/api/userprofile/' + res.locals.currentUser.id
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 1<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 1<<<<<<<<<<<<<<<<<<<<<<<<<<<< req.headers: ', req.headers)
 
   requestOptions = {
     rejectUnauthorized: false,
     url : apiOptions.server + path,
     method : 'GET',
-    auth : { 'username': 'asas@asasaa.com', 'password': res.locals.currentUser.datecreated.toISOString()},
+    auth : { 'username': res.locals.currentUser.email, 'password': res.locals.currentUser.datecreated.toISOString()},
     json : {'referer': req.headers['referer']}
   }
+  // res.locals.currentUser.email
 
-  request(requestOptions, function (err, response, body) {
+  request('requestOptions', function (err, response, body) {
 
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR: ', err)
 
@@ -324,38 +325,23 @@ module.exports.getUserProfile = function (req, res, next) {
 
     } else if (err) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR: ', err)
+      // var voo = err.referer.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 444444<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR: ', err)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4444444<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERRvoo: ')
       res.redirect('/userhome/?err='+err)
+      // res.redirect('/'+err.referer+'/?err='+err)
+      // https://localhost:3000/userhome
 
     } else {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 5<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY: ', body)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 5555555<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY: ', body)
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 6<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.stack: ', body.stack)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 7<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.Stack: ', body.Stack)
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 8<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.name: ', body.name)
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 9<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.message: ', body.message)
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 10<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.status: ', body.status)
       res.redirect('/userhome/?err='+body)
+      // res.redirect('/'+err.referer+'/?err='+err)
 
     }
-    /*
-    if (err) {
-
-      return next(err)
-
-    } else if (response.statusCode === 200) {
-
-      res.render('userProfile', {
-        csrfToken: req.csrfToken(),
-        responseBody: body
-      })
-
-    } else {
-
-      newCustomError = new customError('Bad Request', 400, req.body.referer)
-      return next(newCustomError)
-
-    }
-    */
   })
 }
 

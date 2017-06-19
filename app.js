@@ -234,7 +234,7 @@ if (app.get('env') === 'development') {
     console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT ############################')
 
     res.status(err.status || 500)
-
+    /*
     console.log('############################# DEV ERR: ', err)
     console.log('############################# DEV ERR.code: ', err.code)
     console.log('############################# DEV ERR.status: ', err.status)
@@ -245,6 +245,10 @@ if (app.get('env') === 'development') {
     console.log('############################# DEV REQ.HEADERS.referer: ', req.headers['referer'])
     console.log('############################# DEV REQ.xhr: ', req.xhr)
     res.locals.resLocalsBasicView = 'ResLocalsBasicViewTrue'
+    */
+
+    console.log('############################# DEV REQ.HEADERS.pathname: ', req.pathname)
+    var reqHeadersReferer = req.headers['referer']
 
     var notifyErrorMessageObject = {'name': err.name, 'message': err.message, 'status': err.status, 'code': err.code, 'referer': req.headers['referer'], 'stack': err.stack, 'xhr': req.xhr}
 
@@ -266,6 +270,15 @@ if (app.get('env') === 'development') {
     } else {
 
       console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR #############################')
+
+      if (reqHeadersReferer) {
+
+
+      } else {
+
+
+
+      }
 
       // res.json({'response': 'error', 'type': 'error', 'errTitle': errTitle, 'errAlert': errAlert})
       res.json({'response': 'error', 'type': 'error', 'errTitle': errTitle, 'errAlert': errAlert, 'errMessage': errMessage, 'err': notifyErrorMessageObject})
