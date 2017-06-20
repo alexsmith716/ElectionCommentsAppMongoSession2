@@ -14,10 +14,7 @@ module.exports.ensureAuthenticated = function (req, res, next) {
     return next()
   } else {
     console.log('+++++++++++++++++++++ AUTH ensureAuthenticated No +++++++++++++++++++++')
-    // res.redirect('/loginorsignup')
-    var newExceptionError = new Error('Bad Request')
-    newExceptionError.status = 400
-    return next(newExceptionError)
+    res.redirect('/loginorsignup')
   }
 }
 

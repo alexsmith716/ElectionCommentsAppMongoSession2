@@ -38,33 +38,30 @@ block content
 
     .container
 
-
       - if (err)
         script.
-          console.log('HBJHJHBHBJHBJHBHHJ: ', !{err.title} )
-          $('#modalAlert .modal-title').html()
-          $('#modalAlert .alertDanger').html()
-          $('#modalAlert #modalScrollbox').html()
+          $('#modalAlert .modal-title').html( !{JSON.stringify(err.title)} )
+          $('#modalAlert .alertDanger').html( !{JSON.stringify(err.alert)} )
+          $('#modalAlert #modalScrollbox').html( !{JSON.stringify(err.message)} )
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('#modalAlert').modal({keyboard: false,backdrop: 'static'})
 
       .row
-      
+
         .col-xs-12.col-sm-3.col-md-3.col-lg-3
 
           div(align="center")
             <!-- img(src="/images/someUser.jpg") -->
           br
-      
-      
+
         .col-xs-12.col-sm-7.col-md-7.col-lg-7
 
           div(align="center")
-            
+
             div
               - var isodate= `${currentUser.previouslogin}`
               - var millis = Date.parse(isodate)
-              
+
               .text-muted.alertEditUser
                 small
                   i Last login:
@@ -72,7 +69,7 @@ block content
                     +newAppDate(millis,true)
               br
               br
-  
+
             div
               a.btn.btn-primary.btn-md(href="/userprofile") Account Settings
               br
@@ -90,8 +87,3 @@ block content
               br
               br
               a.btn.btn-primary.btn-md(href="") Most Recommended
- 
-
-    br
-    br
-

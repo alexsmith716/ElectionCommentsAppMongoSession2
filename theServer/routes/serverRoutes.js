@@ -43,6 +43,8 @@ router.get('/notifyerror', serverControllers.getNotifyError)
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+router.get('/userhomex', auth.ensureAuthenticated, serverControllers.getUserHomeX)
+
 router.get('/userhome', auth.ensureAuthenticated, serverControllers.getUserHome)
 router.get('/membersonly', auth.ensureAuthenticated, serverControllers.getMembersOnly)
 router.get('/userprofile', csrfProtection, auth.ensureAuthenticated, serverControllers.getUserProfile)

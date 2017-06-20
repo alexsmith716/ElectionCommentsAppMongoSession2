@@ -28,6 +28,7 @@ var serverRoutes = require('./theServer/routes/serverRoutes')
 var apiRoutes = require('./theAPI/routes/apiRoutes')
 var customError = require('./shared/customError.js')
 var customObjectEnumerable = require('./shared/customObjectEnumerable.js')
+var url = require('url')
 var app = express()
 
 app.use(helmet())
@@ -162,8 +163,10 @@ app.use(function (req, res, next) {
 app.use(function (req, res, next) {
   res.locals.currentUser = req.user
   res.locals.reqUrl = req.url
-  res.locals.currentURL = req.url
-
+  if (req.headers['referer']) {
+    res.locals.referer = url.parse(req.headers['referer']).pathname
+  }
+  
   console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ GOING THROUGH APP NOW ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
 
   // if(res.locals.currentUser){
@@ -285,9 +288,6 @@ if (app.get('env') === 'development') {
         res.redirect('/notifyerror')
 
       }
-
-      // res.json({'response': 'error', 'type': 'error', 'errTitle': errTitle, 'errAlert': errAlert})
-      res.json({'response': 'error', 'type': 'error', 'errTitle': errTitle, 'errAlert': errAlert, 'errMessage': errMessage, 'err': notifyErrorMessageObject})
 
     }
   })
