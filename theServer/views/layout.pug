@@ -50,7 +50,7 @@ html(lang="en-US")
 
                     if reqUrl !== '/userhome'
                       li 
-                        a.navbar-link(href='/userhome', data-toggle='collapse', data-target='.navbar-collapse.in') HomeUser
+                        a.navbar-link(href='/userhome', data-toggle='collapse', data-target='.navbar-collapse.in') User Home
 
                     if reqUrl !== '/membersonly'
                       li 
@@ -64,9 +64,9 @@ html(lang="en-US")
 
                     if reqUrl !== '/'
                       li 
-                        a.navbar-link(href='/', data-toggle='collapse', data-target='.navbar-collapse.in') HomeNoUser
+                        a.navbar-link(href='/', data-toggle='collapse', data-target='.navbar-collapse.in') Homepage
 
-                    if reqUrl !== '/membersonly'
+                    if reqUrl !== '/loginorsignup'
                       li 
                         a.navbar-link(href='/membersonly', data-toggle='collapse', data-target='.navbar-collapse.in') Members Only!
 

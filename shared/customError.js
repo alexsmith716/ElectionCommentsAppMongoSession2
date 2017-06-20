@@ -1,8 +1,8 @@
 
-module.exports = function CustomError(message, status) {
+module.exports = function CustomError(message, status, errStack) {
 
   Error.captureStackTrace(this, this.constructor)
-  this.Stack = this.stack
+  !errStack ? this.Stack = this.stack : this.Stack = errStack
   this.name = this.constructor.name
   this.message = message
   this.status = status

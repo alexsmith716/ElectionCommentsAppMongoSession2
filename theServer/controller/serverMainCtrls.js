@@ -14,6 +14,7 @@ var customError = require('../../shared/customError')
 var customObjectEnumerable = require('../../shared/customObjectEnumerable')
 var renderableErrorObject = require('../../shared/renderableErrorObject')
 var url = require('url')
+var auth = require('basic-auth')
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -279,22 +280,31 @@ module.exports.getSignup = function (req, res, next) {
   })
 }
 
-
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
 module.exports.getUserHome = function (req, res) {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 1 >>>>>>>>>>>>>>>>>>>>>>>>>>')
-  if (req.query.err) {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 2 >>>>>>>>>>>>>>>>>>>>>>>>>>1: ', req.params.err.title)
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 2 >>>>>>>>>>>>>>>>>>>>>>>>>>2: ', req.query.err.title)
-  }
-  res.render('userHome', {
-    err: req.query.err
+  res.render('userHome', { err: req.session.renderableErr }, function (err, html) {
+    if (err) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 1 >>>>>>>>>>>>>>>>>>>>>>>>>> err: ', err)
+    } else {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 2 >>>>>>>>>>>>>>>>>>>>>>>>>>')
+      req.session.renderableErr = null
+      res.send(html)
+    }
   })
-
 }
 
+module.exports.getUserHomeX = function (req, res) {
+  res.render('', { err: req.session.renderableErr }, function (err, html) {
+    if (err) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 1 >>>>>>>>>>>>>>>>>>>>>>>>>> err: ', err)
+    } else {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserHome 2 >>>>>>>>>>>>>>>>>>>>>>>>>>')
+      req.session.renderableErr = null
+      res.send(html)
+    }
+  })
+}
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
@@ -302,7 +312,8 @@ module.exports.getUserProfile = function (req, res, next) {
   var newCustomError
   var requestOptions, path
   path = '/api/userprofile/' + res.locals.currentUser.id
-  var referer = url.parse(req.headers['referer']).pathname
+  // var referer = url.parse(req.headers['referer']).pathname
+  var referer = res.locals.referer
 
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 1<<<<<<<<<<<<<<<<<<<<<<<<<<<< req.headers: ', req.headers)
 
@@ -315,19 +326,15 @@ module.exports.getUserProfile = function (req, res, next) {
   }
   // res.locals.currentUser.email
 
-  request('requestOptions', function (err, response, body) {
-
+  request(requestOptions, function (err, response, body) {
 
     // server-side error 
     if (err) {
-
-      //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR referer: ', referer)
-      //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR err.referer: ', err.referer)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR err1: ', err)
-      // res.redirect('/userhome/?err='+err)
-      var errX = renderableErrorObject(err)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR err2: ', errX.title)
-      res.redirect(referer+'/?err='+errX)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR err: ', err)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR referer: ', referer)
+      req.session.renderableErr = renderableErrorObject(err)
+      res.redirect(referer)
+      // res.redirect('/userhomex')
 
 
     } else if (response.statusCode === 200) {
@@ -347,11 +354,13 @@ module.exports.getUserProfile = function (req, res, next) {
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY: ', body)
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.referer: ', body.referer)
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.stack: ', body.stack)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.Stack: ', body.Stack)
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.name: ', body.name)
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.message: ', body.message)
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.status: ', body.status)
-      // res.redirect('/userhome/?err='+body)
-      res.redirect(referer+'/?err='+body)
+      req.session.renderableErr = renderableErrorObject(body)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 3<<<<<<<<<<<<<<<<<<<<<<<<<<<<req.session.renderableErr: ', req.session.renderableErr)
+      res.redirect(referer)
 
     }
 
