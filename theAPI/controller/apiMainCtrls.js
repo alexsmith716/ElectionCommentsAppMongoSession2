@@ -366,12 +366,14 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
   if (req.params && req.params.userid) {
 
-    // req.params.userid >>> (string || 59470fbe58ee5103bac5f9bd)
-    req.params.userid = '49470fbe58ee5103bac5f9bd'
+    // req.params.userid === (string || 59470fbe58ee5103bac5f9bd)
+    // req.params.userid = '49470fbe58ee5103bac5f9bd'
 
     User.findById(req.params.userid).exec(function (err, user) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 11111 <<<<<<<<<<<<<<<<<<<<<<<<<<<< credentials?: ', credentials)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<< credentials1?: ', credentials)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<< credentials2?: ', credentials.name)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<< credentials3?: ', credentials.pass)
 
       if (err) {
 
@@ -408,44 +410,6 @@ module.exports.getUserProfileResponse = function (req, res, next) {
         sendJSONresponse(res, 404, err)
 
       }
-      /*
-      if (err) {
-
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< err: ', err)
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< err.status: ', err.status)
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< err.name: ', err.name)
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< err.message: ', err.message)
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< err.stack: ', err.stack)
-
-        err = customObjectEnumerable( new customError(err.message, err.status, err.stack) )
-        err.referer = referer
-        
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< CUSTOM err: ', err)
-        sendJSONresponse(res, 400, err)
-
-      } else if (!user) {
-
-        err = customObjectEnumerable( new customError('User not found', 404) )
-        err.referer = referer
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 4 <<<<<<<<<<<<<<<<<<<<<<<<<<<< !user: ', err)
-        sendJSONresponse(res, 404, err)
-
-      // } else if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
-      } else if (!credentials) {
-
-        err = customObjectEnumerable( new customError('Unauthorized', 401) )
-        err.referer = referer
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 3 <<<<<<<<<<<<<<<<<<<<<<<<<<<< !credentials: ', err)
-        sendJSONresponse(res, 401, err)
-
-      } else if (user) {
-
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 5 <<<<<<<<<<<<<<<<<<<<<<<<<<<< GOOD')
-
-        sendJSONresponse(res, 200, user)
-
-      }
-      */
 
     })
 

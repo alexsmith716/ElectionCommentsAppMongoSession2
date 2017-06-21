@@ -321,10 +321,12 @@ module.exports.getUserProfile = function (req, res, next) {
     rejectUnauthorized: false,
     url : apiOptions.server + path,
     method : 'GET',
-    auth : {'username': res.locals.currentUser.email, 'password': res.locals.currentUser.datecreated.toISOString()},
+    auth : {'username': 'aaaaaa@aaaaaaa.com', 'password': res.locals.currentUser.datecreated.toISOString()},
     json : {'referer': referer}
   }
   // res.locals.currentUser.email
+
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 1<<<<<<<<<<<<<<<<<<<<<<<<<<<< DDDCCCC!!!: ', res.locals.currentUser.datecreated.toISOString())
 
   request(requestOptions, function (err, response, body) {
 
