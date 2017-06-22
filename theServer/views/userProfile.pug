@@ -72,7 +72,7 @@ block content
             div(class="modalCancelSubmitBtns")
               button(class="btn btn-default btn-md cancelButton" data-dismiss="modal", id="editProfileFormModalCancel") Cancel
               | &nbsp;&nbsp;&nbsp;&nbsp;
-              button(class="btn btn-primary btn-md", id="submitEditProfileBtn") Submit
+              button(class="btn btn-primary btn-md", id="submitEditProfileBtn") Submit!!!!!!!!!
 
             div(style="margin-top:12px;")
               .text-danger.hide.formerror
@@ -226,9 +226,9 @@ block content
             .col-xs-12
 
               if currentUser
-                p CURRENT USER YESSS
+                p CURRENT USER YES
               else
-                p CURRENT USER NOOOO
+                p CURRENT USER NO
 
               p.small CSRF token (NEW): <br> #{csrfToken}
 

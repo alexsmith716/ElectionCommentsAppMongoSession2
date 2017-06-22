@@ -44,36 +44,38 @@ block content
         .modal-body
 
           form(action="https://localhost:3000/api/forgotpassword", id="forgotPasswordForm", name="forgotPasswordForm", method="post", enctype="application/x-www-form-urlencoded")
-            
+
             .formLead
               p Forgot your password? Enter your email address below and we'll send instructions on how to reset your password.
-          
+
             fieldset
 
               .modalAlertWarning(style="display:none; margin-top: 6px; margin-bottom: 12px;")
                 alert.alert-warning
                   strong An email containing your password recovery link has been sent. If you do not receive an email within 10 minutes, check your spam folder first, then try again.
-          
+
               .form-group
-          
+
                 label.control-label(style="margin-top:10px;") Email:
-          
+
                 input.form-control.input-md(id="forgotPassword", name="forgotPassword", placeholder="Email Address", title="Please enter a valid Email Address", type="email", required)
 
                 .text-danger.hide.loginerror(style="margin-top:8px;") Email is required
-          
+
               button(class="btn btn-default btn-md modalOkayBtn" data-dismiss="modal" style="display:none;") OK
-              | 
+              |
               div(class="modalCancelSubmitBtns")
-                button(class="btn btn-default btn-md" data-dismiss="modal") Cancel
+                button(class="btn btn-default btn-md cancelButton" data-dismiss="modal") Cancel
                 | &nbsp;&nbsp;&nbsp;&nbsp;
                 button(type="submit", id="forgotPasswordSubmitBtn", name="forgotPasswordSubmitBtn", class="btn btn-primary btn-md") Submit
 
         .modal-footer
           .loading(style="display:none;")
-    
+
   .main
-  
+    br
+    br
+
     .container
 
       .row

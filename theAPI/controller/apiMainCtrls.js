@@ -17,6 +17,7 @@ var customError = require('../../shared/customError')
 var customObjectEnumerable = require('../../shared/customObjectEnumerable')
 var renderableErrorObject = require('../../shared/renderableErrorObject')
 var url = require('url')
+var util = require('util')
 
 var sortKey = 'time'
 var sort = '-' + sortKey
@@ -222,39 +223,119 @@ module.exports.deleteOneComment = function(req, res) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-// AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
+
 module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>> > API > ajaxEvaluateUserProfile > req.body:', req.body)
 
-  /*
-  User.findById(res.locals.currentUser.id).select('firstname').exec(function (err, user) {
-  // User.findOne({email : res.locals.currentUser.email}).exec(function(err, user) {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 0000000000 1')
-    if (err) {
-      return next(err)
-    }
-    if (!user) {
-      sendJSONresponse(res, 201, { 'response': 'error' })
-      return
-    }
-    user.firstname = 'Wcscscdd'
-    // user[reqBodyProp] = reqBodyValue
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 0000000000 3: ', typeof user.firstname)
-    user.save(function (err, user) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 1:', err)
-      if (err) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 2:')
-        sendJSONresponse(res, 404, err)
-        // return next(err)
-      } else {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 3:')
-        sendJSONresponse(res, 201, { 'response': 'success', 'updatedData': user.firstname })
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< req.body: ', req.body)
+
+  // req.body:  { firstname: 'Nvhfvfduvdfv', _csrf: 'mw1ThVG4-hv3vkRQ3jrykaTGo4YZLrckseNM' }
+
+  var newError
+  var reqBodyProp
+  var reqBodyValue
+  var template = {}
+  var updatedData
+
+  var templateMain = {firstname: 'required', 
+    lastname: 'required', 
+    city: 'required', 
+    state: 'required'}
+
+  if (req.body && Object.keys(req.body).length == 2) {
+
+    for (var p in req.body) {
+
+      if (p !== '_csrf') {
+
+        reqBodyProp = p
+        reqBodyValue = req.body[reqBodyProp]
+
+        if (reqBodyProp in templateMain) {
+
+          template[reqBodyProp] = 'required'
+          template['expectedResponse'] = 'false'
+
+          serverSideValidation(req, res, template, function (validatedResponse) {
+
+            var validationErrors = false
+
+            for (var prop in validatedResponse) {
+              if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+
+                validationErrors = true
+                break
+
+              }
+            }
+
+            if (!validationErrors) {
+
+              User.findById( res.locals.currentUser.id ).select( reqBodyProp ).exec(function (err, user) {
+
+                if (err) {
+
+                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 66666 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+                  sendJSONresponse(res, 400, err)
+                  return
+                }
+
+                if (!user) {
+
+                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 333333 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+                  sendJSONresponse(res, 201, { 'response': 'error' })
+                  return
+                }
+
+                reqBodyValue = ''
+                user[reqBodyProp] = reqBodyValue
+
+                if (reqBodyProp === 'state') {
+                  updatedData = stateNamer(req, res, reqBodyValue)
+                  reqBodyValue = updatedData
+                }
+
+                user.save(function (err, user) {
+
+                  if (err) {
+
+                    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 000000 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+                    return next(err)
+
+                  } else {
+
+                    sendJSONresponse(res, 201, { 'response': 'success', 'updatedData': reqBodyValue })
+
+                  }
+                })
+
+
+              })
+
+            }else{
+
+              sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
+            }
+          })
+        }
       }
-    })
-  })
-  */
+      break
+    }
+  } else {
 
-  var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'}
+    
+
+  }
+
+}
+
+
+
+module.exports.ajaxEvaluateUserProfileXXX = function (req, res, next) {
+
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< req.body: ', req.body)
+
+  // req.body:  { firstname: 'Nvhfvfduvdfv', _csrf: 'mw1ThVG4-hv3vkRQ3jrykaTGo4YZLrckseNM' }
+
   var newError
   var reqBodyProp
   var reqBodyValue
@@ -282,37 +363,36 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
           var validationErrors = false
 
-          if (validatedResponse.status === 'err') {
+          for (var prop in validatedResponse) {
+            if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
 
-            sendJSONresponse(res, 400, validatedResponse.message)
-            return
+              validationErrors = true
+              break
 
-          } else {
-            for (var prop in validatedResponse) {
-              if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
-
-                validationErrors = true
-                break
-
-              }
             }
           }
 
           if (!validationErrors) {
 
-            User.findById(res.locals.currentUser.id).select(reqBodyProp).exec(function (err, user) {
+            User.findById( res.locals.currentUser.id ).select( reqBodyProp ).exec(function (err, user) {
 
+
+              /*
               if (err) {
+
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 66666 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
                 sendJSONresponse(res, 400, err)
                 return
               }
 
               if (!user) {
+
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 333333 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
                 sendJSONresponse(res, 201, { 'response': 'error' })
                 return
               }
 
-              reqBodyValue = ''
+              // reqBodyValue = ''
               user[reqBodyProp] = reqBodyValue
 
               if (reqBodyProp === 'state') {
@@ -320,29 +400,25 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
                 reqBodyValue = updatedData
               }
 
-              console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 02aaaa:', reqBodyProp)
-              console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 02:', reqBodyValue)
-
               user.save(function (err, user) {
-
-                console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 1:', err)
 
                 if (err) {
 
-                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 2:')
+                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 000000 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
                   return next(err)
 
                 } else {
 
-                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>> API > ajaxEvaluateUserProfile > user.save 3:')
                   sendJSONresponse(res, 201, { 'response': 'success', 'updatedData': reqBodyValue })
 
                 }
               })
+              */
 
             })
 
           }else{
+
             sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
           }
         })
@@ -359,7 +435,6 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
 module.exports.getUserProfileResponse = function (req, res, next) {
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
   var credentials = auth(req)
   var referer = req.body.referer
   // req.params.userid = ''
@@ -367,55 +442,48 @@ module.exports.getUserProfileResponse = function (req, res, next) {
   if (req.params && req.params.userid) {
 
     // req.params.userid === (string || 59470fbe58ee5103bac5f9bd)
-    // req.params.userid = '49470fbe58ee5103bac5f9bd'
+    req.params.userid = '49470fbe58ee5103bac5f9bd'
 
-    User.findById(req.params.userid).exec(function (err, user) {
+    User.findById( req.params.userid ).exec(function (err, user) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<< credentials1?: ', credentials)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<< credentials2?: ', credentials.name)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<< credentials3?: ', credentials.pass)
+      if (user) {
 
-      if (err) {
+        if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< err: ', err)
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< err.status: ', err.status)
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< err.name: ', err.name)
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< err.message: ', err.message)
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< err.stack: ', err.stack)
+          err = customObjectEnumerable( new customError('Unauthorized', 401) )
+          err.referer = referer
+          sendJSONresponse(res, 401, err)
 
-        err = customObjectEnumerable( new customError(err.message, err.status, err.stack) )
+        } else {
+
+          sendJSONresponse(res, 200, user)
+
+        }
+
+      } else if (err) {
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR 1')
+
+        //err = customObjectEnumerable( new customError(err.message, err.status, err.stack, err.name) )
         err.referer = referer
-        
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 2  <<<<<<<<<<<<<<<<<<<<<<<<<<<< CUSTOM err: ', err)
-        sendJSONresponse(res, 400, err)
-
-      } else if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
-
-        err = customObjectEnumerable( new customError('Unauthorized', 401) )
-        err.referer = referer
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 3 <<<<<<<<<<<<<<<<<<<<<<<<<<<< !credentials: ', err)
-        sendJSONresponse(res, 401, err)
-
-      } else if (user) {
-
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 5 <<<<<<<<<<<<<<<<<<<<<<<<<<<< GOOD')
-
-        sendJSONresponse(res, 200, user)
+        //sendJSONresponse(res, 400, err)
+        return next(err)
 
       } else {
 
-        err = customObjectEnumerable( new customError('User not found', 404) )
-        err.referer = referer
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 99999999 <<<<<<<<<<<<<<<<<<<<<<<<<<<< !user: ', err)
-        sendJSONresponse(res, 404, err)
+        // var errX = customObjectEnumerable( new customError('User not found', 404) )
+        var errX = new customError('User not found', 404)
+        // err.referer = referer
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR 2a: ', util.isError(errX) )
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR 2b: ', errX)
+        //sendJSONresponse(res, 404, err)
+        return next(errX)
 
       }
 
     })
 
   } else {
-
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> API > getUserProfileResponse 6 <<<<<<<<<<<<<<<<<<<<<<<<<<<< missing params')
 
     err = customObjectEnumerable( new customError('Not found, userid required', 404) )
     err.referer = referer
@@ -712,16 +780,11 @@ module.exports.ajaxForgotPassword = function (req, res, next) {
   serverSideValidation(req, res, template, function (validatedResponse) {
     var validationErrors = false
 
-    if (validatedResponse.status === 'err') {
-      return next(validatedResponse.message)
+    for (var prop in validatedResponse) {
+      if (validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid') {
+        validationErrors = true
+        break;
 
-    } else {
-      for (var prop in validatedResponse) {
-        if (validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid') {
-          validationErrors = true
-          break;
-
-        }
       }
     }
 
@@ -760,18 +823,15 @@ module.exports.ajaxLoginUser = function (req, res, next) {
   // req.body = testerJOB
 
   serverSideValidation(req, res, template, function (validatedResponse) {
+
     var validationErrors = false
 
-    if (validatedResponse.status === 'err') {
-      return next(validatedResponse.message)
+    for (var prop in validatedResponse) {
 
-    } else {
-      for (var prop in validatedResponse) {
-        if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
-          validationErrors = true
-          break
+      if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+        validationErrors = true
+        break
 
-        }
       }
     }
 
@@ -848,16 +908,20 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
     var validationErrors = false
 
     if (validatedResponse.status === 'err') {
+
       return next(validatedResponse.message)
 
     } else {
+
       for (var prop in validatedResponse) {
+
         if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
           validationErrors = true
           break
 
         }
       }
+
     }
 
     if (!validationErrors) {
