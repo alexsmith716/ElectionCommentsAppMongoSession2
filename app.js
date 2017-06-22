@@ -129,7 +129,7 @@ app.use(function (req, res, next) {
   console.log('REQ.method ++: ', req.method)
   // console.log('REQ.url ++: ', req.url)
   // console.log('REQ.originalUrl ++: ', req.originalUrl)
-  console.log('REQ.headers ++: ', req.headers)
+  // console.log('REQ.headers ++: ', req.headers)
   console.log('REQ.headers.referer ++: ', req.headers['referer'])
   // console.log('REQ.headers.user-agent ++: ', req.headers['user-agent'])
   // console.log('REQ.query ++: ', req.query)
@@ -201,13 +201,11 @@ app.use(function (req, res, next) {
   // }, 30000)
 
   onFinished(req, function () {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> APP onFinished REQ <<<<<<<<<<<<<<<<<<<<<<<: ', req.method)
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> APP onFinished REQ <<<<<<<<<<<<<<<<<<<<<<<: ', req.url)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> APP onFinished REQ <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
   })
 
   onFinished(res, function () {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> APP onFinished RES <<<<<<<<<<<<<<<<<<<<<<<: ', req.method)
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> APP onFinished RES <<<<<<<<<<<<<<<<<<<<<<<: ', req.url)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> APP onFinished RES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
   })
 
   next()
@@ -252,20 +250,18 @@ if (app.get('env') === 'development') {
 
     var referer = url.parse(req.headers['referer']).pathname
 
-    var notifyErrorMessageObject = {'name': err.name, 'message': err.message, 'status': err.status, 'code': err.code, 'referer': req.headers['referer'], 'stack': err.stack, 'xhr': req.xhr}
-
     var errTitle = 'Application Error Notice'
-
     var errAlert = '<p>A error recently occurred with the application.</p><p>If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com.</p><p>Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p><p>We appreciate your patience!</p>'
+    var errMessage = '<pre><p>Name:&nbsp;'+err.name+'</p><p>Message:&nbsp;'+err.message+'</p><p>Status:&nbsp;'+err.status+'</p><p>Code:&nbsp;'+err.code+'</p><p>Referer:&nbsp;'+err.referer+'</p><p>Stack:&nbsp;'+err.stack+'</p></pre>'
 
-    var errMessage = '<pre><p>Name:&nbsp;'+err.name+'</p><p>Message:&nbsp;'+err.message+'</p><p>Status:&nbsp;'+err.status+'</p><p>Code:&nbsp;'+err.code+'</p><p>Xhr:&nbsp;'+err.xhr+'</p><p>Referer:&nbsp;'+err.referer+'</p><p>Stack:&nbsp;'+err.stack+'</p></pre>'
+    req.session.renderableErr = {'title': errTitle, 'alert': errAlert, 'message': errMessage}
 
     if (req.xhr) {
 
       console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > YES XHR ############################')
 
       // res.json({'response': 'error', 'type': 'error', 'errTitle': errTitle, 'errAlert': errAlert})
-      res.json({'response': 'error', 'type': 'error', 'errTitle': errTitle, 'errAlert': errAlert, 'errMessage': errMessage, 'err': notifyErrorMessageObject})
+      res.json({'response': 'error', 'type': 'error', 'title': errTitle, 'alert': errAlert, 'message': errMessage})
 
     } else {
 
@@ -273,13 +269,13 @@ if (app.get('env') === 'development') {
       if (referer) {
 
         console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR 1 #############################')
-        res.redirect(referer+'/?err='+err)
+        res.redirect(referer)
 
       // api-side error - err.referer
       } else if (err.referer) {
 
         console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR 2 #############################')
-        res.redirect(err.referer+'/?err='+err)
+        res.redirect(err.referer)
 
       // unhandled error but not XHR - redirect '/notifyerror'
       } else {

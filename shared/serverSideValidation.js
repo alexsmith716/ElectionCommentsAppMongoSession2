@@ -284,62 +284,55 @@ module.exports = function (req, res, validateTemplate, cb) {
 
     evaluateUserEmail(objValue, validateTemplate.expectedResponse, function(response) {
 
-      if (response.status === 'err') {
+      if (response.response === 'error') {
 
-        cb(response)
+        elementObject = {}
+        elementObject.error = 'registered'
+        validatedUserInput[objName1] = elementObject
 
-      } else {
+      }
 
-        if (response.response === 'error') {
+      objName1 === 'email' ? objValue = reqBody.confirmEmail : objValue = reqBody.email
+      objName1 === 'email' ? objName1 = 'confirmEmail' : objName1 = 'email'
+
+      if (validatedUserInput[objName1] && validatedUserInput[objName1].error === false) {
+
+        evaluateUserEmail(objValue, validateTemplate.expectedResponse, function (response) {
+
+          objName1 === 'email' ? objName2 = 'confirmEmail' : objName2 = 'email'
 
           elementObject = {}
-          elementObject.error = 'registered'
-          validatedUserInput[objName1] = elementObject
 
-        }
+          if (response.response === 'error') {
 
-        objName1 === 'email' ? objValue = reqBody.confirmEmail : objValue = reqBody.email
-        objName1 === 'email' ? objName1 = 'confirmEmail' : objName1 = 'email'
+            elementObject.error = 'registered'
+            validatedUserInput[objName1] = elementObject
 
-        if (validatedUserInput[objName1] && validatedUserInput[objName1].error === false) {
+          } else if (validatedUserInput[objName2] && validatedUserInput[objName2].error === false) {
 
-          evaluateUserEmail(objValue, validateTemplate.expectedResponse, function (response) {
+            if (reqBody.email !== reqBody.confirmEmail) {
 
-            objName1 === 'email' ? objName2 = 'confirmEmail' : objName2 = 'email'
+              elementObject.error = 'nomatch'
 
-            elementObject = {}
+            } else {
 
-            if (response.response === 'error') {
-
-              elementObject.error = 'registered'
-              validatedUserInput[objName1] = elementObject
-
-            } else if (validatedUserInput[objName2] && validatedUserInput[objName2].error === false) {
-
-              if (reqBody.email !== reqBody.confirmEmail) {
-
-                elementObject.error = 'nomatch'
-
-              } else {
-
-                elementObject.error = 'match'
-
-              }
-
-              validatedUserInput.email = elementObject
-              validatedUserInput.confirmEmail = elementObject
+              elementObject.error = 'match'
 
             }
 
-            cb(validatedUserInput)
+            validatedUserInput.email = elementObject
+            validatedUserInput.confirmEmail = elementObject
 
-          })
-
-        } else {
+          }
 
           cb(validatedUserInput)
 
-        }
+        })
+
+      } else {
+
+        cb(validatedUserInput)
+
       }
 
     })

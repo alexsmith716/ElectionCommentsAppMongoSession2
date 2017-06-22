@@ -93,6 +93,7 @@ var helper = {
 
         success: function (data, status, xhr) {
           if (data.response === 'success') {
+            helper.hideLoading()
             $('#signUpForm .form-control').removeClass('has-error')
             $('#signUpForm .form-group .error').removeClass('show').addClass('hide')
             $('#signUpForm .form-group .text-danger').removeClass('show').addClass('hide')
@@ -100,6 +101,8 @@ var helper = {
 
             location.href = data.redirect
           } else {
+            
+            helper.hideLoading()
             if (data.validatedData) {
               $('body').data('validatedData', data.validatedData)
               helper.handleErrorResponse(data.validatedData)
@@ -107,16 +110,18 @@ var helper = {
               $('#signUpForm .formerror').removeClass('hide').addClass('show')
             }
 
-            helper.hideLoading()
             return false
           }
         },
 
         error: function (xhr, status, error) {
+          helper.hideLoading()
           var parsedXHR = JSON.parse(xhr.responseText)
-
-          location.href = parsedXHR.redirect
-
+          $('#modalAlert .modal-title').html(parsedXHR.title)
+          $('#modalAlert .alertDanger').html(parsedXHR.alert)
+          $('#modalAlert #modalScrollbox').html(parsedXHR.message)
+          $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
+          $('#modalAlert').modal({ keyboard: false,backdrop: 'static' })
           return false
         }
       })

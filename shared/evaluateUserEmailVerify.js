@@ -4,15 +4,11 @@ var customError = require('./customError.js')
 
 module.exports = function (req, res, doUserValidatedEmail, cb) {
 
-  console.log('>>>>>>>>>>>>>>>>> evaluateUserEmailVerify <<<<<<<<<<<<<<<<<')
-
   var email = req.body.data.trim()
 
-  email = ''
+  // email = ''
 
   User.findOne( { email: email } ).exec(function (err, user) {
-
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmailVerify > ERR 1<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
 
     if(doUserValidatedEmail === true){
       // err = new Error('Bad Request')
@@ -22,9 +18,7 @@ module.exports = function (req, res, doUserValidatedEmail, cb) {
 
     if (err) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmailVerify > ERR 2<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', err)
-
-      cb({status: 'err', response: 'error', message: err})
+      return next(err)
 
     } else {
 
