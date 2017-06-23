@@ -2,17 +2,18 @@
 var mongoose = require('mongoose')
 var User = mongoose.model('User')
 
-module.exports = function (reqEmail, expectedResponse, cb) {
+module.exports = function (req, res, cb) {
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmail 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-
-  var email = reqEmail.trim()
+  var expectedResponse = req.body.template.expectedResponse
+  var email = req.body.email.trim()
 
   User.findOne( { email: email } ).exec(function (err, user) {
 
     if (err) {
 
-      return next(err)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmail > YES ERR <<<<<<<<<<<<<<<<<<<<<<<<<<')
+
+      cb(err)
 
     } else {
 
@@ -20,11 +21,11 @@ module.exports = function (reqEmail, expectedResponse, cb) {
 
         if (user) {
 
-          cb({status: 201, response: 'error', message: 'user email already exists'})
+          cb(null, {status: 201, response: 'error', message: 'user email already exists'})
 
         } else {
 
-          cb({status: 201, response: 'success'})
+          cb(null, {status: 201, response: 'success'})
 
         }
 
@@ -32,11 +33,11 @@ module.exports = function (reqEmail, expectedResponse, cb) {
 
         if (!user) {
 
-          cb({status: 201, response: 'error', message: 'user email not registered'})
+          cb(null, {status: 201, response: 'error', message: 'user email not registered'})
 
         } else {
 
-          cb({status: 201, response: 'success'})
+          cb(null, {status: 201, response: 'success'})
 
         }
       }

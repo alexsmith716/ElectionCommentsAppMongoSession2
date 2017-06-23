@@ -255,7 +255,7 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
           template[reqBodyProp] = 'required'
           template['expectedResponse'] = 'false'
 
-          serverSideValidation(req, res, template, function (validatedResponse) {
+          serverSideValidation(req, res, template, function (err, validatedResponse) {
 
             var validationErrors = false
 
@@ -359,7 +359,7 @@ module.exports.ajaxEvaluateUserProfileXXX = function (req, res, next) {
         template[reqBodyProp] = 'required'
         template['expectedResponse'] = 'false'
 
-        serverSideValidation(req, res, template, function (validatedResponse) {
+        serverSideValidation(req, res, template, function (err, validatedResponse) {
 
           var validationErrors = false
 
@@ -463,7 +463,6 @@ module.exports.getUserProfileResponse = function (req, res, next) {
       } else if (err) {
 
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR 1')
-
         //err = customObjectEnumerable( new customError(err.message, err.status, err.stack, err.name) )
         err.referer = referer
         //sendJSONresponse(res, 400, err)
@@ -472,12 +471,12 @@ module.exports.getUserProfileResponse = function (req, res, next) {
       } else {
 
         // var errX = customObjectEnumerable( new customError('User not found', 404) )
-        var errX = new customError('User not found', 404)
+        //var errX = new customError('User not found', 404)
         // err.referer = referer
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR 2a: ', util.isError(errX) )
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR 2b: ', errX)
+        // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR 2a: ', util.isError(errX) )
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR !!!!!!!!!!')
         //sendJSONresponse(res, 404, err)
-        return next(errX)
+        return next(new customError('User not found', 404))
 
       }
 
@@ -485,6 +484,7 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
   } else {
 
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR !!!!!!!!!!')
     err = customObjectEnumerable( new customError('Not found, userid required', 404) )
     err.referer = referer
     sendJSONresponse(res, 404, err)
@@ -551,7 +551,7 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
     // ==============================================================================================
 
-    serverSideValidation(req, res, template, function (validatedResponse) {
+    serverSideValidation(req, res, template, function (err, validatedResponse) {
 
       console.log('####### > API > ajaxNewUserDataItem 5 > serverSideValidation > validatedResponse 1: ', validatedResponse)
 
@@ -631,7 +631,7 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
     console.log('####### > API > ajaxNewUserDataItem 8 ++++++++++++++++++++')
 
-    serverSideValidation(req, res, template, function (validatedResponse) {
+    serverSideValidation(req, res, template, function (err, validatedResponse) {
 
       console.log('####### > API > ajaxNewUserDataItem 9 > serverSideValidation > validatedResponse 1: ', validatedResponse)
 
@@ -777,7 +777,7 @@ module.exports.ajaxForgotPassword = function (req, res, next) {
   var testerJOB = {email: '   aaa  1@aaa.com     '}
   // req.body = testerJOB
 
-  serverSideValidation(req, res, template, function (validatedResponse) {
+  serverSideValidation(req, res, template, function (err, validatedResponse) {
     var validationErrors = false
 
     for (var prop in validatedResponse) {
@@ -813,64 +813,78 @@ var validateMaxLengthUserInput = function (val,maxlen) {
 }
 
 module.exports.ajaxLoginUser = function (req, res, next) {
-  // res.app.locals.foober = true
-  var template = {email: 'required',
-                  password: 'required', 
-                  expectedResponse: 'true'}
 
-  var testerJOB = {email: 'aaa1@aa a.com',
-                    password: '  pppp   '}
-  // req.body = testerJOB
+  req.body.template = {email: 'required', password: 'required', expectedResponse: 'true'}
 
-  serverSideValidation(req, res, template, function (validatedResponse) {
+  // var testerJOB = {email: 'aaa1@aa a.com', password: '  pppp   '}
+  // req.body.template = testerJOB
 
-    var validationErrors = false
+  serverSideValidation(req, res, function (err, validatedResponse) {
 
-    for (var prop in validatedResponse) {
+    if (err) {
 
-      if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
-        validationErrors = true
-        break
+      console.log('>>>>>>>>>>>>>>>>>>>>>>> ajaxLoginUser > serverSideValidation <<<<<<<<<<<<<<<<<<< YES ERR: ', err)
+
+      return next(err)
+
+    } else {
+
+      var validationErrors = false
+
+      for (var prop in validatedResponse) {
+
+        if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+          validationErrors = true
+          break
+
+        }
+      }
+
+      if (!validationErrors) {
+
+        passport.authenticate('local', function (err, user, info) {
+
+          if (err) {
+            return next(err)
+          }
+
+          if (!user) {
+            sendJSONresponse(res, 201, { 'response': 'error' })
+            return
+
+          }
+
+          req.logIn(user, function (err) {
+
+            if (err) { 
+
+              return next(err)
+
+            } else {
+
+              user.previouslogin = user.lastlogin
+              user.lastlogin = new Date()
+
+              user.save(function (err, success) {
+                if (err) {
+                  return next(err)
+
+                } else {
+                  sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
+
+                }
+              })
+            }
+
+          })
+
+        })(req, res)
+
+      } else {
+
+        sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
 
       }
-    }
-
-    if (!validationErrors) {
-      passport.authenticate('local', function (err, user, info) {
-        if (err) {
-          return next(err)
-
-        }
-
-        if (!user) {
-          sendJSONresponse(res, 201, { 'response': 'error' })
-          return
-
-        }
-
-        req.logIn(user, function (err) {
-          if (err) { 
-            return next(err)
-
-          } else {
-            user.previouslogin = user.lastlogin
-            user.lastlogin = new Date()
-
-            user.save(function (err, success) {
-              if (err) {
-                return next(err)
-
-              } else {
-                sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
-
-              }
-            })
-          }
-        })
-      })(req, res)
-    } else {
-      sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
-
     }
   })
 }
@@ -904,7 +918,7 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
                     confirmPassword: 'pppp '}
   // req.body = testerJOB2
 
-  serverSideValidation(req, res, template, function (validatedResponse) {
+  serverSideValidation(req, res, template, function (err, validatedResponse) {
     var validationErrors = false
 
     if (validatedResponse.status === 'err') {
