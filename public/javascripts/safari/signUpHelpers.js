@@ -522,6 +522,7 @@ var helper = {
   },
 
   validateEmailService: function (email, callback) {
+
     var data = {}
     var pathName = 'email'
     var err
@@ -556,8 +557,12 @@ var helper = {
 
       error: function (xhr, status, error) {
         var parsedXHR = JSON.parse(xhr.responseText)
-
-        location.href = parsedXHR.redirect
+        $('#modalAlert .modal-title').html(parsedXHR.title)
+        $('#modalAlert .alertDanger').html(parsedXHR.alert)
+        $('#modalAlert #modalScrollbox').html(parsedXHR.message)
+        $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
+        $('#modalAlert').modal({ keyboard: false,backdrop: 'static' })
+        return false
       }
     })
   },

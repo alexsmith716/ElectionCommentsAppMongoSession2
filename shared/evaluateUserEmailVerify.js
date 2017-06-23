@@ -1,8 +1,8 @@
 
-var User = require('../theAPI/model/userSchema.js')
-var customError = require('./customError.js')
+var mongoose = require('mongoose')
+var User = mongoose.model('User')
 
-module.exports = function (req, res, doUserValidatedEmail, cb) {
+module.exports = function (req, res, cb) {
 
   var email = req.body.data.trim()
 
@@ -10,15 +10,9 @@ module.exports = function (req, res, doUserValidatedEmail, cb) {
 
   User.findOne( { email: email } ).exec(function (err, user) {
 
-    if(doUserValidatedEmail === true){
-      // err = new Error('Bad Request')
-      // err.status = 400
-      // user = false
-    }
-
     if (err) {
 
-      return next(err)
+      cb(err)
 
     } else {
 
@@ -30,7 +24,7 @@ module.exports = function (req, res, doUserValidatedEmail, cb) {
 
         if (user.email === res.locals.currentUser.email) {
 
-          if(doUserValidatedEmail){
+          if(req.body.doUserValidatedEmail){
             var nd = new Date()
             nd = nd.getTime()
             req.session.userValidatedEmail = {'isValidated': true, 'timeStamp': nd}

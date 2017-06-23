@@ -688,18 +688,18 @@ module.exports.ajaxNewUserDataItem = function (req, res, next) {
 
 module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 
+  req.body.doUserValidatedEmail = true
+
   if (req.body.type === 'email') {
 
-    evaluateUserEmailVerify(req, res, true, function (response) {
+    evaluateUserEmailVerify(req, res, function (err, response) {
 
-      if (response.status === 'err') {
+      if (err) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>> ajaxValidateNewUserDataService >  evaluateUserEmailVerify > ERR <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', response.message)
-
-        return next(response.message)
+        return next(err)
 
       } else {
-        
+
         sendJSONresponse(res, response.status, { 'response': response.response })
 
       }
@@ -708,6 +708,7 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 
   if (req.body.type === 'password' && req.session.userValidatedEmail.isValidated) {
 
+    req.body.doUserValidatedPassword = true
     var nd = new Date()
     var millis = nd.getTime() - req.session.userValidatedEmail.timeStamp
     var nds = new Date(millis)
@@ -727,11 +728,11 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 
     } else {
 
-      evaluateUserPasswordVerify(req, res, true, function (response) {
+      evaluateUserPasswordVerify(req, res, function (err, response) {
 
-        if (response.status === 'err') {
+        if (err) {
 
-          return next(response.message)
+          return next(err)
 
         } else {
 
@@ -740,7 +741,6 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
         }
       })
     }
-
   }
 }
 
@@ -749,18 +749,18 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 
 module.exports.ajaxEvaluateUserEmail = function (req, res, next) {
 
-  evaluateUserEmail(req.body.email, req.body.expectedResponse, function (response) {
+  evaluateUserEmail(req, res, function (err, response) {
 
-    if (response.status === 'err') {
+    if (err) {
 
-      console.log('###### ERROR! > ajaxEvaluateUserEmail > evaluateUserEmail > err1?: ', response.message)
-      return next(response.message)
+      return next(err)
 
     } else {
 
       sendJSONresponse(res, response.status, { 'response': response.response })
 
     }
+
   })
 }
 
@@ -771,36 +771,45 @@ module.exports.ajaxEvaluateUserEmail = function (req, res, next) {
 // for client, only testing if email is invalid, otherwise indicating instructions sent to reset password
 // but instructions only really sent if email is a registered email
 module.exports.ajaxForgotPassword = function (req, res, next) {
-  var template = {email: 'required',
-                  expectedResponse: 'false'}
 
-  var testerJOB = {email: '   aaa  1@aaa.com     '}
-  // req.body = testerJOB
+  req.body.template = {email: 'required', expectedResponse: 'false'}
 
-  serverSideValidation(req, res, template, function (err, validatedResponse) {
-    var validationErrors = false
+  // var testerJOB = {email: '   aaa  1@aaa.com     '}
+  // req.body.template = testerJOB
 
-    for (var prop in validatedResponse) {
-      if (validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid') {
-        validationErrors = true
-        break;
+  serverSideValidation(req, res, function (err, validatedResponse) {
 
-      }
-    }
+    if (err) {
 
-    if (!validationErrors) {
-      if (validatedResponse['email'].error === 'registered') {
-        // Nodemailer will be initiated here +++++++
-        sendJSONresponse(res, 201, { 'response': 'success' })
+      return next(err)
 
-      } else {
-        sendJSONresponse(res, 201, { 'response': 'success' })
-
-      }
-      
     } else {
-      sendJSONresponse(res, 201, { 'response': 'error' })
 
+      var validationErrors = false
+
+      for (var prop in validatedResponse) {
+        if (validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid') {
+          validationErrors = true
+          break;
+
+        }
+      }
+
+      if (!validationErrors) {
+
+        if (validatedResponse['email'].error === 'registered') {
+          // Nodemailer will be initiated here +++++++
+          sendJSONresponse(res, 201, { 'response': 'success' })
+
+        } else {
+          sendJSONresponse(res, 201, { 'response': 'success' })
+
+        }
+        
+      } else {
+        sendJSONresponse(res, 201, { 'response': 'error' })
+
+      }
     }
   })
 }
@@ -890,7 +899,7 @@ module.exports.ajaxLoginUser = function (req, res, next) {
 }
 
 module.exports.ajaxSignUpUser = function (req, res, next) {
-  var template = {displayname: 'required', 
+  req.body.template = {displayname: 'required', 
                         email: 'required',
                         confirmEmail: 'required', 
                         password: 'required', 
@@ -916,92 +925,101 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
                     confirmEmail: '        aaa@aaa.com     ',
                     password: 'pppp',
                     confirmPassword: 'pppp '}
-  // req.body = testerJOB2
+  // req.body.template = testerJOB2
 
-  serverSideValidation(req, res, template, function (err, validatedResponse) {
-    var validationErrors = false
+  serverSideValidation(req, res, function (err, validatedResponse) {
 
-    if (validatedResponse.status === 'err') {
+    if (err) {
 
-      return next(validatedResponse.message)
+      return next(err)
+
 
     } else {
 
-      for (var prop in validatedResponse) {
+      var validationErrors = false
 
-        if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
-          validationErrors = true
-          break
+      if (validatedResponse.status === 'err') {
 
+        return next(validatedResponse.message)
+
+      } else {
+
+        for (var prop in validatedResponse) {
+
+          if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+            validationErrors = true
+            break
+
+          }
         }
+
       }
 
-    }
+      if (!validationErrors) {
+        var newUser = new User()
 
-    if (!validationErrors) {
-      var newUser = new User()
+        // var stateFull = stateNamer(req, res, req.body.state)
 
-      // var stateFull = stateNamer(req, res, req.body.state)
+        // req.body.state = {
+          // full: stateFull,
+          // initials: req.body.state
+        // }
 
-      // req.body.state = {
-        // full: stateFull,
-        // initials: req.body.state
-      // }
+        newUser.displayname = req.body.displayname
+        newUser.email = req.body.email
+        newUser.firstname = req.body.firstname
+        newUser.lastname = req.body.lastname
+        newUser.city = req.body.city
+        newUser.state = req.body.state
 
-      newUser.displayname = req.body.displayname
-      newUser.email = req.body.email
-      newUser.firstname = req.body.firstname
-      newUser.lastname = req.body.lastname
-      newUser.city = req.body.city
-      newUser.state = req.body.state
+        newUser.setPassword(req.body.password, function (err, result) {
+          if (err) {
+            return next(err);
 
-      newUser.setPassword(req.body.password, function (err, result) {
-        if (err) {
-          return next(err);
+          } else {
+            newUser.save(function (err) {
+              if (err) {
+                return next(err)
 
-        } else {
-          newUser.save(function (err) {
-            if (err) {
-              return next(err)
+              } else {
+                passport.authenticate('local', function (err, user, info) {
+                  if (err) {
+                    return next(err)
 
-            } else {
-              passport.authenticate('local', function (err, user, info) {
-                if (err) {
-                  return next(err)
+                  }
 
-                }
+                  if (!user) {
+                    sendJSONresponse(res, 201, { 'response': 'error' })
+                    return
+          
+                  }
 
-                if (!user) {
-                  sendJSONresponse(res, 201, { 'response': 'error' })
-                  return
-        
-                }
-
-                if (user) {
-                  req.logIn(user, function (err) {
-                    if (err) { 
-                      return next(err)
-
-                    }
-
-                    req.session.save(function (err) {
-                      if (err) {
+                  if (user) {
+                    req.logIn(user, function (err) {
+                      if (err) { 
                         return next(err)
 
                       }
-                      sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
+
+                      req.session.save(function (err) {
+                        if (err) {
+                          return next(err)
+
+                        }
+                        sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
+                      })
                     })
-                  })
-                }
-              })(req, res, next)
-            }
-          })
-        }
-      })
+                  }
+                })(req, res, next)
+              }
+            })
+          }
+        })
 
-    }else{
-      sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
+      }else{
+        sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
 
+      }
     }
   })
 }
