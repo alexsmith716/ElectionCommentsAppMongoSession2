@@ -4,7 +4,8 @@ var User = mongoose.model('User')
 
 module.exports = function (req, res, cb) {
 
-  var expectedResponse = req.body.template.expectedResponse
+  var expectedResponse = req.body.expectedResponse
+  !expectedResponse ? expectedResponse = req.body.template.expectedResponse : null
   var email = req.body.email.trim()
 
   User.findOne( { email: email } ).exec(function (err, user) {
