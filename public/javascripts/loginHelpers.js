@@ -35,7 +35,7 @@ var helper = {
       $('#forgotPasswordForm .loginerror').removeClass('show').html('')
       $('#forgotPasswordForm .formerror').removeClass('show')
       $('#forgotPassword').removeClass('has-error')
-      $('.modalAlertWarning').hide()
+      $('.alertWarning').addClass('hide').removeClass('show')
       $('.modalOkayBtn').hide()
       $('.modalCancelSubmitBtns').show()
       var nextModal = $('body').data('doNextModal')
@@ -85,10 +85,10 @@ var helper = {
           if (data.response === 'success') {
             $('.loading').hide()
             $('#forgotPassword').attr('disabled', 'true')
-            $('.modalAlertWarning').show()
+            $('.alertWarning').html(data.message)
+            $('.alertWarning').addClass('show').removeClass('hide')
             $('.modalOkayBtn').show()
             $('.modalCancelSubmitBtns').hide()
-
           } else {
             $('.loading').hide()
             $('#forgotPassword').addClass('has-error')
@@ -205,7 +205,7 @@ var helper = {
     $('#forgotPasswordForm .loginerror').removeClass('show').html('');
     $('#forgotPasswordForm .formerror').removeClass('show');
     $('#forgotPassword').removeClass('has-error');
-    $('.modalAlertWarning').hide();
+    $('.alertWarning').addClass('hide').removeClass('show')
     $('.modalOkayBtn').hide();
     $('.modalCancelSubmitBtns').show();
   },
