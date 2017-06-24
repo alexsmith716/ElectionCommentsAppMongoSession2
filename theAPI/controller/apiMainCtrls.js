@@ -797,17 +797,19 @@ module.exports.ajaxForgotPassword = function (req, res, next) {
 
       if (!validationErrors) {
 
+        var m = 'An email containing your password recovery link has been sent. If you do not receive an email within 10 minutes, check your spam folder first, then try again.'
+
         if (validatedResponse['email'].error === 'registered') {
           // Nodemailer will be initiated here +++++++
-          sendJSONresponse(res, 201, { 'response': 'success' })
+          sendJSONresponse(res, 201, { 'response': 'success', 'message': m})
 
         } else {
-          sendJSONresponse(res, 201, { 'response': 'success' })
+          sendJSONresponse(res, 201, { 'response': 'success', 'message': m})
 
         }
-        
+
       } else {
-        sendJSONresponse(res, 201, { 'response': 'error' })
+        sendJSONresponse(res, 201, { 'response': 'success', 'message': m})
 
       }
     }
