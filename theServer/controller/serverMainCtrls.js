@@ -342,7 +342,7 @@ module.exports.getUserProfile = function (req, res, next) {
 
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< 200-Good')
       
-      res.locals.currentUser.stateFull = stateNamer(req, res, body.state)
+      res.locals.currentUser.stateFull = stateNamer(body.state)
 
       res.render('userProfile', {
         csrfToken: req.csrfToken(),

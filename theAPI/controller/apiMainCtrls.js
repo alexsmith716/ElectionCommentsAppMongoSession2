@@ -290,7 +290,7 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
                 user[reqBodyProp] = reqBodyValue
 
                 if (reqBodyProp === 'state') {
-                  updatedData = stateNamer(req, res, reqBodyValue)
+                  updatedData = stateNamer(reqBodyValue)
                   reqBodyValue = updatedData
                 }
 
@@ -396,7 +396,7 @@ module.exports.ajaxEvaluateUserProfileXXX = function (req, res, next) {
               user[reqBodyProp] = reqBodyValue
 
               if (reqBodyProp === 'state') {
-                updatedData = stateNamer(req, res, reqBodyValue)
+                updatedData = stateNamer(reqBodyValue)
                 reqBodyValue = updatedData
               }
 
@@ -442,7 +442,7 @@ module.exports.getUserProfileResponse = function (req, res, next) {
   if (req.params && req.params.userid) {
 
     // req.params.userid === (string || 59470fbe58ee5103bac5f9bd)
-    req.params.userid = '49470fbe58ee5103bac5f9bd'
+    // req.params.userid = '49470fbe58ee5103bac5f9bd'
 
     User.findById( req.params.userid ).exec(function (err, user) {
 
@@ -930,22 +930,17 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
   serverSideValidation(req, res, function (err, validatedResponse) {
 
     if (err) {
+
       return next(err)
+
     } else {
 
       var validationErrors = false
 
-      if (validatedResponse.status === 'err') {
-
-        return next(validatedResponse.message)
-
-      } else {
-
-        for (var prop in validatedResponse) {
-          if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
-            validationErrors = true
-            break
-          }
+      for (var prop in validatedResponse) {
+        if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+          validationErrors = true
+          break
         }
       }
 
