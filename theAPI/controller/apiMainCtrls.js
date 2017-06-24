@@ -930,10 +930,7 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
   serverSideValidation(req, res, function (err, validatedResponse) {
 
     if (err) {
-
       return next(err)
-
-
     } else {
 
       var validationErrors = false
@@ -945,25 +942,16 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
       } else {
 
         for (var prop in validatedResponse) {
-
           if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
             validationErrors = true
             break
-
           }
         }
-
       }
 
       if (!validationErrors) {
+
         var newUser = new User()
-
-        // var stateFull = stateNamer(req, res, req.body.state)
-
-        // req.body.state = {
-          // full: stateFull,
-          // initials: req.body.state
-        // }
 
         newUser.displayname = req.body.displayname
         newUser.email = req.body.email
@@ -985,26 +973,22 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
                 passport.authenticate('local', function (err, user, info) {
                   if (err) {
                     return next(err)
-
                   }
 
                   if (!user) {
                     sendJSONresponse(res, 201, { 'response': 'error' })
                     return
-          
                   }
 
                   if (user) {
                     req.logIn(user, function (err) {
                       if (err) { 
                         return next(err)
-
                       }
 
                       req.session.save(function (err) {
                         if (err) {
                           return next(err)
-
                         }
                         sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
                       })
@@ -1018,7 +1002,6 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
 
       }else{
         sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
-
       }
     }
   })

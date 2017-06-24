@@ -556,6 +556,7 @@ var helper = {
       },
 
       error: function (xhr, status, error) {
+        $('body').data('modalShown') ? null : helper.hideLoading()
         var parsedXHR = JSON.parse(xhr.responseText)
         $('#modalAlert .modal-title').html(parsedXHR.title)
         $('#modalAlert .alertDanger').html(parsedXHR.alert)

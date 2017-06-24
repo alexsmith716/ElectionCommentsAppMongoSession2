@@ -12,8 +12,6 @@ module.exports = function (req, res, cb) {
 
     if (err) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmail > YES ERR <<<<<<<<<<<<<<<<<<<<<<<<<<')
-
       cb(err)
 
     } else {

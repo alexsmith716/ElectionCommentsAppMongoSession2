@@ -10,16 +10,13 @@ var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https:/
 
 module.exports.ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
-    console.log('+++++++++++++++++++++ AUTH ensureAuthenticated Yes +++++++++++++++++++++')
     return next()
   } else {
-    console.log('+++++++++++++++++++++ AUTH ensureAuthenticated No +++++++++++++++++++++')
     res.redirect('/loginorsignup')
   }
 }
 
 module.exports.basicAuthenticationAPI = function (req, res, next) {
-  console.log('+++++++++++++++++++++ AUTH basicAuthenticationAPI +++++++++++++++++++++: ', req.headers)
   var hAuth = req.headers['authorization']
   var expr = /Basic/
   var err
