@@ -1,5 +1,5 @@
 
-module.exports = function (req, res, state) {
+module.exports = function (state) {
 	var result
 
 	switch (state) {
