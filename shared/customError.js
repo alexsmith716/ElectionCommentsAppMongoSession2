@@ -1,5 +1,4 @@
 
-
 /*
 module.exports = function CustomError(message, status, errStack, errName) {
 
@@ -21,6 +20,5 @@ module.exports = function CustomError(message, status) {
   this.message = message
   this.extra = status
 }
-
 
 require('util').inherits(module.exports, Error)

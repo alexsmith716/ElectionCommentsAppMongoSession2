@@ -24,10 +24,10 @@ var pattern = {
 
 var userSchema = new mongoose.Schema({
     email: {
-        type: Number,
+        type: String,
         required: true,
         unique: true,
-        match: pattern.tester2
+        match: pattern.email
     },
     displayname: {
         type: String,

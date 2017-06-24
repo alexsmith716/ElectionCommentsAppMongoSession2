@@ -284,16 +284,11 @@ module.exports = function (req, res, cb) {
 
     evaluateUserEmail(req, res, function (err, response) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>> serverSideValidation > evaluateUserEmail 1 <<<<<<<<<<<<<<<<<<<')
-
       if (err) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>> serverSideValidation > evaluateUserEmail 2 <<<<<<<<<<<<<<<<<<< YES ERR: ', err)
         cb(err)
 
       } else {
-
-        console.log('>>>>>>>>>>>>>>>>>>>>>>> serverSideValidation > evaluateUserEmail 3 <<<<<<<<<<<<<<<<<<< NO ERR')
 
         if (response.response === 'error') {
 
@@ -342,7 +337,7 @@ module.exports = function (req, res, cb) {
 
               }
 
-              cb(validatedUserInput)
+              cb(null, validatedUserInput)
 
             }
 
@@ -350,7 +345,7 @@ module.exports = function (req, res, cb) {
 
         } else {
 
-          cb(validatedUserInput)
+          cb(null, validatedUserInput)
 
         }
       }
@@ -359,7 +354,7 @@ module.exports = function (req, res, cb) {
 
   } else {
 
-    cb(validatedUserInput)
-    
+    cb(null, validatedUserInput)
+
   }
 }

@@ -14,7 +14,7 @@ module.exports = function (req, res, cb) {
 
     if (!result) {
 
-      cb({status: 201, response: 'error'})
+      cb(null, {status: 201, response: 'error'})
 
     } else {
 
@@ -24,7 +24,7 @@ module.exports = function (req, res, cb) {
         req.session.userValidatedPassword = {'isValidated': true, 'timeStamp': nd}
       }
       
-      cb({status: 201, response: 'success'})
+      cb(null, {status: 201, response: 'success'})
 
     }
   })
