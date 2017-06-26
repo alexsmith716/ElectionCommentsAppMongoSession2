@@ -257,64 +257,77 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
           serverSideValidation(req, res, template, function (err, validatedResponse) {
 
-            var validationErrors = false
+            if (err) {
 
-            for (var prop in validatedResponse) {
-              if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+              console.log('>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile > serverSideValidation <<<<<<<<<<<<<<<<<<< YES ERR: ', err)
 
-                validationErrors = true
-                break
+              return next(err)
 
+            } else {
+
+              
+
+              var validationErrors = false
+
+              for (var prop in validatedResponse) {
+                if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+                  validationErrors = true
+                  break
+                }
               }
-            }
 
-            if (!validationErrors) {
+              if (!validationErrors) {
 
-              User.findById( res.locals.currentUser.id ).select( reqBodyProp ).exec(function (err, user) {
-
-                if (err) {
-
-                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 66666 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-                  sendJSONresponse(res, 400, err)
-                  return
-                }
-
-                if (!user) {
-
-                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 333333 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-                  sendJSONresponse(res, 201, { 'response': 'error' })
-                  return
-                }
-
-                reqBodyValue = ''
-                user[reqBodyProp] = reqBodyValue
-
-                if (reqBodyProp === 'state') {
-                  updatedData = stateNamer(reqBodyValue)
-                  reqBodyValue = updatedData
-                }
-
-                user.save(function (err, user) {
+                User.findById( res.locals.currentUser.id ).select( reqBodyProp ).exec(function (err, user) {
 
                   if (err) {
 
-                    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 000000 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-                    return next(err)
-
-                  } else {
-
-                    sendJSONresponse(res, 201, { 'response': 'success', 'updatedData': reqBodyValue })
-
+                    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 66666 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+                    sendJSONresponse(res, 400, err)
+                    return
                   }
+
+                  if (!user) {
+
+                    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 333333 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+                    sendJSONresponse(res, 201, { 'response': 'error' })
+                    return
+                  }
+
+                  reqBodyValue = ''
+                  user[reqBodyProp] = reqBodyValue
+
+                  if (reqBodyProp === 'state') {
+                    updatedData = stateNamer(reqBodyValue)
+                    reqBodyValue = updatedData
+                  }
+
+                  user.save(function (err, user) {
+
+                    if (err) {
+
+                      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 000000 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+                      return next(err)
+
+                    } else {
+
+                      sendJSONresponse(res, 201, { 'response': 'success', 'updatedData': reqBodyValue })
+
+                    }
+                  })
+
+
                 })
 
+              }else{
 
-              })
+                sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
+              }
 
-            }else{
 
-              sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
             }
+
+
           })
         }
       }
@@ -442,7 +455,7 @@ module.exports.getUserProfileResponse = function (req, res, next) {
   if (req.params && req.params.userid) {
     // req.params.userid = '49470fbe58ee5103bac5f9bd'
 
-    User.findById( '' ).exec(function (err, user) {
+    User.findById( req.params.userid ).exec(function (err, user) {
 
       if (user) {
 
@@ -482,63 +495,6 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
   }
 }
-
-
-
-
-
-module.exports.getUserProfileResponseXX = function (req, res, next) {
-
-  var credentials = auth(req)
-  var referer = req.body.referer
-  // req.params.userid = ''
-
-  if (req.params && req.params.userid) {
-    // req.params.userid = '49470fbe58ee5103bac5f9bd'
-
-    User.findById( req.params.userid ).exec(function (err, user) {
-
-      if (user) {
-
-        if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
-
-          err = customObjectEnumerable( new customError('Unauthorized', 401) )
-          err.referer = referer
-          sendJSONresponse(res, 401, err)
-
-        } else {
-
-          sendJSONresponse(res, 200, user)
-
-        }
-
-      } else if (err) {
-
-        //err = customObjectEnumerable( new customError(err.message, err.status, err.stack, err.name) )
-        err.referer = referer
-        //sendJSONresponse(res, 400, err)
-        return next(err)
-
-      } else {
-
-        // var errX = customObjectEnumerable( new customError('User not found', 404) )
-        //var errX = new customError('User not found', 404)
-        // err.referer = referer
-        //sendJSONresponse(res, 404, err)
-        return next(new customError('User not found', 404))
-
-      }
-    })
-
-  } else {
-
-    err = customObjectEnumerable( new customError('Not found, userid required', 404) )
-    err.referer = referer
-    sendJSONresponse(res, 404, err)
-
-  }
-}
-
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */

@@ -127,8 +127,8 @@ app.use(function (req, res, next) {
   // console.log('REQ.protocol ++: ', req.protocol)
   console.log('REQ.method ++: ', req.method)
   console.log('REQ.path ++: ', req.path)
-  // console.log('REQ.route ++: ', req.route)
-  // console.log('REQ.url ++: ', req.url)
+  console.log('REQ.route ++: ', req.route)
+  console.log('REQ.url ++: ', req.url)
   // console.log('REQ.originalUrl ++: ', req.originalUrl)
   // console.log('REQ.headers ++: ', req.headers)
   console.log('REQ.headers.referer ++: ', req.headers['referer'])
@@ -215,7 +215,8 @@ app.use('/api', apiRoutes)
 
 app.use(function (req, res, next) {
   console.log('############################# APP UNCAUGHT ERR HANDLER 404 #####################################')
-  var err = customObjectEnumerable( new customError('Page Not Found', 404) )
+  var err = new Error('Not Found, req.url: '+req.url)
+  err.status = 404
   next(err)
 })
 
