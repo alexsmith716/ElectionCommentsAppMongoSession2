@@ -20,14 +20,15 @@ var createError = require('http-errors')
 
 require('./theAPI/model/dbConnector')
 
-var sanitize = require('./shared/sanitizeInput.js')
+var sanitize = require('./shared/sanitizeInput')
 require('./shared/sessionPrototype')
 var onFinished = require('on-finished')
 var setUpAuthentication = require('./theAPI/model/authentication')
 var serverRoutes = require('./theServer/routes/serverRoutes')
 var apiRoutes = require('./theAPI/routes/apiRoutes')
-var customError = require('./shared/customError.js')
-var customObjectEnumerable = require('./shared/customObjectEnumerable.js')
+var customError = require('./shared/customError')
+var customObjectEnumerable = require('./shared/customObjectEnumerable')
+var renderableErrorObject = require('./shared/renderableErrorObject')
 var url = require('url')
 var app = express()
 
@@ -245,28 +246,21 @@ if (app.get('env') === 'development') {
       referer = url.parse(req.headers['referer']).pathname
     }
 
-    var errTitle = 'An Application Error Has Occurred'
-    var errAlert = '<p>A error recently occurred with the application. Please try your request again.</p><p>If this problem continues, please contact our Help Desk at 555-555-1234.</p><p>You may also email Customer Service at customer.care@ThisGreatApp.com.</p><p>Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p><p>We appreciate your patience!</p>'
-    var errMessage = '<pre><p>Name:&nbsp;'+err.name+'</p><p>Message:&nbsp;'+err.message+'</p><p>Status:&nbsp;'+err.status+'</p><p>Code:&nbsp;'+err.code+'</p><p>Referer:&nbsp;'+err.referer+'</p><p>Stack:&nbsp;'+err.stack+'</p></pre>'
-
-    req.session.renderableErr = {'title': errTitle, 'alert': errAlert, 'message': errMessage}
+    req.session.renderableErr = renderableErrorObject(err)
 
     if (req.xhr) {
 
       console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > YES XHR ############################')
-      // res.json({'response': 'error', 'type': 'error', 'errTitle': errTitle, 'errAlert': errAlert})
       res.json({'response': 'error', 'type': 'error', 'title': errTitle, 'alert': errAlert, 'message': errMessage})
 
     } else {
 
-      // server-side error - headers referer
       if (referer) {
-        console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR 1 #############################')
+        console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR - referer #############################')
         res.redirect(referer)
 
-      // unhandled error but not XHR - redirect '/notifyerror'
       } else {
-        console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR 3 #############################')
+        console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR - other #############################')
         res.redirect('/notifyerror')
 
       }
