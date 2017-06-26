@@ -26,7 +26,7 @@ block content
           .alertWarning.alert.alert-warning.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
           .alertDanger.alert.alert-danger.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
 
-          div(id="modalScrollbox")
+          div(id="errScrollbox")
 
           button(class="btn btn-default btn-md", data-dismiss="modal", style="margin-top: 6px;") OK
 
@@ -37,14 +37,6 @@ block content
     br
 
     .container
-
-      - if (err)
-        script.
-          $('#modalAlert .modal-title').html( !{JSON.stringify(err.title)} )
-          $('#modalAlert .alertDanger').html( !{JSON.stringify(err.alert)} )
-          $('#modalAlert #modalScrollbox').html( !{JSON.stringify(err.message)} )
-          $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
-          $('#modalAlert').modal({keyboard: false,backdrop: 'static'})
 
       .row
 
@@ -87,3 +79,11 @@ block content
               br
               br
               a.btn.btn-primary.btn-md(href="") Most Recommended
+
+      - if (err)
+        script.
+          $('#modalAlert .modal-title').html( !{JSON.stringify(err.title)} )
+          $('#modalAlert .alertDanger').html( !{JSON.stringify(err.alert)} )
+          $('#modalAlert #errScrollbox').html( !{JSON.stringify(err.message)} )
+          $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
+          $('#modalAlert').modal({keyboard: false,backdrop: 'static'})
