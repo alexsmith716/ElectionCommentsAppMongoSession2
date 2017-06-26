@@ -4,8 +4,8 @@ extends layout
 block metas
 
 block title
-  title Notify Application Error
-  
+  title An Application Error Has Occurred
+
 block links
 
 block headScripts
@@ -19,61 +19,22 @@ block content
     .container
 
       .row
-      
+
         .col-lg-10.col-centered
 
           .panel-body
 
-            - if (title != undefined)
-              h3= title
+            h3.err-title
 
-            - if (message != undefined)
+            .alertSuccess.alert.alert-success.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
+            .alertWarning.alert.alert-warning.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
+            .alertDanger.alert.alert-danger.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
 
-              if (type === 'success')
-                .alert.alert-success #{message}
+            div(id="errScrollbox")
 
-              if (type === 'warning')
-                .alert.alert-warning #{message}
-
-              if (type === 'danger')
-                .alert.alert-danger #{message}
-
-            p Please
-              |&nbsp;
-              a.highlight(href='/') visit our homepage
-              |&nbsp;or&nbsp;
-              a.highlight(href='/login') Log In
-              |&nbsp;or&nbsp;
-              a.highlight(href='/signup') Sign Up
-              |&nbsp;to start using Election App 2016.
-
-            br
-            hr
-            br
-
-            - if ( notifyErrorMessageObject )
-              - var appError = `${notifyErrorMessageObject.err}`
-              - var appErrorName = `${notifyErrorMessageObject.name}`
-              - var appErrorMessage = `${notifyErrorMessageObject.message}`
-              - var appErrorStatus = `${notifyErrorMessageObject.status}`
-              - var appErrorCode = `${notifyErrorMessageObject.code}`
-              - var appErrorReferer = `${notifyErrorMessageObject.referer}`
-              - var appErrorXHR = `${notifyErrorMessageObject.xhr}`
-              - var appErrorStack = `${notifyErrorMessageObject.stack}`
-
-
-            - if ( notifyErrorMessageObject )
-              pre
-                | Name: #{appErrorName}
-                |
-                | Message: #{appErrorMessage}
-                |
-                | Status: #{appErrorStatus}
-                |
-                | Code: #{appErrorCode}
-                |
-                | Xhr: #{appErrorXHR}
-                |
-                | Referer: #{appErrorReferer}
-                |
-                | Stack: #{appErrorStack}
+      - if (err)
+        script.
+          $('.err-title').html( !{JSON.stringify(err.title)} )
+          $('.alertDanger').html( !{JSON.stringify(err.alert)} )
+          $('#errScrollbox').html( !{JSON.stringify(err.message)} )
+          $('.alertDanger').addClass('show').removeClass('hide')

@@ -282,7 +282,7 @@ module.exports.getSignup = function (req, res, next) {
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-module.exports.getUserHome = function (req, res) {
+module.exports.getUserHome = function (req, res, next) {
 
   res.render('userHome', { err: req.session.renderableErr }, function (err, html) {
 
@@ -296,7 +296,7 @@ module.exports.getUserHome = function (req, res) {
   })
 }
 
-module.exports.getUserHomeX = function (req, res) {
+module.exports.getUserHomeX = function (req, res, next) {
   res.render('', { err: req.session.renderableErr }, function (err, html) {
     if (err) {
       return next(err)
@@ -310,20 +310,17 @@ module.exports.getUserHomeX = function (req, res) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.getUserProfile = function (req, res, next) {
-  var newCustomError
   var requestOptions, path
   path = '/api/userprofile/' + res.locals.currentUser.id
-  // var referer = url.parse(req.headers['referer']).pathname
-  var referer = res.locals.referer
 
-  // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 1<<<<<<<<<<<<<<<<<<<<<<<<<<<< req.headers: ', req.headers)
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
   requestOptions = {
     rejectUnauthorized: false,
     url : apiOptions.server + path,
     method : 'GET',
     auth : {'username': res.locals.currentUser.email, 'password': res.locals.currentUser.datecreated.toISOString()},
-    json : {'referer': referer}
+    json : {}
   }
   // res.locals.currentUser.email
 
@@ -331,12 +328,9 @@ module.exports.getUserProfile = function (req, res, next) {
 
     // server-side error 
     if (err) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<<ERR err: ', err)
-      //req.session.renderableErr = renderableErrorObject(err)
-      //res.redirect(referer)
-      // res.redirect('/userhomex')
-      return next(err)
 
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR ERR: ', err)
+      return next(err)
 
     } else if (response.statusCode === 200) {
 
@@ -352,26 +346,12 @@ module.exports.getUserProfile = function (req, res, next) {
     // api-side error 
     } else {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< API Error')
-
-      /*
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY: ', body)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.referer: ', body.referer)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.stack: ', body.stack)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.Stack: ', body.Stack)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.name: ', body.name)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.message: ', body.message)
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4<<<<<<<<<<<<<<<<<<<<<<<<<<<<BODY.status: ', body.status)
-      */
-      req.session.renderableErr = renderableErrorObject(body)
-      //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile 4<<<<<<<<<<<<<<<<<<<<<<<<<<<<req.session.renderableErr: ', req.session.renderableErr)
-      res.redirect(referer)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< API Error Body: ', body)
+      return next(body)
 
     }
-
   })
 }
-
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -388,17 +368,21 @@ module.exports.getMembersOnly = function (req, res) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-module.exports.renderNotifyError = function (req, res) {
-
-}
-
 module.exports.getNotifyError = function (req, res, next) {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> getNotifyError > notifyErrorMessageObject <<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
-  res.render('notifyError', {
-    //
+  res.render('notifyError', { err: req.session.renderableErr }, function (err, html) {
+
+    if (err) {
+      return next(err)
+
+    } else {
+      req.session.renderableErr ? req.session.renderableErr = null : null
+      res.send(html)
+    }
   })
 }
+
 /*
 module.exports.renderNotifyError = function (req, res) {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> renderNotifyError <<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
@@ -430,6 +414,7 @@ module.exports.getNotifyError = function (req, res, next) {
   })
 }
 */
+
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 

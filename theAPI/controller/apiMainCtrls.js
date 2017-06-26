@@ -432,16 +432,68 @@ module.exports.ajaxEvaluateUserProfileXXX = function (req, res, next) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-
 module.exports.getUserProfileResponse = function (req, res, next) {
+
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
+  var credentials = auth(req)
+  // req.params.userid = ''
+
+  if (req.params && req.params.userid) {
+    // req.params.userid = '49470fbe58ee5103bac5f9bd'
+
+    User.findById( '' ).exec(function (err, user) {
+
+      if (user) {
+
+        if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
+
+          err = customObjectEnumerable( new customError('Unauthorized, bad credentials', 401) )
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< CREDENTIALS: ', err)
+          sendJSONresponse(res, 401, err)
+
+        } else {
+
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > 200-Good <<<<<<<<<<<<<<<<<<<<<<<<<<<')
+          sendJSONresponse(res, 200, user)
+
+        }
+
+      } else if (err) {
+
+        err = customObjectEnumerable( new customError(err.message, err.status, err.stack, err.name) )
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< ERR: ', err)
+        sendJSONresponse(res, 400, err)
+
+      } else {
+
+        err = customObjectEnumerable( new customError('User \'findById\' not found', 404) )
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< !USER: ', err)
+        sendJSONresponse(res, 404, err)
+
+      }
+    })
+
+  } else {
+
+    err = customObjectEnumerable( new customError('User not found, req.params.userid value required', 404) )
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< OTHER: ', err)
+    sendJSONresponse(res, 404, err)
+
+  }
+}
+
+
+
+
+
+module.exports.getUserProfileResponseXX = function (req, res, next) {
 
   var credentials = auth(req)
   var referer = req.body.referer
   // req.params.userid = ''
 
   if (req.params && req.params.userid) {
-
-    // req.params.userid === (string || 59470fbe58ee5103bac5f9bd)
     // req.params.userid = '49470fbe58ee5103bac5f9bd'
 
     User.findById( req.params.userid ).exec(function (err, user) {
@@ -462,7 +514,6 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
       } else if (err) {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR 1')
         //err = customObjectEnumerable( new customError(err.message, err.status, err.stack, err.name) )
         err.referer = referer
         //sendJSONresponse(res, 400, err)
@@ -473,24 +524,19 @@ module.exports.getUserProfileResponse = function (req, res, next) {
         // var errX = customObjectEnumerable( new customError('User not found', 404) )
         //var errX = new customError('User not found', 404)
         // err.referer = referer
-        // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR 2a: ', util.isError(errX) )
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR !!!!!!!!!!')
         //sendJSONresponse(res, 404, err)
         return next(new customError('User not found', 404))
 
       }
-
     })
 
   } else {
 
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponseXXXX 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR !!!!!!!!!!')
     err = customObjectEnumerable( new customError('Not found, userid required', 404) )
     err.referer = referer
     sendJSONresponse(res, 404, err)
 
   }
-
 }
 
 
@@ -912,7 +958,7 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
                         state: 'required',
                         expectedResponse: 'false'}
 
-  var testerJOB = {displayname: ' displaynameABC123',
+  var tester1 = {displayname: ' displaynameABC123',
                     email: 'aaa1@aaa.com',
                     confirmEmail: '        aaa@aaa.com     ',
                     password: 'pppp',
@@ -922,12 +968,13 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
                     city: '               AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz          ',
                     state: 'NY'}
 
-  var testerJOB2 = {displayname: ' displaynameABC123',
+  var tester2 = {displayname: ' displaynameABC123',
                     email: 'aaa1@aaa.com',
                     confirmEmail: '        aaa@aaa.com     ',
                     password: 'pppp',
                     confirmPassword: 'pppp '}
-  // req.body.template = testerJOB2
+
+  // req.body = tester2
 
   serverSideValidation(req, res, function (err, validatedResponse) {
 

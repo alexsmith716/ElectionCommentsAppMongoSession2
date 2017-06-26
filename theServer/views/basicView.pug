@@ -4,7 +4,7 @@ block metas
 
 block title
   title= title
-  
+
 block links
 
 block headScripts
@@ -27,11 +27,6 @@ block content
 
             br
 
-            - if ( resLocalsBasicView )
-              p #{resLocalsBasicView}
-              p= resLocalsBasicView
-              
-
             p !{(content).replace(/\n/g, '<br/>')}
 
 
@@ -46,11 +41,6 @@ block content
 
 
             p Contact
-              | 
+              |
               a.highlight(href='/customerservice') Customer Service
               |&nbsp;for questions and comments.
-
-
-
-
-

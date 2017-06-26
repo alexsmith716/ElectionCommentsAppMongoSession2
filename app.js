@@ -124,9 +124,9 @@ app.use(function (req, res, next) {
   // console.log('REQ.fresh ++: ', req.fresh)
   // console.log('REQ.stale ++: ', req.stale)
   // console.log('REQ.protocol ++: ', req.protocol)
+  console.log('REQ.method ++: ', req.method)
   console.log('REQ.path ++: ', req.path)
   // console.log('REQ.route ++: ', req.route)
-  console.log('REQ.method ++: ', req.method)
   // console.log('REQ.url ++: ', req.url)
   // console.log('REQ.originalUrl ++: ', req.originalUrl)
   // console.log('REQ.headers ++: ', req.headers)
@@ -142,7 +142,6 @@ app.use(function (req, res, next) {
   // console.log('REQ.params ++: ', req.params)
   // console.log('RES.headersSent ++: ', res.headersSent)
 
-  console.log('REQ.json ++: ', req.json)
   var reqBody = sanitize(req.body)
   var reqQuery = sanitize(req.query)
   var reqParams = sanitize(req.params)
@@ -152,7 +151,6 @@ app.use(function (req, res, next) {
     err.status = 400
     return next(err)
   } else {
-    req.headers['referer'] ? req.session.referer = req.headers['referer'] : null
     next()
   }
 })
@@ -186,12 +184,6 @@ if (app.get('env') === 'development') {
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-app.use(function (req, res, next) {
-// app.use('/userprofile', function (req, res, next) {
-  // return next(createError(400, 'Bad Request!'))
-  next()
-})
 
 app.use(function (req, res, next) {
 
@@ -246,12 +238,15 @@ if (app.get('env') === 'development') {
     console.log('############################# ++++++++++++++++++++++++++++++++++++++++')
     console.log('############################# DEV REQ.HEADERS.referer: ', req.headers['referer'])
     console.log('############################# DEV REQ.xhr: ', req.xhr)
-    res.locals.resLocalsBasicView = 'ResLocalsBasicViewTrue'
 
-    var referer = url.parse(req.headers['referer']).pathname
+    var referer
 
-    var errTitle = 'Application Error Notice'
-    var errAlert = '<p>A error recently occurred with the application.</p><p>If this problem continues, please contact our Help Desk at 555-555-1234 or email Customer Service at customer.care@ThisGreatApp.com.</p><p>Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p><p>We appreciate your patience!</p>'
+    if (req.headers['referer']) {
+      referer = url.parse(req.headers['referer']).pathname
+    }
+
+    var errTitle = 'An Application Error Has Occurred'
+    var errAlert = '<p>A error recently occurred with the application. Please try your request again.</p><p>If this problem continues, please contact our Help Desk at 555-555-1234.</p><p>You may also email Customer Service at customer.care@ThisGreatApp.com.</p><p>Visit our&nbsp;<a class="highlight" href="/customerservice">Customer Service</a>&nbsp;webpage for a full listing of helpful information.</p><p>We appreciate your patience!</p>'
     var errMessage = '<pre><p>Name:&nbsp;'+err.name+'</p><p>Message:&nbsp;'+err.message+'</p><p>Status:&nbsp;'+err.status+'</p><p>Code:&nbsp;'+err.code+'</p><p>Referer:&nbsp;'+err.referer+'</p><p>Stack:&nbsp;'+err.stack+'</p></pre>'
 
     req.session.renderableErr = {'title': errTitle, 'alert': errAlert, 'message': errMessage}
@@ -259,7 +254,6 @@ if (app.get('env') === 'development') {
     if (req.xhr) {
 
       console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > YES XHR ############################')
-
       // res.json({'response': 'error', 'type': 'error', 'errTitle': errTitle, 'errAlert': errAlert})
       res.json({'response': 'error', 'type': 'error', 'title': errTitle, 'alert': errAlert, 'message': errMessage})
 
@@ -267,24 +261,15 @@ if (app.get('env') === 'development') {
 
       // server-side error - headers referer
       if (referer) {
-
         console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR 1 #############################')
         res.redirect(referer)
 
-      // api-side error - err.referer
-      } else if (err.referer) {
-
-        console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR 2 #############################')
-        res.redirect(err.referer)
-
       // unhandled error but not XHR - redirect '/notifyerror'
       } else {
-
         console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR 3 #############################')
         res.redirect('/notifyerror')
 
       }
-
     }
   })
 }

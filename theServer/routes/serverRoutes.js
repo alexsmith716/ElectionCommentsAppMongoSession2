@@ -38,7 +38,7 @@ router.get('/login', csrfProtection, serverControllers.getLogin)
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-router.get('/rendernotifyerror', serverControllers.renderNotifyError)
+// router.get('/rendernotifyerror', serverControllers.renderNotifyError)
 router.get('/notifyerror', serverControllers.getNotifyError)
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
