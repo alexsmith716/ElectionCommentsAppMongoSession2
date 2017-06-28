@@ -13,6 +13,25 @@ block bodyScripts
 
 block content
 
+  .modal.fade(id='modalAlert', tabindex='-1')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type="button" data-dismiss="modal") &times;
+          h4.modal-title
+
+        .modal-body
+
+          .alertSuccess.alert.alert-success.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
+          .alertWarning.alert.alert-warning.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
+          .alertDanger.alert.alert-danger.hide(role="alert", style="margin-top: 10px; margin-bottom: 22px;")
+
+          div(id="errScrollbox")
+
+          button(class="btn btn-default btn-md", data-dismiss="modal", style="margin-top: 6px;") OK
+
+        .modal-footer
+
   .main
 
     .container
@@ -44,3 +63,11 @@ block content
               |
               a.highlight(href='/customerservice') Customer Service
               |&nbsp;for questions and comments.
+
+  - if (err)
+    script.
+      $('#modalAlert .modal-title').html( !{JSON.stringify(err.title)} )
+      $('#modalAlert .alertDanger').html( !{JSON.stringify(err.alert)} )
+      $('#modalAlert #errScrollbox').html( !{JSON.stringify(err.message)} )
+      $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
+      $('#modalAlert').modal({keyboard: false,backdrop: 'static'})

@@ -80,10 +80,10 @@ block content
               br
               a.btn.btn-primary.btn-md(href="") Most Recommended
 
-      - if (err)
-        script.
-          $('#modalAlert .modal-title').html( !{JSON.stringify(err.title)} )
-          $('#modalAlert .alertDanger').html( !{JSON.stringify(err.alert)} )
-          $('#modalAlert #errScrollbox').html( !{JSON.stringify(err.message)} )
-          $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
-          $('#modalAlert').modal({keyboard: false,backdrop: 'static'})
+  - if (err)
+    script.
+      $('#modalAlert .modal-title').html( !{JSON.stringify(err.title)} )
+      $('#modalAlert .alertDanger').html( !{JSON.stringify(err.alert)} )
+      $('#modalAlert #errScrollbox').html( !{JSON.stringify(err.message)} )
+      $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
+      $('#modalAlert').modal({keyboard: false,backdrop: 'static'})

@@ -119,7 +119,7 @@ var helper = {
           var parsedXHR = JSON.parse(xhr.responseText)
           $('#modalAlert .modal-title').html(parsedXHR.title)
           $('#modalAlert .alertDanger').html(parsedXHR.alert)
-          $('#modalAlert #modalScrollbox').html(parsedXHR.message)
+          $('#modalAlert #errScrollbox').html(parsedXHR.message)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('#modalAlert').modal({ keyboard: false,backdrop: 'static' })
           return false
@@ -560,7 +560,7 @@ var helper = {
         var parsedXHR = JSON.parse(xhr.responseText)
         $('#modalAlert .modal-title').html(parsedXHR.title)
         $('#modalAlert .alertDanger').html(parsedXHR.alert)
-        $('#modalAlert #modalScrollbox').html(parsedXHR.message)
+        $('#modalAlert #errScrollbox').html(parsedXHR.message)
         $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
         $('#modalAlert').modal({ keyboard: false,backdrop: 'static' })
         return false

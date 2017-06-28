@@ -126,12 +126,12 @@ app.use(function (req, res, next) {
   // console.log('REQ.stale ++: ', req.stale)
   // console.log('REQ.protocol ++: ', req.protocol)
   console.log('REQ.method ++: ', req.method)
-  console.log('REQ.path ++: ', req.path)
-  console.log('REQ.route ++: ', req.route)
-  console.log('REQ.url ++: ', req.url)
-  // console.log('REQ.originalUrl ++: ', req.originalUrl)
+  // console.log('REQ.route ++: ', req.route)
+  // console.log('REQ.url ++: ', req.url)
+  console.log('REQ.originalUrl ++++++++++++++++++++++++++++++++++++++++++++++++++: ', req.originalUrl)
+  console.log('REQ.path +++++++++++++++++++++++++++++++++++++++++++++++++++++++++: ', req.path)
   // console.log('REQ.headers ++: ', req.headers)
-  console.log('REQ.headers.referer ++: ', req.headers['referer'])
+  console.log('REQ.headers.referer ++++++++++++++++++++++++++++++++++++++++++++++: ', req.headers['referer'])
   // console.log('REQ.headers.user-agent ++: ', req.headers['user-agent'])
   // console.log('REQ.query ++: ', req.query)
   // console.log('REQ.query.token ++: ', req.query.token)
@@ -160,8 +160,10 @@ app.use(function (req, res, next) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 app.use(function (req, res, next) {
+
   res.locals.currentUser = req.user
   res.locals.reqUrl = req.url
+
   if (req.headers['referer']) {
     res.locals.referer = url.parse(req.headers['referer']).pathname
   }
@@ -188,16 +190,20 @@ if (app.get('env') === 'development') {
 
 app.use(function (req, res, next) {
 
-  // setTimeout(function () {
-    // console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ APP End Too Long Request ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-    // res.status(504).end() 
-  // }, 30000)
-
+  /*
+  var timer = setTimeout(function () {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Ending Timed-Out Request <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+    var err = new Error('Gateway Timeout, req.originalUrl: '+req.originalUrl)
+    err.status = 504
+    next(err)
+  }, 30000)
+  */
   onFinished(req, function () {
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> APP onFinished REQ <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
   })
 
   onFinished(res, function () {
+    // clearTimeout(timer)
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> APP onFinished RES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
   })
 
@@ -215,7 +221,7 @@ app.use('/api', apiRoutes)
 
 app.use(function (req, res, next) {
   console.log('############################# APP UNCAUGHT ERR HANDLER 404 #####################################')
-  var err = new Error('Not Found, req.url: '+req.url)
+  var err = new Error('Not Found, req.originalUrl: '+req.originalUrl)
   err.status = 404
   next(err)
 })
@@ -238,6 +244,7 @@ if (app.get('env') === 'development') {
     console.log('############################# DEV ERR.message: ', err.message)
     console.log('############################# DEV ERR.referer: ', err.referer)
     console.log('############################# ++++++++++++++++++++++++++++++++++++++++')
+    console.log('############################# DEV REQ.originalUrl: ',  req.originalUrl)
     console.log('############################# DEV REQ.HEADERS.referer: ', req.headers['referer'])
     console.log('############################# DEV REQ.xhr: ', req.xhr)
 
@@ -252,7 +259,7 @@ if (app.get('env') === 'development') {
     if (req.xhr) {
 
       console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > YES XHR ############################')
-      res.json({'response': 'error', 'type': 'error', 'title': errTitle, 'alert': errAlert, 'message': errMessage})
+      res.json({'response': 'error', 'type': 'error', 'err': req.session.renderableErr})
 
     } else {
 

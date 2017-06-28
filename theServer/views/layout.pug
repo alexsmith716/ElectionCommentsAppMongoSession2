@@ -49,34 +49,67 @@ html(lang="en-US")
                   if currentUser
 
                     if reqUrl !== '/userhome'
-                      li 
+                      li
                         a.navbar-link(href='/userhome', data-toggle='collapse', data-target='.navbar-collapse.in') User Home
 
                     if reqUrl !== '/membersonly'
-                      li 
+                      li
                         a.navbar-link(href='/membersonly', data-toggle='collapse', data-target='.navbar-collapse.in') Members Only!
 
                     li 
                       a.login-link(href='/logout', data-toggle='collapse', data-target='.navbar-collapse.in') Log Out
 
+                    if reqUrl !== '/customerservice'
+                      li
+                        a.navbar-link(href='/signup', data-toggle='collapse', data-target='.navbar-collapse.in') Customer Service
+
+                    if reqUrl !== '/contact'
+                      li
+                        a.navbar-link(href='/signup', data-toggle='collapse', data-target='.navbar-collapse.in') Contact
+
+                    if reqUrl !== '/team'
+                      li
+                        a.navbar-link(href='/signup', data-toggle='collapse', data-target='.navbar-collapse.in') Team
+
+                    if reqUrl !== '/about'
+                      li
+                        a.navbar-link(href='/signup', data-toggle='collapse', data-target='.navbar-collapse.in') About
+
 
                   else
 
                     if reqUrl !== '/'
-                      li 
+                      li
                         a.navbar-link(href='/', data-toggle='collapse', data-target='.navbar-collapse.in') Homepage
 
                     if reqUrl !== '/loginorsignup'
-                      li 
+                      li
                         a.navbar-link(href='/membersonly', data-toggle='collapse', data-target='.navbar-collapse.in') Members Only!
 
                     if reqUrl !== '/login'
-                      li 
+                      li
                         a.login-link(href='/login', data-toggle='collapse', data-target='.navbar-collapse.in') Log In
 
                     if reqUrl !== '/signup'
-                      li 
+                      li
                         a.signup-link(href='/signup', data-toggle='collapse', data-target='.navbar-collapse.in') Sign Up
+
+                    if reqUrl !== '/customerservice'
+                      li
+                        a.navbar-link(href='/customerservice', data-toggle='collapse', data-target='.navbar-collapse.in') Customer Service
+
+                    if reqUrl !== '/contact'
+                      li
+                        a.navbar-link(href='/contact', data-toggle='collapse', data-target='.navbar-collapse.in') Contact
+
+                    if reqUrl !== '/team'
+                      li
+                        a.navbar-link(href='/team', data-toggle='collapse', data-target='.navbar-collapse.in') Team
+
+                    if reqUrl !== '/about'
+                      li
+                        a.navbar-link(href='/about', data-toggle='collapse', data-target='.navbar-collapse.in') About
+
 
           if (multipleUserSession !== undefined)
             .alert.alert-warning(role="alert") Alert: multiple instances of users have logged on to this account.

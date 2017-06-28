@@ -2,28 +2,30 @@
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
 var mongoose = require('mongoose')
-// var User = require('./userSchema.js')
 var User = mongoose.model('User')
 
+// Sessions
+
+// In a typical web application, the credentials used to authenticate a user will only be transmitted during the login request. If authentication succeeds, a session will be established and maintained via a cookie set in the user's browser.
+
+// Each subsequent request will not contain credentials, but rather the unique cookie that identifies the session. In order to support login sessions, Passport will serialize and deserialize user instances to and from the session.
+
 module.exports = function() {
-  // serialize user into session
+
   passport.serializeUser(function (user, done) {
-    console.log('####### AUTHENTICATION > PASSPORT.serializeUser $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
     done(null, user.id)
   })
 
-  // deserialize user out of the session
   passport.deserializeUser(function (id, done) {
     User.findById(id, function (err, user) {
-      if (user) {
-        console.log('####### AUTHENTICATION > PASSPORT.deserializeUser $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-      }
       done(err, user)
     })
   })
 
   passport.use('local', new LocalStrategy({ usernameField: 'email' }, function (username, password, done) {
+
       User.findOne({ email: username }, function (err, user) {
+
         if (err) { 
           return done(err)
 
@@ -32,6 +34,7 @@ module.exports = function() {
 
         } else {
           user.checkPassword(password, function(err, result) {
+
             if (err) {
               return done(err)
             }
@@ -40,7 +43,6 @@ module.exports = function() {
               return done(null, false, { message: 'Invalid password.' })
 
             } else {
-              console.log('####### AUTHENTICATION > PASSPORT > USER CHECKPASSWORD GOOD $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
               return done(null, user)
 
             }
@@ -50,4 +52,3 @@ module.exports = function() {
     }
   ))
 }
-
