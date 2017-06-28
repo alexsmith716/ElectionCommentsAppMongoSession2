@@ -836,9 +836,7 @@ module.exports.ajaxLoginUser = function (req, res, next) {
 
     if (err) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>> ajaxLoginUser > serverSideValidation <<<<<<<<<<<<<<<<<<< YES ERR: ', err)
-
-      return next(err)
+      next(err)
 
     } else {
 
@@ -858,39 +856,37 @@ module.exports.ajaxLoginUser = function (req, res, next) {
         passport.authenticate('local', function (err, user, info) {
 
           if (err) {
-            return next(err)
-          }
 
-          if (!user) {
+            next(err)
+
+          } else if (!user) {
+
             sendJSONresponse(res, 201, { 'response': 'error' })
-            return
 
+          } else {
+
+            req.logIn(user, function (err) {
+
+              if (err) { 
+
+                next(err)
+
+              } else {
+
+                user.previouslogin = user.lastlogin
+                user.lastlogin = new Date()
+
+                user.save(function (err, success) {
+                  if (err) {
+                    next(err)
+
+                  } else {
+                    sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
+                  }
+                })
+              }
+            })
           }
-
-          req.logIn(user, function (err) {
-
-            if (err) { 
-
-              return next(err)
-
-            } else {
-
-              user.previouslogin = user.lastlogin
-              user.lastlogin = new Date()
-
-              user.save(function (err, success) {
-                if (err) {
-                  return next(err)
-
-                } else {
-                  sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
-
-                }
-              })
-            }
-
-          })
-
         })(req, res)
 
       } else {
@@ -929,14 +925,13 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
                     confirmEmail: '        aaa@aaa.com     ',
                     password: 'pppp',
                     confirmPassword: 'pppp '}
-
   // req.body = tester2
 
   serverSideValidation(req, res, function (err, validatedResponse) {
 
     if (err) {
 
-      return next(err)
+      next(err)
 
     } else {
 
@@ -961,37 +956,45 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
         newUser.state = req.body.state
 
         newUser.setPassword(req.body.password, function (err, result) {
+
           if (err) {
-            return next(err);
+            next(err)
 
           } else {
             newUser.save(function (err) {
+
               if (err) {
-                return next(err)
+                next(err)
 
               } else {
+
                 passport.authenticate('local', function (err, user, info) {
+
                   if (err) {
-                    return next(err)
-                  }
+                    next(err)
 
-                  if (!user) {
+                  } else if (!user) {
                     sendJSONresponse(res, 201, { 'response': 'error' })
-                    return
-                  }
 
-                  if (user) {
+                  } else {
+
                     req.logIn(user, function (err) {
-                      if (err) { 
-                        return next(err)
-                      }
 
-                      req.session.save(function (err) {
-                        if (err) {
-                          return next(err)
-                        }
-                        sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
-                      })
+                      if (err) { 
+                        next(err)
+                      } else {
+
+                        req.session.save(function (err) {
+
+                          if (err) {
+                            next(err)
+                          } else {
+                            sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
+                          }
+
+                        })
+
+                      }
                     })
                   }
                 })(req, res, next)
@@ -1006,3 +1009,55 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
     }
   })
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -15,7 +15,7 @@ var helper = {
 
     //var windowHeight = $(window).height();
     var windowHeight = ($(window).height() - 180);
-    $('#modalScrollbox').css('max-height', windowHeight+'px');
+    $('#errScrollbox').css('max-height', windowHeight+'px');
 
     helper.initializeJqueryEvents()
   },
@@ -251,7 +251,7 @@ var helper = {
           var parsedXHR = JSON.parse(xhr.responseText)
           $('#modalAlert .modal-title').html(parsedXHR.title)
           $('#modalAlert .alertDanger').html(parsedXHR.alert)
-          $('#modalAlert #modalScrollbox').html(parsedXHR.message)
+          $('#modalAlert #errScrollbox').html(parsedXHR.message)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('body').data('doNextModal', 'modalAlert')
           $('#editProfileFormModal .cancelButton').trigger('click')
@@ -381,7 +381,7 @@ var helper = {
           var parsedXHR = JSON.parse(xhr.responseText)
           $('#modalAlert .modal-title').html(parsedXHR.title)
           $('#modalAlert .alertDanger').html(parsedXHR.alert)
-          $('#modalAlert #modalScrollbox').html(parsedXHR.message)
+          $('#modalAlert #errScrollbox').html(parsedXHR.message)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('body').data('doNextModal', 'modalAlert')
           $('#userDataEmailPathChangeModal .cancelButton').trigger('click')
@@ -505,7 +505,7 @@ var helper = {
           var parsedXHR = JSON.parse(xhr.responseText)
           $('#modalAlert .modal-title').html(parsedXHR.title)
           $('#modalAlert .alertDanger').html(parsedXHR.alert)
-          $('#modalAlert #modalScrollbox').html(parsedXHR.message)
+          $('#modalAlert #errScrollbox').html(parsedXHR.message)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('body').data('doNextModal', 'modalAlert')
           $('#userDataPasswordPathChangeModal .cancelButton').trigger('click')
@@ -1037,7 +1037,7 @@ var helper = {
         ms ? $(ms + ' .loading').hide() : helper.hideLoading()
         $('#modalAlert .modal-title').html(parsedXHR.title)
         $('#modalAlert .alertDanger').html(parsedXHR.alert)
-        $('#modalAlert #modalScrollbox').html(parsedXHR.message)
+        $('#modalAlert #errScrollbox').html(parsedXHR.message)
         $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
         $('body').data('doNextModal', 'modalAlert')
         $('#currentUserDataPathModal .cancelButton').trigger('click')
@@ -1086,7 +1086,7 @@ var helper = {
         var parsedXHR = JSON.parse(xhr.responseText)
         $('#modalAlert .modal-title').html(parsedXHR.title)
         $('#modalAlert .alertDanger').html(parsedXHR.alert)
-        $('#modalAlert #modalScrollbox').html(parsedXHR.message)
+        $('#modalAlert #errScrollbox').html(parsedXHR.message)
         $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
         $('#modalAlert').modal({ keyboard: false,backdrop: 'static' })
         return false

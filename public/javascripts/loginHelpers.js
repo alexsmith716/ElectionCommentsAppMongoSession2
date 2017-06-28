@@ -103,7 +103,7 @@ var helper = {
           var parsedXHR = JSON.parse(xhr.responseText)
           $('#modalAlert .modal-title').html(parsedXHR.title)
           $('#modalAlert .alertDanger').html(parsedXHR.alert)
-          $('#modalAlert #modalScrollbox').html(parsedXHR.message)
+          $('#modalAlert #errScrollbox').html(parsedXHR.message)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('body').data('doNextModal', 'modalAlert')
           $('#forgotPasswordFormModal .cancelButton').trigger('click')
@@ -150,7 +150,7 @@ var helper = {
               if (data.response === 'success') {
                 hideLoading()
                 location.href = data.redirect
-
+                
               } else {
                 hideLoading()
                 if(data.validatedData){
@@ -169,9 +169,9 @@ var helper = {
             error: function (xhr, status, error) {
               hideLoading()
               var parsedXHR = JSON.parse(xhr.responseText)
-              $('#modalAlert .modal-title').html(parsedXHR.title)
-              $('#modalAlert .alertDanger').html(parsedXHR.alert)
-              $('#modalAlert #modalScrollbox').html(parsedXHR.message)
+              $('#modalAlert .modal-title').html(parsedXHR.err.title)
+              $('#modalAlert .alertDanger').html(parsedXHR.err.alert)
+              $('#modalAlert #errScrollbox').html(parsedXHR.err.message)
               $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
               $('#modalAlert').modal({ keyboard: false,backdrop: 'static' })
               return false

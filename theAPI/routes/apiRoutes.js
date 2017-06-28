@@ -11,11 +11,6 @@ var csrfProtection = csrf({ cookie: true })
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 router.use(function (req, res, next) {
-  if (req.isAuthenticated()) {
-    console.log('+++++++++++++++++++++ API ROUTES > AUTHENTICATED +++++++++++++++++++++')
-  }else{
-    console.log('+++++++++++++++++++++ API ROUTES > NOT AUTHENTICATED +++++++++++++++++++++')
-  }
   next()
 })
 
