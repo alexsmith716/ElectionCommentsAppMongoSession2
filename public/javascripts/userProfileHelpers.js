@@ -237,7 +237,6 @@ var helper = {
               $('#editProfileFormModal .cancelButton').trigger('click')
 
             }
-            
             return false
           }
 
@@ -245,13 +244,18 @@ var helper = {
 
         error: function(xhr, status, error) {
 
-          console.log('#editProfileForm > ajax > ERROR > ERROR: ', xhr)
+          //console.log('#editProfileForm > ajax > ERROR > ERROR: ', xhr)
           
           $('.loading').hide()
           var parsedXHR = JSON.parse(xhr.responseText)
-          $('#modalAlert .modal-title').html(parsedXHR.title)
-          $('#modalAlert .alertDanger').html(parsedXHR.alert)
-          $('#modalAlert #errScrollbox').html(parsedXHR.message)
+
+          console.log('#editProfileForm > ajax > ERROR > ERROR > TITLE: ', parsedXHR.err.title)
+          console.log('#editProfileForm > ajax > ERROR > ERROR > ALERT: ', parsedXHR.err.alert)
+          console.log('#editProfileForm > ajax > ERROR > ERROR > MESSAGE: ', parsedXHR.err.message)
+
+          $('#modalAlert .modal-title').html(parsedXHR.err.title)
+          $('#modalAlert .alertDanger').html(parsedXHR.err.alert)
+          $('#modalAlert #errScrollbox').html(parsedXHR.err.message)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('body').data('doNextModal', 'modalAlert')
           $('#editProfileFormModal .cancelButton').trigger('click')
@@ -379,9 +383,9 @@ var helper = {
 
           $('.loading').hide()
           var parsedXHR = JSON.parse(xhr.responseText)
-          $('#modalAlert .modal-title').html(parsedXHR.title)
-          $('#modalAlert .alertDanger').html(parsedXHR.alert)
-          $('#modalAlert #errScrollbox').html(parsedXHR.message)
+          $('#modalAlert .modal-title').html(parsedXHR.err.title)
+          $('#modalAlert .alertDanger').html(parsedXHR.err.alert)
+          $('#modalAlert #errScrollbox').html(parsedXHR.err.message)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('body').data('doNextModal', 'modalAlert')
           $('#userDataEmailPathChangeModal .cancelButton').trigger('click')
@@ -503,9 +507,9 @@ var helper = {
 
           $('.loading').hide()
           var parsedXHR = JSON.parse(xhr.responseText)
-          $('#modalAlert .modal-title').html(parsedXHR.title)
-          $('#modalAlert .alertDanger').html(parsedXHR.alert)
-          $('#modalAlert #errScrollbox').html(parsedXHR.message)
+          $('#modalAlert .modal-title').html(parsedXHR.err.title)
+          $('#modalAlert .alertDanger').html(parsedXHR.err.alert)
+          $('#modalAlert #errScrollbox').html(parsedXHR.err.message)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('body').data('doNextModal', 'modalAlert')
           $('#userDataPasswordPathChangeModal .cancelButton').trigger('click')
@@ -1035,9 +1039,9 @@ var helper = {
 
         var parsedXHR = JSON.parse(xhr.responseText)
         ms ? $(ms + ' .loading').hide() : helper.hideLoading()
-        $('#modalAlert .modal-title').html(parsedXHR.title)
-        $('#modalAlert .alertDanger').html(parsedXHR.alert)
-        $('#modalAlert #errScrollbox').html(parsedXHR.message)
+        $('#modalAlert .modal-title').html(parsedXHR.err.title)
+        $('#modalAlert .alertDanger').html(parsedXHR.err.alert)
+        $('#modalAlert #errScrollbox').html(parsedXHR.err.message)
         $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
         $('body').data('doNextModal', 'modalAlert')
         $('#currentUserDataPathModal .cancelButton').trigger('click')

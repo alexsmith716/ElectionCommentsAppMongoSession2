@@ -117,9 +117,9 @@ var helper = {
         error: function (xhr, status, error) {
           helper.hideLoading()
           var parsedXHR = JSON.parse(xhr.responseText)
-          $('#modalAlert .modal-title').html(parsedXHR.title)
-          $('#modalAlert .alertDanger').html(parsedXHR.alert)
-          $('#modalAlert #errScrollbox').html(parsedXHR.message)
+          $('#modalAlert .modal-title').html(parsedXHR.err.title)
+          $('#modalAlert .alertDanger').html(parsedXHR.err.alert)
+          $('#modalAlert #errScrollbox').html(parsedXHR.err.message)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('#modalAlert').modal({ keyboard: false,backdrop: 'static' })
           return false
@@ -554,9 +554,9 @@ var helper = {
       error: function (xhr, status, error) {
         $('body').data('modalShown') ? null : helper.hideLoading()
         var parsedXHR = JSON.parse(xhr.responseText)
-        $('#modalAlert .modal-title').html(parsedXHR.title)
-        $('#modalAlert .alertDanger').html(parsedXHR.alert)
-        $('#modalAlert #errScrollbox').html(parsedXHR.message)
+        $('#modalAlert .modal-title').html(parsedXHR.err.title)
+        $('#modalAlert .alertDanger').html(parsedXHR.err.alert)
+        $('#modalAlert #errScrollbox').html(parsedXHR.err.message)
         $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
         $('#modalAlert').modal({ keyboard: false,backdrop: 'static' })
         cb('error')

@@ -252,6 +252,8 @@ if (app.get('env') === 'development') {
 
     req.session.renderableErr = renderableCustomErrorObject(err)
 
+    console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > req.session.renderableErr ############################: ', req.session.renderableErr)
+
     if (req.xhr) {
 
       console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > YES XHR ############################')

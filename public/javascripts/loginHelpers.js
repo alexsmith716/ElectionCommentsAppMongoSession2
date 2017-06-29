@@ -101,9 +101,9 @@ var helper = {
         error: function (xhr, status, error) {
           $('.loading').hide()
           var parsedXHR = JSON.parse(xhr.responseText)
-          $('#modalAlert .modal-title').html(parsedXHR.title)
-          $('#modalAlert .alertDanger').html(parsedXHR.alert)
-          $('#modalAlert #errScrollbox').html(parsedXHR.message)
+          $('#modalAlert .modal-title').html(parsedXHR.err.title)
+          $('#modalAlert .alertDanger').html(parsedXHR.err.alert)
+          $('#modalAlert #errScrollbox').html(parsedXHR.err.message)
           $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
           $('body').data('doNextModal', 'modalAlert')
           $('#forgotPasswordFormModal .cancelButton').trigger('click')

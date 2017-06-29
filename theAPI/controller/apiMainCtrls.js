@@ -224,8 +224,7 @@ module.exports.deleteOneComment = function(req, res) {
 
 module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< req.body: ', req.body)
-
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< req.body: ', req.body)
   // req.body:  { firstname: 'Nvhfvfduvdfv', _csrf: 'mw1ThVG4-hv3vkRQ3jrykaTGo4YZLrckseNM' }
 
   var newError
@@ -238,6 +237,8 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
     lastname: 'required', 
     city: 'required', 
     state: 'required'}
+
+  req.body = {}
 
   if (req.body && Object.keys(req.body).length == 2) {
 
@@ -257,13 +258,10 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
             if (err) {
 
-              console.log('>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile > serverSideValidation <<<<<<<<<<<<<<<<<<< YES ERR: ', err)
-
-              return next(err)
+              err = newObjectErrorEnumerable( err )
+              next(err)
 
             } else {
-
-              
 
               var validationErrors = false
 
@@ -280,52 +278,51 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
                   if (err) {
 
-                    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 66666 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-                    sendJSONresponse(res, 400, err)
-                    return
-                  }
+                    err = newObjectErrorEnumerable( err )
+                    next( err )
 
-                  if (!user) {
+                  } else if (!user) {
 
-                    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 333333 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-                    sendJSONresponse(res, 201, { 'response': 'error' })
-                    return
-                  }
+                    err = newObjectErrorEnumerable( new customErrorObject('Error', 'Bad res.locals.currentUser.id value, \'User.findById\' failed to find document', 404) )
+                    next( err )
 
-                  reqBodyValue = ''
-                  user[reqBodyProp] = reqBodyValue
+                  } else {
 
-                  if (reqBodyProp === 'state') {
-                    updatedData = stateNamer(reqBodyValue)
-                    reqBodyValue = updatedData
-                  }
+                    reqBodyValue = ''
+                    user[reqBodyProp] = reqBodyValue
 
-                  user.save(function (err, user) {
-
-                    if (err) {
-
-                      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 000000 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-                      return next(err)
-
-                    } else {
-
-                      sendJSONresponse(res, 201, { 'response': 'success', 'updatedData': reqBodyValue })
-
+                    if (reqBodyProp === 'state') {
+                      updatedData = stateNamer(reqBodyValue)
+                      reqBodyValue = updatedData
                     }
-                  })
 
+                    user.save(function (err, user) {
 
+                      if (err) {
+
+                        err = newObjectErrorEnumerable( err )
+                        next(err)
+
+                      } if (!user) {
+
+                        err = newObjectErrorEnumerable( new customErrorObject('Error', 'Bad res.locals.currentUser.id value, \'User.findById\' failed to save document', 404) )
+                        next( err )
+
+                      }else {
+
+                        sendJSONresponse(res, 201, { 'response': 'success', 'updatedData': reqBodyValue })
+
+                      }
+                    })
+                  }
                 })
 
               }else{
 
                 sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
+
               }
-
-
             }
-
-
           })
         }
       }
@@ -333,117 +330,15 @@ module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
     }
   } else {
 
-    
+    var err = newObjectErrorEnumerable( new customErrorObject('Error', 'Received bad req.body object or bad Object.keys length', 404) )
+    next(err)
 
   }
-
 }
 
 
-
-module.exports.ajaxEvaluateUserProfileXXX = function (req, res, next) {
-
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< req.body: ', req.body)
-
-  // req.body:  { firstname: 'Nvhfvfduvdfv', _csrf: 'mw1ThVG4-hv3vkRQ3jrykaTGo4YZLrckseNM' }
-
-  var newError
-  var reqBodyProp
-  var reqBodyValue
-  var template = {}
-  var updatedData
-
-  var templateMain = {firstname: 'required', 
-    lastname: 'required', 
-    city: 'required', 
-    state: 'required'}
-
-  for (var p in req.body) {
-
-    if (p !== '_csrf') {
-
-      reqBodyProp = p
-      reqBodyValue = req.body[reqBodyProp]
-
-      if (reqBodyProp in templateMain) {
-
-        template[reqBodyProp] = 'required'
-        template['expectedResponse'] = 'false'
-
-        serverSideValidation(req, res, template, function (err, validatedResponse) {
-
-          var validationErrors = false
-
-          for (var prop in validatedResponse) {
-            if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
-
-              validationErrors = true
-              break
-
-            }
-          }
-
-          if (!validationErrors) {
-
-            User.findById( res.locals.currentUser.id ).select( reqBodyProp ).exec(function (err, user) {
-
-
-              /*
-              if (err) {
-
-                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 66666 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-                sendJSONresponse(res, 400, err)
-                return
-              }
-
-              if (!user) {
-
-                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 333333 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-                sendJSONresponse(res, 201, { 'response': 'error' })
-                return
-              }
-
-              // reqBodyValue = ''
-              user[reqBodyProp] = reqBodyValue
-
-              if (reqBodyProp === 'state') {
-                updatedData = stateNamer(reqBodyValue)
-                reqBodyValue = updatedData
-              }
-
-              user.save(function (err, user) {
-
-                if (err) {
-
-                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxEvaluateUserProfile 000000 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-                  return next(err)
-
-                } else {
-
-                  sendJSONresponse(res, 201, { 'response': 'success', 'updatedData': reqBodyValue })
-
-                }
-              })
-              */
-
-            })
-
-          }else{
-
-            sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
-          }
-        })
-      }
-    }
-    break
-  }
-
-}
-
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-
 
 module.exports.getUserProfileResponse = function (req, res, next) {
 
@@ -453,13 +348,11 @@ module.exports.getUserProfileResponse = function (req, res, next) {
   // req.params.userid = ''
 
   if (req.params && req.params.userid) {
-    req.params.userid = '49470fbe58ee5103bac5f9bd'
+    // req.params.userid = '49470fbe58ee5103bac5f9bd'
 
     User.findById( req.params.userid ).exec(function (err, user) {
 
       if (user) {
-
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<< USER1: ', user)
 
         if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
 
@@ -479,9 +372,7 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
       } else {
 
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<< USER2: ', user)
-
-        err = newObjectErrorEnumerable( new customErrorObject('Error', '\'User.findById\' failed to find document', 404) )
+        err = newObjectErrorEnumerable( new customErrorObject('Error', 'Bad req.params.userid value, \'User.findById\' failed to find document', 404) )
         sendJSONresponse(res, 404, err)
 
       }
@@ -489,7 +380,7 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
   } else {
 
-    err = newObjectErrorEnumerable( new customErrorObject('Error', 'User not found, req.params.userid value required', 404) )
+    err = newObjectErrorEnumerable( new customErrorObject('Error', 'Bad req.params.userid value, \'User.findById\' failed to find document', 404) )
     sendJSONresponse(res, 404, err)
 
   }
