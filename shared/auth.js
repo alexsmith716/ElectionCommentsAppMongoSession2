@@ -1,6 +1,6 @@
 
-var customErrorObject = require('./customErrorObject.js')
-var customErrorObjectEnumerable = require('./customErrorObjectEnumerable.js')
+var customErrorObject = require('./customErrorObject')
+var newObjectErrorEnumerable = require('./newObjectErrorEnumerable')
 
 var sendJSONresponse = function(res, status, content) {
   res.status(status)
@@ -18,11 +18,10 @@ module.exports.ensureAuthenticated = function (req, res, next) {
 module.exports.basicAuthenticationAPI = function (req, res, next) {
   var hAuth = req.headers['authorization']
   var expr = /Basic/
-  var err
   if (hAuth !== undefined && expr.test(hAuth)) {
     return next()
   } else {
-    err = customErrorObjectEnumerable( new customErrorObject('Unauthorized, missing Basic Auth headers', 401) )
+    var err = newObjectErrorEnumerable( new customErrorObject('Error', 'Unauthorized, missing Basic Auth headers', 401) )
     sendJSONresponse(res, 401, err)
   }
 }

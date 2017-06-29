@@ -14,9 +14,8 @@ var stateNamer = require('../../shared/stateNamer')
 var auth = require('basic-auth')
 var createError = require('http-errors')
 var customErrorObject = require('../../shared/customErrorObject')
-var customErrorObjectEnumerable = require('../../shared/customErrorObjectEnumerable')
+var newObjectErrorEnumerable = require('../../shared/newObjectErrorEnumerable')
 var url = require('url')
-var util = require('util')
 
 var sortKey = 'time'
 var sort = '-' + sortKey
@@ -454,79 +453,35 @@ module.exports.getUserProfileResponse = function (req, res, next) {
   // req.params.userid = ''
 
   if (req.params && req.params.userid) {
-    // req.params.userid = '49470fbe58ee5103bac5f9bd'
-
-    User.findById( '' ).exec(function (err, user) {
-
-      if (user) {
-
-        if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
-
-          err = customErrorObjectEnumerable( new customErrorObject('Unauthorized, bad credentials', 401) )
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< CREDENTIALS: ', err)
-          sendJSONresponse(res, 401, err)
-
-        } else {
-
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > 200-Good <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-          sendJSONresponse(res, 200, user)
-
-        }
-
-      } else if (err) {
-
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< ERR1: ', err)
-        err = customErrorObjectEnumerable( new customErrorObject(err.message, err.status, err.stack, err.name) )
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< ERR2: ', err)
-        sendJSONresponse(res, 400, err)
-
-      } else {
-
-        err = customErrorObjectEnumerable( new customErrorObject('User \'findById\' not found', 404) )
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< !USER: ', err)
-        sendJSONresponse(res, 404, err)
-
-      }
-    })
-
-  } else {
-
-    err = customErrorObjectEnumerable( new customErrorObject('User not found, req.params.userid value required', 404) )
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< OTHER: ', err)
-    sendJSONresponse(res, 404, err)
-
-  }
-  /*
-  if (req.params && req.params.userid) {
-    // req.params.userid = '49470fbe58ee5103bac5f9bd'
+    req.params.userid = '49470fbe58ee5103bac5f9bd'
 
     User.findById( req.params.userid ).exec(function (err, user) {
 
       if (user) {
 
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<< USER1: ', user)
+
         if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
 
-          err = customErrorObjectEnumerable( new customErrorObject('Unauthorized, bad credentials', 401) )
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< CREDENTIALS: ', err)
+          err = newObjectErrorEnumerable( new customErrorObject('Unauthorized, bad credentials', 401))
           sendJSONresponse(res, 401, err)
 
         } else {
 
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > 200-Good <<<<<<<<<<<<<<<<<<<<<<<<<<<')
           sendJSONresponse(res, 200, user)
 
         }
 
       } else if (err) {
 
-        err = customErrorObjectEnumerable( new customErrorObject(err.message, err.status, err.stack, err.name) )
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< ERR: ', err)
+        err = newObjectErrorEnumerable( err )
         sendJSONresponse(res, 400, err)
 
       } else {
 
-        err = customErrorObjectEnumerable( new customErrorObject('User \'findById\' not found', 404) )
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< !USER: ', err)
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<< USER2: ', user)
+
+        err = newObjectErrorEnumerable( new customErrorObject('Error', '\'User.findById\' failed to find document', 404) )
         sendJSONresponse(res, 404, err)
 
       }
@@ -534,63 +489,7 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
   } else {
 
-    err = customErrorObjectEnumerable( new customErrorObject('User not found, req.params.userid value required', 404) )
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< OTHER: ', err)
-    sendJSONresponse(res, 404, err)
-
-  }
-  */
-}
-
-
-
-
-module.exports.getUserProfileResponseXX = function (req, res, next) {
-
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-
-  var credentials = auth(req)
-  // req.params.userid = ''
-
-  if (req.params && req.params.userid) {
-    // req.params.userid = '49470fbe58ee5103bac5f9bd'
-
-    User.findById( req.params.userid ).exec(function (err, user) {
-
-      if (user) {
-
-        if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
-
-          err = customErrorObjectEnumerable( new customErrorObject('Unauthorized, bad credentials', 401) )
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< CREDENTIALS: ', err)
-          sendJSONresponse(res, 401, err)
-
-        } else {
-
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > 200-Good <<<<<<<<<<<<<<<<<<<<<<<<<<<')
-          sendJSONresponse(res, 200, user)
-
-        }
-
-      } else if (err) {
-
-        err = customErrorObjectEnumerable( new customErrorObject(err.message, err.status, err.stack, err.name) )
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< ERR: ', err)
-        sendJSONresponse(res, 400, err)
-
-      } else {
-
-        err = customErrorObjectEnumerable( new customErrorObject('User \'findById\' not found', 404) )
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< !USER: ', err)
-        sendJSONresponse(res, 404, err)
-
-      }
-    })
-
-  } else {
-
-    err = customErrorObjectEnumerable( new customErrorObject('User not found, req.params.userid value required', 404) )
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< OTHER: ', err)
+    err = newObjectErrorEnumerable( new customErrorObject('Error', 'User not found, req.params.userid value required', 404) )
     sendJSONresponse(res, 404, err)
 
   }

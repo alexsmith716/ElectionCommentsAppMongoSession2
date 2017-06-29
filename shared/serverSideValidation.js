@@ -1,5 +1,5 @@
 
-var evaluateUserEmail = require('./evaluateUserEmail.js')
+var evaluateUserEmail = require('./evaluateUserEmail')
 
 module.exports = function (req, res, cb) {
 
