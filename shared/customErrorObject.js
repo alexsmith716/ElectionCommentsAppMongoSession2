@@ -1,5 +1,5 @@
 
-module.exports = function CustomError(message, status, errStack, errName) {
+module.exports = function CustomErrorObject(message, status, errStack, errName) {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CustomError <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
   Error.captureStackTrace(this, this.constructor)
   !errStack ? this.Stack = this.stack : this.Stack = errStack

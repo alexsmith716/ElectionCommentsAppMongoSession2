@@ -1,12 +1,11 @@
 
-var customError = require('./customError.js')
+var customErrorObject = require('./customErrorObject.js')
+var customErrorObjectEnumerable = require('./customErrorObjectEnumerable.js')
 
 var sendJSONresponse = function(res, status, content) {
   res.status(status)
   res.json(content)
 }
-
-var exceptionError = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyerror'}
 
 module.exports.ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
@@ -23,7 +22,7 @@ module.exports.basicAuthenticationAPI = function (req, res, next) {
   if (hAuth !== undefined && expr.test(hAuth)) {
     return next()
   } else {
-    err = new customError('Unauthorized', 401)
+    err = customErrorObjectEnumerable( new customErrorObject('Unauthorized, missing Basic Auth headers', 401) )
     sendJSONresponse(res, 401, err)
   }
 }
@@ -74,7 +73,8 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
     }
   } else {
 
-    sendJSONresponse(res, 400, exceptionError)
+    err = customErrorObjectEnumerable( new customErrorObject('Unauthorized, bad credentials, userValidated timeStamp expired', 401) )
+    next(err)
 
   }
 }

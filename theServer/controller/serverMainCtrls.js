@@ -7,12 +7,8 @@ var pugCompiler = require('../../shared/pugCompiler')
 var mailer = require('../../shared/mailer')
 var sanitizeInputModule = require('../../shared/sanitizeInput')
 require('../../shared/sessionPrototype')
-var customError = require('../../shared/customError')
 var serverSideValidation = require('../../shared/serverSideValidation')
 var stateNamer = require('../../shared/stateNamer')
-var customError = require('../../shared/customError')
-var customObjectEnumerable = require('../../shared/customObjectEnumerable')
-var renderableErrorObject = require('../../shared/renderableErrorObject')
 var url = require('url')
 var auth = require('basic-auth')
 
@@ -89,10 +85,10 @@ module.exports.getComments = function(req, res){
     method : 'GET',
     json : {}
   };
-  request(requestOptions, function(err, response, body) {
+  request(requestOptions, function(err, code, body) {
     if(err){
       handleError(req, res, err);
-    }else if (response.statusCode === 200) {
+    }else if (code.statusCode === 200) {
       var htitle = 'Election App 2016!';
       var stitle = 'Log In or Sign Up to join the discussion';
       var message;
@@ -111,7 +107,7 @@ module.exports.getComments = function(req, res){
         message: message
       })
     }else{
-      handleError(req, res, response.statusCode);
+      handleError(req, res, code.statusCode);
     }
   });
 };
@@ -144,14 +140,14 @@ module.exports.postMainComment = function(req, res){
     m = 'All Sign up fields required';
     res.redirect('/comments/?err='+m);
   } else {
-    request(requestOptions, function(err, httpResponse, body) {
-      if (httpResponse.statusCode === 201) {
+    request(requestOptions, function(err, code, body) {
+      if (code.statusCode === 201) {
         res.redirect('/comments');
-      } else if (httpResponse.statusCode === 400 && body.name && body.name === 'ValidationError' ) {
+      } else if (code.statusCode === 400 && body.name && body.name === 'ValidationError' ) {
           m = 'Error has ocurred (serverMainCtrls.js > requestAddNewComment)';
           res.redirect('/comments/?err='+m);
       } else {
-          handleError(req, res, httpResponse.statusCode);
+          handleError(req, res, code.statusCode);
       }
     });
   }
@@ -185,14 +181,14 @@ module.exports.postSubComment = function(req, res){
     m = 'All Comment Reply fields required';
     res.redirect('/comments/subcomment/' + sanitizeInput1 + '/?err='+m);
   } else {
-    request(requestOptions, function(err, response, body) {
-      if (response.statusCode === 201) {
+    request(requestOptions, function(err, code, body) {
+      if (code.statusCode === 201) {
         res.redirect('/comments');
-      } else if (response.statusCode === 400 && body.name && body.name === 'ValidationError' ) {
+      } else if (code.statusCode === 400 && body.name && body.name === 'ValidationError' ) {
           m = 'Error has ocurred > serverMainCtrls.js > postSubComment)';
           res.redirect('/comments/subcomment/' + sanitizeInput1 + '/?err='+m);
       } else {
-          handleError(req, res, response.statusCode);
+          handleError(req, res, code.statusCode);
       }
     });
   }
@@ -307,7 +303,50 @@ module.exports.getUserProfile = function (req, res, next) {
   }
   // res.locals.currentUser.email
 
-  request(requestOptions, function (err, response, body) {
+  request(requestOptions, function (err, code, body) {
+
+    if (err) {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR ERR: ', err)
+      next(err)
+
+    } else if (code.statusCode === 200) {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< 200-Good')
+      
+      res.locals.currentUser.stateFull = stateNamer(body.state)
+
+      res.render('userProfile', {
+        csrfToken: req.csrfToken(),
+        responseBody: body
+      })
+
+    } else {
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< API Error Body: ', body)
+      next(body)
+
+    }
+  })
+}
+
+
+module.exports.getUserProfileXX = function (req, res, next) {
+  var requestOptions, path
+  path = '/api/userprofile/' + res.locals.currentUser.id
+
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
+  requestOptions = {
+    rejectUnauthorized: false,
+    url : apiOptions.server + path,
+    method : 'GET',
+    auth : {'username': res.locals.currentUser.email, 'password': res.locals.currentUser.datecreated.toISOString()},
+    json : {}
+  }
+  // res.locals.currentUser.email
+
+  request(requestOptions, function (err, code, body) {
 
     // server-side error 
     if (err) {
@@ -315,7 +354,7 @@ module.exports.getUserProfile = function (req, res, next) {
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR ERR: ', err)
       return next(err)
 
-    } else if (response.statusCode === 200) {
+    } else if (code.statusCode === 200) {
 
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< 200-Good')
       

@@ -13,9 +13,8 @@ var evaluateUserPasswordVerify = require('../../shared/evaluateUserPasswordVerif
 var stateNamer = require('../../shared/stateNamer')
 var auth = require('basic-auth')
 var createError = require('http-errors')
-var customError = require('../../shared/customError')
-var customObjectEnumerable = require('../../shared/customObjectEnumerable')
-var renderableErrorObject = require('../../shared/renderableErrorObject')
+var customErrorObject = require('../../shared/customErrorObject')
+var customErrorObjectEnumerable = require('../../shared/customErrorObjectEnumerable')
 var url = require('url')
 var util = require('util')
 
@@ -445,7 +444,108 @@ module.exports.ajaxEvaluateUserProfileXXX = function (req, res, next) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+
+
 module.exports.getUserProfileResponse = function (req, res, next) {
+
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
+  var credentials = auth(req)
+  // req.params.userid = ''
+
+  if (req.params && req.params.userid) {
+    // req.params.userid = '49470fbe58ee5103bac5f9bd'
+
+    User.findById( '' ).exec(function (err, user) {
+
+      if (user) {
+
+        if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
+
+          err = customErrorObjectEnumerable( new customErrorObject('Unauthorized, bad credentials', 401) )
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< CREDENTIALS: ', err)
+          sendJSONresponse(res, 401, err)
+
+        } else {
+
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > 200-Good <<<<<<<<<<<<<<<<<<<<<<<<<<<')
+          sendJSONresponse(res, 200, user)
+
+        }
+
+      } else if (err) {
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< ERR1: ', err)
+        err = customErrorObjectEnumerable( new customErrorObject(err.message, err.status, err.stack, err.name) )
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< ERR2: ', err)
+        sendJSONresponse(res, 400, err)
+
+      } else {
+
+        err = customErrorObjectEnumerable( new customErrorObject('User \'findById\' not found', 404) )
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< !USER: ', err)
+        sendJSONresponse(res, 404, err)
+
+      }
+    })
+
+  } else {
+
+    err = customErrorObjectEnumerable( new customErrorObject('User not found, req.params.userid value required', 404) )
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< OTHER: ', err)
+    sendJSONresponse(res, 404, err)
+
+  }
+  /*
+  if (req.params && req.params.userid) {
+    // req.params.userid = '49470fbe58ee5103bac5f9bd'
+
+    User.findById( req.params.userid ).exec(function (err, user) {
+
+      if (user) {
+
+        if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
+
+          err = customErrorObjectEnumerable( new customErrorObject('Unauthorized, bad credentials', 401) )
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< CREDENTIALS: ', err)
+          sendJSONresponse(res, 401, err)
+
+        } else {
+
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > 200-Good <<<<<<<<<<<<<<<<<<<<<<<<<<<')
+          sendJSONresponse(res, 200, user)
+
+        }
+
+      } else if (err) {
+
+        err = customErrorObjectEnumerable( new customErrorObject(err.message, err.status, err.stack, err.name) )
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< ERR: ', err)
+        sendJSONresponse(res, 400, err)
+
+      } else {
+
+        err = customErrorObjectEnumerable( new customErrorObject('User \'findById\' not found', 404) )
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< !USER: ', err)
+        sendJSONresponse(res, 404, err)
+
+      }
+    })
+
+  } else {
+
+    err = customErrorObjectEnumerable( new customErrorObject('User not found, req.params.userid value required', 404) )
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< OTHER: ', err)
+    sendJSONresponse(res, 404, err)
+
+  }
+  */
+}
+
+
+
+
+module.exports.getUserProfileResponseXX = function (req, res, next) {
 
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse <<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
@@ -461,7 +561,7 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
         if (!credentials || credentials.name !== user.email || credentials.pass !== user.datecreated.toISOString()) {
 
-          err = customObjectEnumerable( new customError('Unauthorized, bad credentials', 401) )
+          err = customErrorObjectEnumerable( new customErrorObject('Unauthorized, bad credentials', 401) )
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< CREDENTIALS: ', err)
           sendJSONresponse(res, 401, err)
 
@@ -474,13 +574,13 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
       } else if (err) {
 
-        err = customObjectEnumerable( new customError(err.message, err.status, err.stack, err.name) )
+        err = customErrorObjectEnumerable( new customErrorObject(err.message, err.status, err.stack, err.name) )
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< ERR: ', err)
         sendJSONresponse(res, 400, err)
 
       } else {
 
-        err = customObjectEnumerable( new customError('User \'findById\' not found', 404) )
+        err = customErrorObjectEnumerable( new customErrorObject('User \'findById\' not found', 404) )
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< !USER: ', err)
         sendJSONresponse(res, 404, err)
 
@@ -489,7 +589,7 @@ module.exports.getUserProfileResponse = function (req, res, next) {
 
   } else {
 
-    err = customObjectEnumerable( new customError('User not found, req.params.userid value required', 404) )
+    err = customErrorObjectEnumerable( new customErrorObject('User not found, req.params.userid value required', 404) )
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserProfileResponse > err <<<<<<<<<<<<<<<<<<<<<<<<<<< OTHER: ', err)
     sendJSONresponse(res, 404, err)
 
@@ -698,7 +798,7 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 
       if (err) {
 
-        return next(err)
+        next(err)
 
       } else {
 
@@ -706,9 +806,8 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 
       }
     })
-  }
 
-  if (req.body.type === 'password' && req.session.userValidatedEmail.isValidated) {
+  } else if (req.body.type === 'password' && req.session.userValidatedEmail.isValidated) {
 
     req.body.doUserValidatedPassword = true
     var nd = new Date()
@@ -734,7 +833,7 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 
         if (err) {
 
-          return next(err)
+          next(err)
 
         } else {
 
@@ -755,7 +854,7 @@ module.exports.ajaxEvaluateUserEmail = function (req, res, next) {
 
     if (err) {
 
-      return next(err)
+      next(err)
 
     } else {
 
@@ -769,7 +868,6 @@ module.exports.ajaxEvaluateUserEmail = function (req, res, next) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-// will include nodemailer for ForgotPassword later/last
 // for client, only testing if email is invalid, otherwise indicating instructions sent to reset password
 // but instructions only really sent if email is a registered email
 module.exports.ajaxForgotPassword = function (req, res, next) {
@@ -783,7 +881,7 @@ module.exports.ajaxForgotPassword = function (req, res, next) {
 
     if (err) {
 
-      return next(err)
+      next(err)
 
     } else {
 
@@ -897,6 +995,8 @@ module.exports.ajaxLoginUser = function (req, res, next) {
     }
   })
 }
+
+
 
 module.exports.ajaxSignUpUser = function (req, res, next) {
   req.body.template = {displayname: 'required', 
@@ -1015,49 +1115,114 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
 
 
 
+module.exports.ajaxSignUpUserX = function (req, res, next) {
+  req.body.template = {displayname: 'required', 
+                        email: 'required',
+                        confirmEmail: 'required', 
+                        password: 'required', 
+                        confirmPassword: 'required',
+                        firstname: 'required', 
+                        lastname: 'required', 
+                        city: 'required', 
+                        state: 'required',
+                        expectedResponse: 'false'}
 
+  var tester1 = {displayname: ' displaynameABC123',
+                    email: 'aaa1@aaa.com',
+                    confirmEmail: '        aaa@aaa.com     ',
+                    password: 'pppp',
+                    confirmPassword: 'pppp ',
+                    firstname: '          Abcdefghijklmnopqrst             ',
+                    lastname: '   Ccccc Cityyyyyyyy     ',
+                    city: '               AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz          ',
+                    state: 'NY'}
 
+  var tester2 = {displayname: ' displaynameABC123',
+                    email: 'aaa1@aaa.com',
+                    confirmEmail: '        aaa@aaa.com     ',
+                    password: 'pppp',
+                    confirmPassword: 'pppp '}
+  // req.body = tester2
 
+  serverSideValidation(req, res, function (err, validatedResponse) {
 
+    if (err) {
 
+      next(err)
 
+    } else {
 
+      var validationErrors = false
 
+      for (var prop in validatedResponse) {
+        if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+          validationErrors = true
+          break
+        }
+      }
 
+      if (!validationErrors) {
 
+        var newUser = new User()
 
+        newUser.displayname = req.body.displayname
+        newUser.email = req.body.email
+        newUser.firstname = req.body.firstname
+        newUser.lastname = req.body.lastname
+        newUser.city = req.body.city
+        newUser.state = req.body.state
 
+        newUser.setPassword(req.body.password, function (err, result) {
 
+          if (err) {
+            next(err)
 
+          } else {
+            newUser.save(function (err) {
 
+              if (err) {
+                next(err)
 
+              } else {
 
+                passport.authenticate('local', function (err, user, info) {
 
+                  if (err) {
+                    next(err)
 
+                  } else if (!user) {
+                    sendJSONresponse(res, 201, { 'response': 'error' })
 
+                  } else {
 
+                    req.logIn(user, function (err) {
 
+                      if (err) { 
+                        next(err)
+                      } else {
 
+                        req.session.save(function (err) {
 
+                          if (err) {
+                            next(err)
+                          } else {
+                            sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
+                          }
 
+                        })
 
+                      }
+                    })
+                  }
+                })(req, res, next)
+              }
+            })
+          }
+        })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      }else{
+        sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
+      }
+    }
+  })
+}

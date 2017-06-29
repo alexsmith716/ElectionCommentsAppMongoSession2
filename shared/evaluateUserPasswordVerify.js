@@ -4,7 +4,7 @@ var User = mongoose.model('User')
 
 module.exports = function (req, res, cb) {
 
-  res.locals.currentUser.checkPassword(req.body.data, function (err, result) {
+  res.locals.currentUser.checkPassword(req.body.data, function (err, password) {
 
     if (err) {
 
@@ -12,7 +12,7 @@ module.exports = function (req, res, cb) {
 
     }
 
-    if (!result) {
+    if (!password) {
 
       cb(null, {status: 201, response: 'error'})
 
