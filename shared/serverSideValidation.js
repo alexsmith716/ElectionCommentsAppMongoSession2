@@ -286,6 +286,8 @@ module.exports = function (req, res, cb) {
 
       if (err) {
 
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 1 serverSideValidation > evaluateUserEmail > ERROR')
+
         cb(err)
 
       } else {

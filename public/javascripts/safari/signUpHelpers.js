@@ -521,11 +521,10 @@ var helper = {
     }
   },
 
-  validateEmailService: function (email, callback) {
+  validateEmailService: function (email, cb) {
 
     var data = {}
     var pathName = 'email'
-    var err
     data[pathName] = $.trim(email)
     pathName = 'expectedResponse'
     data[pathName] = 'false'
@@ -545,16 +544,13 @@ var helper = {
       async: true,
 
       success: function (data, status, xhr) {
-        if (data.response === 'success') {
-          callback(null, true)
-        } else {
-          err = new Error('error')
-          callback(err, false)
-        }
-
         $('body').data('modalShown') ? null : helper.hideLoading()
+        if (data.response === 'success') {
+          cb(null)
+        } else {
+          cb('false')
+        }
       },
-
       error: function (xhr, status, error) {
         $('body').data('modalShown') ? null : helper.hideLoading()
         var parsedXHR = JSON.parse(xhr.responseText)
@@ -563,21 +559,14 @@ var helper = {
         $('#modalAlert #errScrollbox').html(parsedXHR.message)
         $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
         $('#modalAlert').modal({ keyboard: false,backdrop: 'static' })
-        return false
+        cb('error')
       }
     })
   },
 
   validateEmailField: function (elementVal, thisField, comparedField, err1) {
 
-    if (err1 !== undefined) {
-      // console.log('#validateEmailField > err1: ', thisField, ' :: ', err1)
-    } else {
-      console.log('#validateEmailField > no err1: ', elementVal, ' :: ', thisField, ' :: ', comparedField)
-    }
-
     var isEmailValid
-
     err1 === undefined || err1.error === 'false' ? isEmailValid = helper.validateEmailValue(elementVal) : null
 
         // EMAIL IS VALID +++++++++++++++++++
@@ -590,18 +579,22 @@ var helper = {
 
         helper.validateEmailService(elementVal, function (err, response) {
 
-          if (err) {
+          if (err === 'false') {
 
             isSafari ? $('#' + thisField + 'Registered').removeClass('hide').addClass('show') : null
             !isSafari ? $('#' + thisField).get(0).setCustomValidity('This email address is already in our system. Sign in, or enter a new email address') : null
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
 
+          } else if (err === 'error') {
+
+            isSafari ? $('#' + thisField + 'Registered').removeClass('hide').addClass('show') : null
+            !isSafari ? $('#' + thisField).get(0).setCustomValidity('An error occurred, please enter email again') : null
+            err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
+
           } else {
 
             isSafari ? $('#' + thisField + 'Registered').removeClass('show').addClass('hide') : null
-
             helper.validateParams(thisField, comparedField)
-
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
           }
         })

@@ -26,9 +26,7 @@ var onFinished = require('on-finished')
 var setUpAuthentication = require('./theAPI/model/authentication')
 var serverRoutes = require('./theServer/routes/serverRoutes')
 var apiRoutes = require('./theAPI/routes/apiRoutes')
-var customError = require('./shared/customError')
-var customObjectEnumerable = require('./shared/customObjectEnumerable')
-var renderableErrorObject = require('./shared/renderableErrorObject')
+var renderableCustomErrorObject = require('./shared/renderableCustomErrorObject')
 var url = require('url')
 var app = express()
 
@@ -238,11 +236,11 @@ if (app.get('env') === 'development') {
     res.status(err.status || 500)
 
     console.log('############################# DEV ERR: ', err)
-    console.log('############################# DEV ERR.code: ', err.code)
-    console.log('############################# DEV ERR.status: ', err.status)
-    console.log('############################# DEV ERR.name: ', err.name)
-    console.log('############################# DEV ERR.message: ', err.message)
-    console.log('############################# DEV ERR.referer: ', err.referer)
+    //console.log('############################# DEV ERR.code: ', err.code)
+    //console.log('############################# DEV ERR.status: ', err.status)
+    //console.log('############################# DEV ERR.name: ', err.name)
+    //console.log('############################# DEV ERR.message: ', err.message)
+    //console.log('############################# DEV ERR.referer: ', err.referer)
     console.log('############################# ++++++++++++++++++++++++++++++++++++++++')
     console.log('############################# DEV REQ.originalUrl: ',  req.originalUrl)
     console.log('############################# DEV REQ.HEADERS.referer: ', req.headers['referer'])
@@ -254,7 +252,7 @@ if (app.get('env') === 'development') {
       referer = url.parse(req.headers['referer']).pathname
     }
 
-    req.session.renderableErr = renderableErrorObject(err)
+    req.session.renderableErr = renderableCustomErrorObject(err)
 
     if (req.xhr) {
 

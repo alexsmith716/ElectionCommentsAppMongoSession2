@@ -6,8 +6,6 @@ module.exports = function (req, res, cb) {
 
   var email = req.body.data.trim()
 
-  // email = ''
-
   User.findOne( { email: email } ).exec(function (err, user) {
 
     if (err) {
