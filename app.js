@@ -17,9 +17,7 @@ var passport = require('passport')
 var session = require('express-session')
 var MongoStore = require('connect-mongo')(session)
 var createError = require('http-errors')
-
 require('./theAPI/model/dbConnector')
-
 var sanitize = require('./shared/sanitizeInput')
 require('./shared/sessionPrototype')
 var onFinished = require('on-finished')

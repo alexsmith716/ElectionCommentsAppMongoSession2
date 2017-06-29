@@ -1,11 +1,11 @@
 
-module.exports = function CustomErrorObject(message, status, errStack, errName) {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CustomError <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+module.exports = function CustomErrorObject( name, message, status ) {
+
   Error.captureStackTrace(this, this.constructor)
-  !errStack ? this.Stack = this.stack : this.Stack = errStack
-  !errName ? this.name = this.constructor.name : this.name = errName
+  this.name = name
   this.message = message
   this.status = status
+
 }
 
 require('util').inherits(module.exports, Error)
