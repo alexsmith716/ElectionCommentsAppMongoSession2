@@ -8,8 +8,22 @@ module.exports = function (req, res, cb) {
   !expectedResponse ? expectedResponse = req.body.template.expectedResponse : null
   var email = req.body.email.trim()
 
-  User.findOne( { email: email } ).exec(function (err, user) {
+  /*
+  var promise = User.findOne( { email: email } ).exec()
+  promise.then(function(user) {
+    //
+  })
+  .then(function(user) {
+    //
+  })
+  .catch(function(err){
+    //
+  })
+  */
 
+  // User.findOne( { email: email } ).exec(function (err, user) {
+  User.findOne( { email : email }, function (err, user) {
+    
     if (err) {
 
       cb(err)

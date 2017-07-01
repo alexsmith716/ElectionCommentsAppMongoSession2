@@ -4,8 +4,6 @@ var LocalStrategy = require('passport-local').Strategy
 var mongoose = require('mongoose')
 var User = mongoose.model('User')
 
-// Sessions
-
 // In a typical web application, the credentials used to authenticate a user will only be transmitted during the login request. If authentication succeeds, a session will be established and maintained via a cookie set in the user's browser.
 
 // Each subsequent request will not contain credentials, but rather the unique cookie that identifies the session. In order to support login sessions, Passport will serialize and deserialize user instances to and from the session.
@@ -28,26 +26,25 @@ module.exports = function() {
 
         if (err) { 
           return done(err)
+        } 
 
-        } else if (!user) {
+        if (!user) {
           return done(null, false, { message: 'No user has that username!' })
-
-        } else {
-          user.checkPassword(password, function(err, result) {
-
-            if (err) {
-              return done(err)
-            }
-
-            if (!result) {
-              return done(null, false, { message: 'Invalid password.' })
-
-            } else {
-              return done(null, user)
-
-            }
-          })
         }
+
+        user.checkPassword(password, function(err, result) {
+
+          if (err) {
+            return done(err)
+          }
+
+          if (!result) {
+            return done(null, false, { message: 'Invalid password.' })
+          }
+
+          done(null, user)
+
+        })
       })
     }
   ))

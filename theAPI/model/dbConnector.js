@@ -12,6 +12,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 mongoose.Promise  = global.Promise;
+// mongoose.Promise = require('bluebird')
+
 mongoose.connect(dbURI);
 
 // SCHEMAS & MODELS

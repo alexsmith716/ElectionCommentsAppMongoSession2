@@ -1052,11 +1052,10 @@ var helper = {
   },
 
 
-  validateEmailService: function (email, callback) {
+  validateEmailService: function (email, cb) {
 
     var data = {}
     var pathName = 'email'
-    var err
     data[pathName] = $.trim(email)
     pathName = 'expectedResponse'
     data[pathName] = 'false'
@@ -1076,24 +1075,22 @@ var helper = {
       async: true,
 
       success: function (data, status, xhr) {
-        if (data.response === 'success') {
-          callback(null, true)
-        } else {
-          err = new Error('error')
-          callback(err, false)
-        }
-
         $('body').data('modalShown') ? null : helper.hideLoading()
+        if (data.response === 'success') {
+          cb(null)
+        } else {
+          cb('false')
+        }
       },
-
       error: function (xhr, status, error) {
+        $('body').data('modalShown') ? null : helper.hideLoading()
         var parsedXHR = JSON.parse(xhr.responseText)
-        $('#modalAlert .modal-title').html(parsedXHR.title)
-        $('#modalAlert .alertDanger').html(parsedXHR.alert)
-        $('#modalAlert #errScrollbox').html(parsedXHR.message)
+        $('#modalAlert .modal-title').html(parsedXHR.err.title)
+        $('#modalAlert .alertDanger').html(parsedXHR.err.alert)
+        $('#modalAlert #errScrollbox').html(parsedXHR.err.message)
         $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
         $('#modalAlert').modal({ keyboard: false,backdrop: 'static' })
-        return false
+        cb('error')
       }
     })
   },
@@ -1319,95 +1316,64 @@ var helper = {
 
   validateEmailField: function (elementVal, thisField, comparedField, err1) {
 
-    var formConfirmType = $('body').data('whichformdataid')
     var isEmailValid
-
-    console.log('>>>>>>>>>>>>>>>>>>>>> validateEmailField 0 <<<<<<<<<<<<<<<<<<<<<<<: ', thisField)
-    console.log('>>>>>>>>>>>>>>>>>>>>> validateEmailField 00 <<<<<<<<<<<<<<<<<<<<<<<: ', comparedField)
-    console.log('>>>>>>>>>>>>>>>>>>>>> validateEmailField 000 <<<<<<<<<<<<<<<<<<<<<<<: ', formConfirmType)
-
     err1 === undefined || err1.error === 'false' ? isEmailValid = helper.validateEmailValue(elementVal) : null
 
-    // EMAIL IS VALID +++++++++++++++++++
+        // EMAIL IS VALID +++++++++++++++++++
     if ((err1 !== undefined && (err1.error !== 'invalid' && err1.error !== 'empty')) || isEmailValid) {
-
-      // +++++++++++++++++++++++++++++++++++++
-      err1 !== undefined || !interactiveFormValidationEnabled ? $('#' + thisField + 'Improper').removeClass('show').addClass('hide') : null
-      interactiveFormValidationEnabled ? $('#' + thisField).get(0).setCustomValidity('') : null
+      err1 !== undefined || isSafari ? $('#' + thisField + 'Improper').removeClass('show').addClass('hide') : null
+      !isSafari ? $('#' + thisField).get(0).setCustomValidity('') : null
       $('#' + thisField).off('input')
-      // +++++++++++++++++++++++++++++++++++++
 
       if (isEmailValid) {
 
         helper.validateEmailService(elementVal, function (err, response) {
 
-          if (err) {
+          if (err === 'false') {
 
-            !interactiveFormValidationEnabled ? $('#' + thisField + 'Registered').removeClass('hide').addClass('show') : null
-            interactiveFormValidationEnabled ? $('#' + thisField).get(0).setCustomValidity('This email address is already in our system. Sign in, or enter a new email address') : null
-
+            isSafari ? $('#' + thisField + 'Registered').removeClass('hide').addClass('show') : null
+            !isSafari ? $('#' + thisField).get(0).setCustomValidity('This email address is already in our system. Sign in, or enter a new email address') : null
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
-            return false
+
+          } else if (err === 'error') {
+
+            isSafari ? $('#' + thisField + 'Registered').removeClass('hide').addClass('show') : null
+            !isSafari ? $('#' + thisField).get(0).setCustomValidity('An error occurred, please enter email again') : null
+            err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
 
           } else {
 
-            !interactiveFormValidationEnabled ? $('#' + thisField + 'Registered').removeClass('show').addClass('hide') : null
-
-            if (helper.validateParams(thisField, comparedField)) {
-              return true
-            } else {
-              return false
-            }
-
+            isSafari ? $('#' + thisField + 'Registered').removeClass('show').addClass('hide') : null
+            helper.validateParams(thisField, comparedField)
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
-
           }
         })
 
       } else {
-
         if (err1 !== undefined && err1.error === 'registered') {
-
           $('#' + thisField + 'Registered').removeClass('hide').addClass('show')
-          return false
-
         } else {
-
-          if (helper.validateParams(thisField, comparedField, err1)) {
-            return true
-          } else {
-            return false
-          }
-
+          helper.validateParams(thisField, comparedField, err1)
         }
         err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
-
       }
 
-    // EMAIL IS NOT VALID +++++++++++++++++++
+        // EMAIL IS NOT VALID +++++++++++++++++++
     } else if ((err1 !== undefined && err1.error === 'invalid') || (err1 === undefined && !isEmailValid)) {
-
-      if (err1 !== undefined || !interactiveFormValidationEnabled) {
-
+      if (err1 !== undefined || isSafari) {
         $('#' + thisField + 'Registered').removeClass('show').addClass('hide')
         $('#' + thisField + 'Improper').removeClass('hide').addClass('show')
-        return false
-
       } else {
-
         $('#' + thisField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + ' is in improper format')
-        return false
       }
 
+      $('#' + thisField).focus()
+
       err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
-
     } else if (err1 !== undefined && err1.error === 'empty') {
-
       helper.testUserInputEmail(thisField, err1)
-
     }
   },
-
 
 
   // =================================================================================================================================
