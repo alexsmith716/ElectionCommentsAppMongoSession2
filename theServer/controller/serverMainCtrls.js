@@ -244,7 +244,7 @@ module.exports.getSignup = function (req, res, next) {
 
     } else {
 
-      res.render('signup', { csrfToken: req.csrfToken() }, function (err, html) {
+      res.render('signup', { csrfToken: req.csrfToken(), validateEmailService: 'evaluateuseremailsignup' }, function (err, html) {
 
         if (err) {
           return next(err)
@@ -292,8 +292,6 @@ module.exports.getUserProfile = function (req, res, next) {
   var requestOptions, path
   path = '/api/userprofile/' + res.locals.currentUser.id
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-
   requestOptions = {
     rejectUnauthorized: false,
     url : apiOptions.server + path,
@@ -307,23 +305,20 @@ module.exports.getUserProfile = function (req, res, next) {
 
     if (err) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR ERR: ', err)
       next(err)
 
     } else if (code.statusCode === 200) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< 200-Good')
-      
       res.locals.currentUser.stateFull = stateNamer(body.state)
 
       res.render('userProfile', {
         csrfToken: req.csrfToken(),
-        responseBody: body
+        responseBody: body,
+        validateEmailService: 'evaluateuseremailuserprofile'
       })
 
     } else {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< API Error Body: ', body)
       next(body)
 
     }
@@ -334,8 +329,6 @@ module.exports.getUserProfile = function (req, res, next) {
 module.exports.getUserProfileXX = function (req, res, next) {
   var requestOptions, path
   path = '/api/userprofile/' + res.locals.currentUser.id
-
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
   requestOptions = {
     rejectUnauthorized: false,
@@ -351,13 +344,10 @@ module.exports.getUserProfileXX = function (req, res, next) {
     // server-side error 
     if (err) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< ERR ERR: ', err)
       return next(err)
 
     } else if (code.statusCode === 200) {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< 200-Good')
-      
       res.locals.currentUser.stateFull = stateNamer(body.state)
 
       res.render('userProfile', {
@@ -368,7 +358,6 @@ module.exports.getUserProfileXX = function (req, res, next) {
     // api-side error 
     } else {
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SERVER > getUserProfile <<<<<<<<<<<<<<<<<<<<<<<<<<<< API Error Body: ', body)
       return next(body)
 
     }
@@ -401,7 +390,6 @@ module.exports.getMembersOnly = function (req, res, next) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.getNotifyError = function (req, res, next) {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> server > getNotifyError <<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
   res.render('notifyError', { err: req.session.renderableErr }, function (err, html) {
 

@@ -20,8 +20,23 @@ module.exports = function (req, res, cb) {
     //
   })
   */
+  /*
+  User.findOne( { email: email } )
+  .then(function(user) {
+    if (user) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmail > promise 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+    }
+    if (!user) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmail > promise 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+    }
+  })
+  .catch(function(err){
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmail > promise 3 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+    cb(err)
+  })
+  */
 
-  User.findOne( { email: email } ).exec(function (err, user) {
+  User.findOne( { emailX: email }, function (err, user) {
 
     if (err) {
 

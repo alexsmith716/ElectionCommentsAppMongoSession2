@@ -524,10 +524,7 @@ var helper = {
   validateEmailService: function (email, cb) {
 
     var data = {}
-    var pathName = 'email'
-    data[pathName] = $.trim(email)
-    pathName = 'expectedResponse'
-    data[pathName] = 'false'
+    data['email'] = $.trim(email)
 
     $('body').data('modalShown') ? null : helper.showLoading()
 
@@ -535,7 +532,7 @@ var helper = {
 
     $.ajax({
       rejectUnauthorized: false,
-      url: 'https://localhost:3000/api/evaluateuseremail',
+      url: 'https://localhost:3000/api/evaluateuseremailsignup',
       type: 'POST',
       data: JSON.stringify(data),
       dataType: 'json',
@@ -590,6 +587,7 @@ var helper = {
             isSafari ? $('#' + thisField + 'Registered').removeClass('hide').addClass('show') : null
             !isSafari ? $('#' + thisField).get(0).setCustomValidity('An error occurred, please enter email again') : null
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null
+            $('#' + thisField).get(0).reset()
 
           } else {
 

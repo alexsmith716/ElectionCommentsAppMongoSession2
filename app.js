@@ -137,7 +137,7 @@ app.use(function (req, res, next) {
   // req.user ? console.log('REQ.user._id: ', req.user._id) : null
   // console.log('REQ.body ++: ', req.body)
   // console.log('REQ.params ++: ', req.params)
-  // console.log('RES.headersSent ++: ', res.headersSent)
+  console.log('RES.headersSent ++: ', res.headersSent)
 
   var reqBody = sanitize(req.body)
   var reqQuery = sanitize(req.query)

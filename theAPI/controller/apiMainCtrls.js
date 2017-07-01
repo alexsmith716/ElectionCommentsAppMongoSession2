@@ -613,8 +613,6 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 
       var u = req.body.type.charAt(0).toUpperCase()+req.body.type.slice(1)
 
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>> ajaxValidateNewUserDataService 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-
       sendJSONresponse(res, 201, { 'response': 'error', 'alertDanger': ' You\'re request to change the '+ u +' has timed out. Please try changing your '+ u +' again.' })
 
     } else {
@@ -638,6 +636,23 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+module.exports.expectedResponseSignUp = function (req, res, next) {
+
+  req.body.expectedResponse = 'false'
+  next()
+
+}
+
+module.exports.expectedResponseUserProfile = function (req, res, next) {
+
+  req.body.expectedResponse = 'false'
+  next()
+
+}
+
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+
 module.exports.ajaxEvaluateUserEmail = function (req, res, next) {
 
   evaluateUserEmail(req, res, function (err, response) {
@@ -651,7 +666,6 @@ module.exports.ajaxEvaluateUserEmail = function (req, res, next) {
       sendJSONresponse(res, response.status, { 'response': response.response })
 
     }
-
   })
 }
 
