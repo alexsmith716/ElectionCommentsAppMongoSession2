@@ -11,7 +11,8 @@ if (process.env.NODE_ENV === 'production') {
     dbURI = process.env.MONGOLAB_URI;
 }
 
-mongoose.Promise  = global.Promise;
+
+mongoose.Promise = global.Promise
 // mongoose.Promise = require('bluebird')
 
 mongoose.connect(dbURI);

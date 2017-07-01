@@ -992,7 +992,7 @@ var helper = {
 // =================================================================================================================================
 
 
-  validateNewUserDataService: function (value, type, resp, callback) {
+  validateNewUserDataService: function (value, type, resp, cb) {
 
     var ms = $('body').data('modalShown')
     ms ? $(ms + ' .loading').show() : helper.showLoading()
@@ -1022,11 +1022,11 @@ var helper = {
         if (data.response === 'success') {
 
           console.log('validateNewUserDataService > SUCCESS > SUCCESS: ', data)
-          callback(null, true)
+          cb(null, true)
         } else {
 
           console.log('validateNewUserDataService > SUCCESS > ERROR: ', data)
-          callback(data, false)
+          cb(data, false)
 
         }
 
@@ -1055,10 +1055,7 @@ var helper = {
   validateEmailService: function (email, cb) {
 
     var data = {}
-    var pathName = 'email'
-    data[pathName] = $.trim(email)
-    pathName = 'expectedResponse'
-    data[pathName] = 'false'
+    data['email'] = $.trim(email)
 
     $('body').data('modalShown') ? null : helper.showLoading()
 
@@ -1066,7 +1063,7 @@ var helper = {
 
     $.ajax({
       rejectUnauthorized: false,
-      url: 'https://localhost:3000/api/evaluateuseremail',
+      url: 'https://localhost:3000/api/evaluateuseremailuserprofile',
       type: 'POST',
       data: JSON.stringify(data),
       dataType: 'json',

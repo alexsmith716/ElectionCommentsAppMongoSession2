@@ -9,7 +9,7 @@ var sendJSONresponse = function(res, status, content) {
 
 module.exports.ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
-    return next()
+    next()
   } else {
     res.redirect('/loginorsignup')
   }
@@ -19,7 +19,7 @@ module.exports.basicAuthenticationAPI = function (req, res, next) {
   var hAuth = req.headers['authorization']
   var expr = /Basic/
   if (hAuth !== undefined && expr.test(hAuth)) {
-    return next()
+    next()
   } else {
     var err = newObjectErrorEnumerable( new customErrorObject('Error', 'Unauthorized, missing Basic Auth headers', 401) )
     sendJSONresponse(res, 401, err)
@@ -47,7 +47,7 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
     } else {
       
-      return next()
+      next()
 
     }
 
@@ -67,7 +67,7 @@ module.exports.ensureAuthenticatedNewUserDataItem = function (req, res, next) {
 
     } else {
 
-      return next()
+      next()
 
     }
   } else {
@@ -82,5 +82,5 @@ module.exports.noCache = function (req, res, next) {
   res.header('Cache-Control', 'no-store, no-cache, private, must-revalidate, proxy-revalidate, max-stale=0, post-check=0, pre-check=0')
   //res.header('Expires', '-1')
   //res.header('Pragma', 'no-cache')
-  return next()
+  next()
 }
