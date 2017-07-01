@@ -21,9 +21,8 @@ module.exports = function (req, res, cb) {
   })
   */
 
-  // User.findOne( { email: email } ).exec(function (err, user) {
-  User.findOne( { email : email }, function (err, user) {
-    
+  User.findOne( { email: email } ).exec(function (err, user) {
+
     if (err) {
 
       cb(err)

@@ -125,8 +125,4 @@ userSchema.methods.checkPassword = function(password, cb) {
   })
 }
 
-userSchema.methods.name = function() {
-  return this.displayname || this.email
-}
-
 mongoose.model('User', userSchema)
