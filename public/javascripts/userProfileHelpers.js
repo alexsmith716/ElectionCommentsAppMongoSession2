@@ -1063,7 +1063,7 @@ var helper = {
 
     $.ajax({
       rejectUnauthorized: false,
-      url: 'https://localhost:3000/api/evaluateuseremailuserprofile',
+      url: 'https://localhost:3000/api/userprofile',
       type: 'POST',
       data: JSON.stringify(data),
       dataType: 'json',

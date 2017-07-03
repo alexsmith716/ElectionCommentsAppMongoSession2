@@ -191,5 +191,10 @@ block content
   .modal-backdrop
      img(src="/images/ajax-loader.gif" style="position: fixed; top: 45%; left: 49%;")
 
-
-
+  - if ( err )
+    script.
+      $('#modalAlert .modal-title').html( '!{err.title}' )
+      $('#modalAlert .alertDanger').html( '!{err.alert}' )
+      $('#modalAlert #errScrollbox').html( '!{err.message}' )
+      $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
+      $('#modalAlert').modal({keyboard: false,backdrop: 'static'})

@@ -532,7 +532,7 @@ var helper = {
 
     $.ajax({
       rejectUnauthorized: false,
-      url: 'https://localhost:3000/api/evaluateuseremailsignup',
+      url: 'https://localhost:3000/api/usersignup',
       type: 'POST',
       data: JSON.stringify(data),
       dataType: 'json',

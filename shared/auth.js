@@ -9,6 +9,7 @@ var sendJSONresponse = function(res, status, content) {
 
 module.exports.ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ensureAuthenticated > YES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
     next()
   } else {
     res.redirect('/loginorsignup')

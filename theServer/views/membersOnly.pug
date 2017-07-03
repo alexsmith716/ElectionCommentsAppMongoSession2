@@ -57,11 +57,11 @@ block content
               h3
                 i Only registered users can access this page.
 
-  - if (err)
+  - if ( err )
     script.
-      $('#modalAlert .modal-title').html( !{JSON.stringify(err.title)} )
-      $('#modalAlert .alertDanger').html( !{JSON.stringify(err.alert)} )
-      $('#modalAlert #errScrollbox').html( !{JSON.stringify(err.message)} )
+      $('#modalAlert .modal-title').html( '!{err.title}' )
+      $('#modalAlert .alertDanger').html( '!{err.alert}' )
+      $('#modalAlert #errScrollbox').html( '!{err.message}' )
       $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
       $('#modalAlert').modal({keyboard: false,backdrop: 'static'})
   

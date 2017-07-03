@@ -215,7 +215,8 @@ module.exports.getAddNewComment = function(req, res) {
 
 module.exports.getLogin = function (req, res, next) {
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getLogin <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+  // var jsonString
+  // req.session.renderableErr ? jsonString = req.session.renderableErr : null
 
   res.render('login', { csrfToken: req.csrfToken(), err: req.session.renderableErr }, function (err, html) {
 
@@ -227,41 +228,17 @@ module.exports.getLogin = function (req, res, next) {
     res.send(html)
 
   })
-  /*
-  req.session.regenerate(function (err) {
-
-    if (err) {
-      next(err)
-
-    } else {
-
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getLogin > req.session.renderableErr <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', req.session.renderableErr)
-      res.render('login', { csrfToken: req.csrfToken(), err: req.session.renderableErr }, function (err, html) {
-
-        if (err) {
-          next(err)
-        } 
-        //req.session.renderableErr ? req.session.renderableErr = null : null
-        res.send(html)
-      })
-    }
-  })
-  */
 }
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.getSignup = function (req, res, next) {
-
-  res.render('signup', { csrfToken: req.csrfToken(), validateEmailService: 'evaluateuseremailsignup' }, function (err, html) {
-
+  res.render('signup', { csrfToken: req.csrfToken(), validateEmailService: 'usersignup' }, function (err, html) {
     if (err) {
       return next(err)
     }
-
     res.send(html)
-
   })
 }
 
@@ -270,12 +247,9 @@ module.exports.getSignup = function (req, res, next) {
 
 module.exports.getUserHome = function (req, res, next) {
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserHome <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-
-  res.render('userHome', { err: req.session.renderableErr }, function (err, html) {
+  res.render('userHomeX', { err: req.session.renderableErr }, function (err, html) {
 
     if (err) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserHome <<<<<<<<<<<<<<<<<<<<<<<<<<<< err: ', err)
       return next(err)
     }
 
@@ -314,7 +288,7 @@ module.exports.getUserProfile = function (req, res, next) {
       res.render('userProfile', {
         csrfToken: req.csrfToken(),
         responseBody: body,
-        validateEmailService: 'evaluateuseremailuserprofile'
+        validateEmailService: 'userprofile'
       })
 
     } else {
@@ -329,14 +303,12 @@ module.exports.getUserProfile = function (req, res, next) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.getMembersOnly = function (req, res, next) {
-
   var locals = { 
     title: 'Members Only Page',
     pageHeader: {
       header: 'Hello Authorized Users!'
     }
   }
-
   res.render('membersonly', locals, function (err, html) {
     if (err) {
       return next(err)
@@ -349,16 +321,12 @@ module.exports.getMembersOnly = function (req, res, next) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.getNotifyError = function (req, res, next) {
-
   res.render('notifyError', { err: req.session.renderableErr }, function (err, html) {
-
     if (err) {
       return next(err)
     }
-
-    req.session.renderableErr ? req.session.renderableErr = null : null
+    req.session.renderableErr = null
     res.send(html)
-
   })
 }
 
@@ -375,13 +343,11 @@ module.exports.getLoginOrSignup = function (req, res, next) {
 }
 
 module.exports.getResouces = function (req, res, next) {
-
   var locals = { 
     title: 'Resources',
     header: 'Resouces!',
     content: 'ThisGreatApp! is all about people sharing their favorite novelties across America.\n\nAut tenetur sit quam aliquid quia dolorum voluptate. Numquam itaque et hic reiciendis. Et eligendi quidem officia maiores. Molestiae ex sed vel architecto nostrum. Debitis culpa omnis perspiciatis vel eum. Vitae doloremque dolor enim aut minus.\n\nPossimus quaerat enim voluptatibus provident. Unde commodi ipsum voluptas ut velit. Explicabo voluptas at alias voluptas commodi. Illum et nihil ut nihil et. Voluptas iusto sed facere maiores.'
     }
-
   res.render('basicView', locals, function (err, html) {
     if (err) {
       return next(err)
@@ -391,13 +357,11 @@ module.exports.getResouces = function (req, res, next) {
 }
 
 module.exports.getDummyPage = function (req, res, next) {
-
   var locals = { 
     title: 'Dummy Test Page',
     header: 'Dummy Test Page!',
     content: 'Dummy Page content.\n\nThisGreatApp! is all about people sharing their favorite novelties across America.\n\nAut tenetur sit quam aliquid quia dolorum voluptate. Numquam itaque et hic reiciendis. Et eligendi quidem officia maiores. Molestiae ex sed vel architecto nostrum. Debitis culpa omnis perspiciatis vel eum. Vitae doloremque dolor enim aut minus.\n\nPossimus quaerat enim voluptatibus provident. Unde commodi ipsum voluptas ut velit. Explicabo voluptas at alias voluptas commodi. Illum et nihil ut nihil et. Voluptas iusto sed facere maiores.v'
     }
-
   res.render('basicView', locals, function (err, html) {
     if (err) {
       return next(err)
@@ -407,13 +371,11 @@ module.exports.getDummyPage = function (req, res, next) {
 }
 
 module.exports.getAbout = function (req, res, next) {
-
   var locals = { 
     title: 'About',
     header: 'About!',
     content: 'ThisGreatApp! is all about people sharing their favorite novelties across America.\n\nAut tenetur sit quam aliquid quia dolorum voluptate. Numquam itaque et hic reiciendis. Et eligendi quidem officia maiores. Molestiae ex sed vel architecto nostrum. Debitis culpa omnis perspiciatis vel eum. Vitae doloremque dolor enim aut minus.\n\nPossimus quaerat enim voluptatibus provident. Unde commodi ipsum voluptas ut velit. Explicabo voluptas at alias voluptas commodi. Illum et nihil ut nihil et. Voluptas iusto sed facere maiores.'
     }
-
   res.render('basicView', locals, function (err, html) {
     if (err) {
       return next(err)
@@ -423,13 +385,11 @@ module.exports.getAbout = function (req, res, next) {
 }
 
 module.exports.getContact = function (req, res, next) {
-
   var locals = { 
     title: 'Contact',
     header: 'Contact!',
     content: 'ThisGreatApp! can be contacted by calling 1-800-555-1234.\n\nDolorem necessitatibus aliquam libero magni. Quod quaerat expedita at esse. Omnis tempora optio laborum laudantium culpa pariatur eveniet consequatur.'
     }
-
   res.render('basicView', locals, function (err, html) {
     if (err) {
       return next(err)
@@ -439,13 +399,11 @@ module.exports.getContact = function (req, res, next) {
 }
 
 module.exports.getTeam = function (req, res, next) {
-
   var locals = { 
     title: 'Team',
     header: 'Meet the Team',
     content: 'The team behind ThisGreatApp! are a dedicated bunch who enjoy sharing favorite places and experiences.\n\nAt vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.'
     }
-
   res.render('basicView', locals, function (err, html) {
     if (err) {
       return next(err)
@@ -455,13 +413,11 @@ module.exports.getTeam = function (req, res, next) {
 }
 
 module.exports.getCustomerService = function (req, res, next) {
-
   var locals = { 
     title: 'Customer Service',
     header: 'ThisGreatApp\'s Customer Service',
     content: 'We at ThisGreatApp are dedicated to providing the highest level of customer service.\n\nAt vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.'
     }
-
   res.render('basicView', locals, function (err, html) {
     if (err) {
       return next(err)

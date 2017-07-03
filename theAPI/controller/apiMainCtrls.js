@@ -26,6 +26,13 @@ var sendJSONresponse = function (res, status, content) {
   res.json(content)
 }
 
+var validateMaxLengthUserInput = function (val,maxlen) {
+  var newVal = (val.length) - maxlen
+  newVal = (val.length) - newVal
+  newVal = val.slice(0,newVal)
+  return newVal
+}
+
 module.exports.getIndexResponse = function (req, res) {
   sendJSONresponse(res, 200), { "response": "getIndexResponse Response!!!" }
 }
@@ -580,14 +587,11 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
     evaluateUserEmailVerify(req, res, function (err, response) {
 
       if (err) {
-
-        next(err)
-
-      } else {
-
-        sendJSONresponse(res, response.status, { 'response': response.response })
-
+        return next(err)
       }
+
+      sendJSONresponse(res, response.status, { 'response': response.response })
+
     })
 
   } else if (req.body.type === 'password' && req.session.userValidatedEmail.isValidated) {
@@ -613,14 +617,11 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
       evaluateUserPasswordVerify(req, res, function (err, response) {
 
         if (err) {
-
-          next(err)
-
-        } else {
-
-          sendJSONresponse(res, response.status, { 'response': response.response })
-
+          return next(err)
         }
+
+        sendJSONresponse(res, response.status, { 'response': response.response })
+
       })
     }
   }
@@ -647,14 +648,11 @@ module.exports.ajaxEvaluateUserEmail = function (req, res, next) {
   evaluateUserEmail(req, res, function (err, response) {
 
     if (err) {
+      return next(err)
+    } 
 
-      next(err)
+    sendJSONresponse(res, response.status, { 'response': response.response })
 
-    } else {
-
-      sendJSONresponse(res, response.status, { 'response': response.response })
-
-    }
   })
 }
 
@@ -665,6 +663,8 @@ module.exports.ajaxEvaluateUserEmail = function (req, res, next) {
 // but instructions only really sent if email is a registered email
 module.exports.ajaxForgotPassword = function (req, res, next) {
 
+  var validationErrors = false
+  var m = 'An email containing your password recovery link has been sent. If you do not receive an email within 10 minutes, check your spam folder first, then try again.'
   req.body.template = {email: 'required', expectedResponse: 'false'}
 
   // var testerJOB = {email: '   aaa  1@aaa.com     '}
@@ -673,51 +673,45 @@ module.exports.ajaxForgotPassword = function (req, res, next) {
   serverSideValidation(req, res, function (err, validatedResponse) {
 
     if (err) {
+      return next(err)
+    }
 
-      next(err)
-
-    } else {
-
-      var validationErrors = false
-
-      for (var prop in validatedResponse) {
-        if (validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid') {
-          validationErrors = true
-          break;
-
-        }
+    for (var prop in validatedResponse) {
+      if (validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid') {
+        validationErrors = true
+        break
       }
+    }
 
-      if (!validationErrors) {
+    if (!validationErrors) {
 
-        var m = 'An email containing your password recovery link has been sent. If you do not receive an email within 10 minutes, check your spam folder first, then try again.'
+      if (validatedResponse['email'].error === 'registered') {
 
-        if (validatedResponse['email'].error === 'registered') {
-          // Nodemailer will be initiated here +++++++
-          sendJSONresponse(res, 201, { 'response': 'success', 'message': m})
-
-        } else {
-          sendJSONresponse(res, 201, { 'response': 'success', 'message': m})
-
-        }
+        // Nodemailer will be initiated here +++++++
+        sendJSONresponse(res, 201, { 'response': 'success', 'message': m})
 
       } else {
+
         sendJSONresponse(res, 201, { 'response': 'success', 'message': m})
 
       }
+
+    } else {
+
+      sendJSONresponse(res, 201, { 'response': 'success', 'message': m})
+
     }
   })
 }
 
-var validateMaxLengthUserInput = function (val,maxlen) {
-  var newVal = (val.length) - maxlen
-  newVal = (val.length) - newVal
-  newVal = val.slice(0,newVal)
-  return newVal
-}
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.ajaxLoginUser = function (req, res, next) {
 
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxLoginUser 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
+  var validationErrors = false
   req.body.template = {email: 'required', password: 'required', expectedResponse: 'true'}
 
   // var testerJOB = {email: 'aaa1@aa a.com', password: '  pppp   '}
@@ -726,31 +720,31 @@ module.exports.ajaxLoginUser = function (req, res, next) {
   serverSideValidation(req, res, function (err, validatedResponse) {
 
     if (err) {
+      return next(err)
+    }
 
-      next(err)
-
-    } else {
-
-      var validationErrors = false
-
-      for (var prop in validatedResponse) {
-
-        if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
-          validationErrors = true
-          break
-
-        }
+    for (var prop in validatedResponse) {
+      if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+        validationErrors = true
+        break
       }
+    }
 
-      if (!validationErrors) {
+    if (!validationErrors) {
+
+      req.session.regenerate(function (err) {
+
+        if (err) {
+          return next(err)
+        }
 
         passport.authenticate('local', function (err, user, info) {
 
           if (err) {
+            return next(err)
+          }
 
-            next(err)
-
-          } else if (!user) {
+          if (!user) {
 
             sendJSONresponse(res, 201, { 'response': 'error' })
 
@@ -759,43 +753,38 @@ module.exports.ajaxLoginUser = function (req, res, next) {
             req.logIn(user, function (err) {
 
               if (err) { 
-
-                next(err)
-
-              } else {
-
-                user.previouslogin = user.lastlogin
-                user.lastlogin = new Date()
-
-                user.save(function (err, success) {
-
-                  if (err) {
-                    return next(err)
-
-                  }
-
-                  req.session.regenerate(function (err) {
-
-                    if (err) {
-                      return next(err)
-                    }
-                    
-                    sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
-                  })
-
-                })
+                return next(err)
               }
+
+              user.previouslogin = user.lastlogin
+              user.lastlogin = new Date()
+
+              user.save(function (err, success) {
+
+                if (err) {
+                  return next(err)
+                }
+
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ajaxLoginUser 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+                sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
+
+              })
             })
           }
         })(req, res)
-      } else {
-        sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
-      }
+      })
+    } else {
+      sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
     }
   })
 }
 
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+
 module.exports.ajaxSignUpUser = function (req, res, next) {
+
+  var validationErrors = false
   req.body.template = {displayname: 'required', 
                         email: 'required',
                         confirmEmail: 'required', 
@@ -827,79 +816,73 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
   serverSideValidation(req, res, function (err, validatedResponse) {
 
     if (err) {
+      return next(err)
+    }
 
-      next(err)
-
-    } else {
-
-      var validationErrors = false
-
-      for (var prop in validatedResponse) {
-        if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
-          validationErrors = true
-          break
-        }
+    for (var prop in validatedResponse) {
+      if (validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match') {
+        validationErrors = true
+        break
       }
+    }
 
-      if (!validationErrors) {
+    if (!validationErrors) {
 
-        var newUser = new User()
+      var newUser = new User()
 
-        newUser.displayname = req.body.displayname
-        newUser.email = req.body.email
-        newUser.firstname = req.body.firstname
-        newUser.lastname = req.body.lastname
-        newUser.city = req.body.city
-        newUser.state = req.body.state
+      newUser.displayname = req.body.displayname
+      newUser.email = req.body.email
+      newUser.firstname = req.body.firstname
+      newUser.lastname = req.body.lastname
+      newUser.city = req.body.city
+      newUser.state = req.body.state
+
+      req.session.regenerate(function (err) {
+
+        if (err) {
+          return next(err)
+        }
 
         newUser.setPassword(req.body.password, function (err, result) {
 
           if (err) {
-            next(err)
+            return next(err)
+          }
 
-          } else {
-            newUser.save(function (err) {
+          newUser.save(function (err) {
+
+            if (err) {
+              return next(err)
+            }
+
+            passport.authenticate('local', function (err, user, info) {
 
               if (err) {
-                next(err)
+                return next(err)
+              }
+
+              if (!user) {
+
+                sendJSONresponse(res, 201, { 'response': 'error' })
 
               } else {
 
-                passport.authenticate('local', function (err, user, info) {
+                req.logIn(user, function (err) {
 
-                  if (err) {
-                    next(err)
-
-                  } else if (!user) {
-                    sendJSONresponse(res, 201, { 'response': 'error' })
-
-                  } else {
-
-                    req.logIn(user, function (err) {
-
-                      if (err) { 
-                        next(err)
-                      }
-
-                      req.session.regenerate(function (err) {
-
-                        if (err) {
-                          return next(err)
-                        }
-                        
-                        sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
-                      })
-
-                    })
+                  if (err) { 
+                    return next(err)
                   }
-                })(req, res, next)
+
+                  sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
+
+                })
               }
-            })
-          }
+            })(req, res, next)
+          })
         })
-      }else{
-        sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
-      }
+      })
+    }else{
+      sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
     }
   })
 }
