@@ -64,10 +64,10 @@ block content
               a.highlight(href='/customerservice') Customer Service
               |&nbsp;for questions and comments.
 
-  - if (err)
+  - if ( err )
     script.
-      $('#modalAlert .modal-title').html( !{JSON.stringify(err.title)} )
-      $('#modalAlert .alertDanger').html( !{JSON.stringify(err.alert)} )
-      $('#modalAlert #errScrollbox').html( !{JSON.stringify(err.message)} )
+      $('#modalAlert .modal-title').html( '!{err.title}' )
+      $('#modalAlert .alertDanger').html( '!{err.alert}' )
+      $('#modalAlert #errScrollbox').html( '!{err.message}' )
       $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
       $('#modalAlert').modal({keyboard: false,backdrop: 'static'})

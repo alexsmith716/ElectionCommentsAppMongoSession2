@@ -22,12 +22,12 @@ router.post('/signupuser', csrfProtection, apiControllers.ajaxSignUpUser)
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 router.post('/forgotpassword', csrfProtection, apiControllers.ajaxForgotPassword)
-router.put('/evaluateuserprofile', csrfProtection, auth.ensureAuthenticated, apiControllers.ajaxEvaluateUserProfile)
+router.put('/userprofile', csrfProtection, auth.ensureAuthenticated, apiControllers.ajaxEvaluateUserProfile)
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-router.post('/evaluateuseremailsignup', csrfProtection, apiControllers.expectedResponseSignUp, apiControllers.ajaxEvaluateUserEmail)
-router.post('/evaluateuseremailuserprofile', csrfProtection, apiControllers.expectedResponseUserProfile, apiControllers.ajaxEvaluateUserEmail)
+router.post('/usersignup', csrfProtection, apiControllers.expectedResponseSignUp, apiControllers.ajaxEvaluateUserEmail)
+router.post('/userprofile', csrfProtection, apiControllers.expectedResponseUserProfile, apiControllers.ajaxEvaluateUserEmail)
 
 router.post('/validatenewuserdataservice', csrfProtection, auth.ensureAuthenticated, apiControllers.ajaxValidateNewUserDataService)
 

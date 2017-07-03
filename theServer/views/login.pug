@@ -137,7 +137,8 @@ block content
 
   - if ( err )
     script.
+      $('#modalAlert .modal-title').html( '!{err.title}' )
+      $('#modalAlert .alertDanger').html( '!{err.alert}' )
+      $('#modalAlert #errScrollbox').html( '!{err.message}' )
       $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
       $('#modalAlert').modal({keyboard: false,backdrop: 'static'})
-
-

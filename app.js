@@ -250,7 +250,7 @@ if (app.get('env') === 'development') {
       referer = url.parse(req.headers['referer']).pathname
     }
 
-    req.session.renderableErr = renderableCustomErrorObject(err)
+    req.session.renderableErr = renderableCustomErrorObject( err )
 
     console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > req.session.renderableErr ############################: ', req.session.renderableErr)
 

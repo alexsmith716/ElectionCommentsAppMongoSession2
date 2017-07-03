@@ -8,7 +8,7 @@ module.exports = function (req, res, cb) {
   !expectedResponse ? expectedResponse = req.body.template.expectedResponse : null
   var email = req.body.email.trim()
 
-  UserX.findOne( { email: email }, function (err, user) {
+  User.findOne( { email: email }, function (err, user) {
 
     if (err) {
 

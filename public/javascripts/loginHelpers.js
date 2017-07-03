@@ -149,6 +149,7 @@ var helper = {
             success: function (data, status, xhr) {
               if (data.response === 'success') {
                 hideLoading()
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> loginForm SUCCESS REDIRECT <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', data.redirect)
                 location.href = data.redirect
                 
               } else {
