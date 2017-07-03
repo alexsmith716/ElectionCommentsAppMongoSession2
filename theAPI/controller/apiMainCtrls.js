@@ -214,13 +214,6 @@ module.exports.deleteOneComment = function(req, res) {
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
-
 
 module.exports.ajaxEvaluateUserProfile = function (req, res, next) {
 
@@ -637,17 +630,13 @@ module.exports.ajaxValidateNewUserDataService = function (req, res, next) {
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.expectedResponseSignUp = function (req, res, next) {
-
   req.body.expectedResponse = 'false'
   next()
-
 }
 
 module.exports.expectedResponseUserProfile = function (req, res, next) {
-
   req.body.expectedResponse = 'false'
   next()
-
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -779,22 +768,28 @@ module.exports.ajaxLoginUser = function (req, res, next) {
                 user.lastlogin = new Date()
 
                 user.save(function (err, success) {
-                  if (err) {
-                    next(err)
 
-                  } else {
-                    sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
+                  if (err) {
+                    return next(err)
+
                   }
+
+                  req.session.regenerate(function (err) {
+
+                    if (err) {
+                      return next(err)
+                    }
+                    
+                    sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
+                  })
+
                 })
               }
             })
           }
         })(req, res)
-
       } else {
-
         sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
-
       }
     }
   })
@@ -884,19 +879,17 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
 
                       if (err) { 
                         next(err)
-                      } else {
-
-                        req.session.save(function (err) {
-
-                          if (err) {
-                            next(err)
-                          } else {
-                            sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
-                          }
-
-                        })
-
                       }
+
+                      req.session.regenerate(function (err) {
+
+                        if (err) {
+                          return next(err)
+                        }
+                        
+                        sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' })
+                      })
+
                     })
                   }
                 })(req, res, next)
@@ -904,7 +897,6 @@ module.exports.ajaxSignUpUser = function (req, res, next) {
             })
           }
         })
-
       }else{
         sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse })
       }
