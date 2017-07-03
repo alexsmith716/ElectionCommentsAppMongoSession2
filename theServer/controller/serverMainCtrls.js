@@ -11,6 +11,8 @@ var serverSideValidation = require('../../shared/serverSideValidation')
 var stateNamer = require('../../shared/stateNamer')
 var url = require('url')
 var auth = require('basic-auth')
+var path = require('path')
+var pug = require('pug')
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -37,15 +39,17 @@ var handleError = function (req, res, statusCode) {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 module.exports.getLogout = function (req, res, next) {
+  
   req.logout()
 
   req.session.destroy(function (err) {
+
     if (err) {
       return next(err)
-    } else {
-      res.redirect('/')
-
     }
+
+    res.redirect('/')
+
   })
 }
 
@@ -211,25 +215,38 @@ module.exports.getAddNewComment = function(req, res) {
 
 module.exports.getLogin = function (req, res, next) {
 
-  req.session.regenerate(function (err) {
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getLogin <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
+  res.render('login', { csrfToken: req.csrfToken(), err: req.session.renderableErr }, function (err, html) {
 
     if (err) {
       return next(err)
+    }
+
+    req.session.renderableErr ? req.session.renderableErr = null : null
+    res.send(html)
+
+  })
+  /*
+  req.session.regenerate(function (err) {
+
+    if (err) {
+      next(err)
 
     } else {
 
-      res.render('login', { csrfToken: req.csrfToken() }, function (err, html) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getLogin > req.session.renderableErr <<<<<<<<<<<<<<<<<<<<<<<<<<<<: ', req.session.renderableErr)
+      res.render('login', { csrfToken: req.csrfToken(), err: req.session.renderableErr }, function (err, html) {
 
         if (err) {
-          return next(err)
-
-        } else {
-          res.send(html)
-        }
+          next(err)
+        } 
+        //req.session.renderableErr ? req.session.renderableErr = null : null
+        res.send(html)
       })
-
     }
   })
+  */
 }
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -237,24 +254,14 @@ module.exports.getLogin = function (req, res, next) {
 
 module.exports.getSignup = function (req, res, next) {
 
-  req.session.regenerate(function (err) {
+  res.render('signup', { csrfToken: req.csrfToken(), validateEmailService: 'evaluateuseremailsignup' }, function (err, html) {
 
     if (err) {
       return next(err)
-
-    } else {
-
-      res.render('signup', { csrfToken: req.csrfToken(), validateEmailService: 'evaluateuseremailsignup' }, function (err, html) {
-
-        if (err) {
-          return next(err)
-
-        } else {
-          res.send(html)
-        }
-      })
-
     }
+
+    res.send(html)
+
   })
 }
 
@@ -263,28 +270,21 @@ module.exports.getSignup = function (req, res, next) {
 
 module.exports.getUserHome = function (req, res, next) {
 
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserHome <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+
   res.render('userHome', { err: req.session.renderableErr }, function (err, html) {
 
     if (err) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getUserHome <<<<<<<<<<<<<<<<<<<<<<<<<<<< err: ', err)
       return next(err)
-
-    } else {
-      req.session.renderableErr ? req.session.renderableErr = null : null
-      res.send(html)
     }
+
+    req.session.renderableErr ? req.session.renderableErr = null : null
+    res.send(html)
+
   })
 }
 
-module.exports.getUserHomeX = function (req, res, next) {
-  res.render('', { err: req.session.renderableErr }, function (err, html) {
-    if (err) {
-      return next(err)
-    } else {
-      req.session.renderableErr = null
-      res.send(html)
-    }
-  })
-}
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
@@ -325,45 +325,6 @@ module.exports.getUserProfile = function (req, res, next) {
   })
 }
 
-
-module.exports.getUserProfileXX = function (req, res, next) {
-  var requestOptions, path
-  path = '/api/userprofile/' + res.locals.currentUser.id
-
-  requestOptions = {
-    rejectUnauthorized: false,
-    url : apiOptions.server + path,
-    method : 'GET',
-    auth : {'username': res.locals.currentUser.email, 'password': res.locals.currentUser.datecreated.toISOString()},
-    json : {}
-  }
-  // res.locals.currentUser.email
-
-  request(requestOptions, function (err, code, body) {
-
-    // server-side error 
-    if (err) {
-
-      return next(err)
-
-    } else if (code.statusCode === 200) {
-
-      res.locals.currentUser.stateFull = stateNamer(body.state)
-
-      res.render('userProfile', {
-        csrfToken: req.csrfToken(),
-        responseBody: body
-      })
-
-    // api-side error 
-    } else {
-
-      return next(body)
-
-    }
-  })
-}
-
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
@@ -379,10 +340,8 @@ module.exports.getMembersOnly = function (req, res, next) {
   res.render('membersonly', locals, function (err, html) {
     if (err) {
       return next(err)
-
-    } else {
-      res.send(html)
     }
+    res.send(html)
   })
 }
 
@@ -395,11 +354,11 @@ module.exports.getNotifyError = function (req, res, next) {
 
     if (err) {
       return next(err)
-
-    } else {
-      req.session.renderableErr ? req.session.renderableErr = null : null
-      res.send(html)
     }
+
+    req.session.renderableErr ? req.session.renderableErr = null : null
+    res.send(html)
+
   })
 }
 
@@ -410,9 +369,8 @@ module.exports.getLoginOrSignup = function (req, res, next) {
   res.render('loginorsignup', function (err, html) {
     if (err) {
       return next(err)
-    } else {
-      res.send(html)
     }
+    res.send(html)
   })
 }
 
@@ -427,9 +385,8 @@ module.exports.getResouces = function (req, res, next) {
   res.render('basicView', locals, function (err, html) {
     if (err) {
       return next(err)
-    } else {
-      res.send(html)
     }
+    res.send(html)
   })
 }
 
@@ -444,9 +401,8 @@ module.exports.getDummyPage = function (req, res, next) {
   res.render('basicView', locals, function (err, html) {
     if (err) {
       return next(err)
-    } else {
-      res.send(html)
     }
+    res.send(html)
   })
 }
 
@@ -461,9 +417,8 @@ module.exports.getAbout = function (req, res, next) {
   res.render('basicView', locals, function (err, html) {
     if (err) {
       return next(err)
-    } else {
-      res.send(html)
     }
+    res.send(html)
   })
 }
 
@@ -478,9 +433,8 @@ module.exports.getContact = function (req, res, next) {
   res.render('basicView', locals, function (err, html) {
     if (err) {
       return next(err)
-    } else {
-      res.send(html)
     }
+    res.send(html)
   })
 }
 
@@ -495,9 +449,8 @@ module.exports.getTeam = function (req, res, next) {
   res.render('basicView', locals, function (err, html) {
     if (err) {
       return next(err)
-    } else {
-      res.send(html)
     }
+    res.send(html)
   })
 }
 
@@ -512,8 +465,7 @@ module.exports.getCustomerService = function (req, res, next) {
   res.render('basicView', locals, function (err, html) {
     if (err) {
       return next(err)
-    } else {
-      res.send(html)
     }
+    res.send(html)
   })
 }

@@ -8,35 +8,7 @@ module.exports = function (req, res, cb) {
   !expectedResponse ? expectedResponse = req.body.template.expectedResponse : null
   var email = req.body.email.trim()
 
-  /*
-  var promise = User.findOne( { email: email } ).exec()
-  promise.then(function(user) {
-    //
-  })
-  .then(function(user) {
-    //
-  })
-  .catch(function(err){
-    //
-  })
-  */
-  /*
-  User.findOne( { email: email } )
-  .then(function(user) {
-    if (user) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmail > promise 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-    }
-    if (!user) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmail > promise 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-    }
-  })
-  .catch(function(err){
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmail > promise 3 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-    cb(err)
-  })
-  */
-
-  User.findOne( { emailX: email }, function (err, user) {
+  UserX.findOne( { email: email }, function (err, user) {
 
     if (err) {
 
@@ -70,4 +42,32 @@ module.exports = function (req, res, cb) {
       }
     }
   })
+
+  /*
+  var promise = User.findOne( { email: email } ).exec()
+  promise.then(function(user) {
+    //
+  })
+  .then(function(user) {
+    //
+  })
+  .catch(function(err){
+    //
+  })
+  */
+  /*
+  User.findOne( { email: email } )
+  .then(function(user) {
+    if (user) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmail > promise 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+    }
+    if (!user) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmail > promise 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+    }
+  })
+  .catch(function(err){
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> evaluateUserEmail > promise 3 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+    cb(err)
+  })
+  */
 }

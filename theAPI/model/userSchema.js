@@ -88,9 +88,11 @@ userSchema.pre('save', function (next) {
 })
 
 userSchema.methods.setPassword = function (password, cb) {
+
   var self = this
 
-  crypto.randomBytes(64, function(err, buf) {
+  crypto.randomBytes(64, function (err, buf) {
+
     if (err) {
       return cb(err)
     }
@@ -98,7 +100,8 @@ userSchema.methods.setPassword = function (password, cb) {
     var salt = buf.toString('hex')
     self.salt = salt
 
-    crypto.pbkdf2(password, self.salt, 1000, 64, 'sha512', function(err, key) {
+    crypto.pbkdf2(password, self.salt, 1000, 64, 'sha512', function (err, key) {
+
       if (err) {
         return cb(err)
       }
@@ -110,14 +113,17 @@ userSchema.methods.setPassword = function (password, cb) {
   })
 }
 
-userSchema.methods.checkPassword = function(password, cb) {
+userSchema.methods.checkPassword = function (password, cb) {
+  
   var result
   var self = this
 
-  crypto.pbkdf2(password, self.salt, 1000, 64, 'sha512', function(err, key) {
+  crypto.pbkdf2(password, self.salt, 1000, 64, 'sha512', function (err, key) {
+
     if (err) {
       return cb(err)
     }
+
     var hash = key.toString('hex')
     self.hash === hash ? result = true : result = false
     cb(null, result)

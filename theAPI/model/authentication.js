@@ -32,7 +32,7 @@ module.exports = function() {
           return done(null, false, { message: 'No user has that username!' })
         }
 
-        user.checkPassword(password, function(err, result) {
+        user.checkPassword(password, function (err, result) {
 
           if (err) {
             return done(err)

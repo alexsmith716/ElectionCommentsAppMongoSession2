@@ -1,7 +1,7 @@
 extends layout
 
 block metas
-  meta(name="csrf-token", content=`${csrfToken}`)
+  meta(name="csrf-token", content= `${csrfToken}`)
 
 block title
   title Log In
@@ -134,5 +134,10 @@ block content
 
   .modal-backdrop.fade.in(style="display: none;")
      img(src="/images/ajax-loader.gif" style="position: fixed; top: 45%; left: 49%;")
+
+  - if ( err )
+    script.
+      $('#modalAlert .alertDanger').addClass('show').removeClass('hide')
+      $('#modalAlert').modal({keyboard: false,backdrop: 'static'})
 
 

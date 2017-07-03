@@ -79,12 +79,12 @@ app.use(cookieParser())
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 // var cookieExpireDate = new Date( Date.now() + 14 * 24 * 60 * 60 )
-var sessionExpireDate = 6 * 60 * 60 * 1000
-// 6 hours
-// var sessionExpireDate = 1 * 60 * 1000
+// 1 hour(s)
+var sessionExpireDate = 1 * 60 * 60 * 1000
 // 1 minute
-// var sessionExpireDate = 10 * 60 * 1000
+// var sessionExpireDate = 1 * 60 * 1000
 // 10 minutes
+// var sessionExpireDate = 10 * 60 * 1000
 
 app.use(session({
   store: new MongoStore({
@@ -137,7 +137,7 @@ app.use(function (req, res, next) {
   // req.user ? console.log('REQ.user._id: ', req.user._id) : null
   // console.log('REQ.body ++: ', req.body)
   // console.log('REQ.params ++: ', req.params)
-  console.log('RES.headersSent ++: ', res.headersSent)
+  // console.log('RES.headersSent ++: ', res.headersSent)
 
   var reqBody = sanitize(req.body)
   var reqQuery = sanitize(req.query)
@@ -262,7 +262,7 @@ if (app.get('env') === 'development') {
     } else {
 
       if (referer) {
-        console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR - referer #############################')
+        console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR - referer #############################: ', req.session.renderableErr)
         res.redirect(referer)
 
       } else {
