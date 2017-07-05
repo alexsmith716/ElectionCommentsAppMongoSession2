@@ -6,7 +6,6 @@ var passport = require('passport')
 var pugCompiler = require('../../shared/pugCompiler')
 var mailer = require('../../shared/mailer')
 var sanitizeInputModule = require('../../shared/sanitizeInput')
-require('../../shared/sessionPrototype')
 var serverSideValidation = require('../../shared/serverSideValidation')
 var stateNamer = require('../../shared/stateNamer')
 var url = require('url')
@@ -247,7 +246,7 @@ module.exports.getSignup = function (req, res, next) {
 
 module.exports.getUserHome = function (req, res, next) {
 
-  res.render('userHomeX', { err: req.session.renderableErr }, function (err, html) {
+  res.render('userHome', { err: req.session.renderableErr }, function (err, html) {
 
     if (err) {
       return next(err)
@@ -325,7 +324,7 @@ module.exports.getNotifyError = function (req, res, next) {
     if (err) {
       return next(err)
     }
-    req.session.renderableErr = null
+    req.session.renderableErr ? req.session.renderableErr = null : null
     res.send(html)
   })
 }

@@ -12,7 +12,7 @@ html(lang="en-US")
     block metas
 
     block title
-    
+
     link(href='data:image/x-icon;', type='image/x-icon', rel='shortcut icon') 
     intercept-url(pattern="/favicon.ico" access="ROLE_ANONYMOUS")
     link(href='/bootstrap/css/bootstrap.min.css', rel='stylesheet')
@@ -110,7 +110,6 @@ html(lang="en-US")
           if (multipleUserSession !== undefined)
             .alert.alert-warning(role="alert") Alert: multiple instances of users have logged on to this account.
 
-      
       .view
 
         script.
@@ -126,94 +125,4 @@ html(lang="en-US")
 
         block content
 
-
-    //-
-      footer
-        .footer
-          br
-          .container
-            .row
-              .col-md-2.col-sm-12.col-xs-12
-                .row
-                  .col-md-12.col-sm-6.col-xs-6
-                    a(href="https://itunes.apple.com/us/" target="_blank")
-                      <!-- img(src="/images/ios.svg" width="125" height="54" alt="Get it for iOS" class="apple") -->
-
-                  .col-md-12.col-sm-6.col-xs-6
-                    a(href="https://play.google.com/store/" target="_blank")
-                      <!-- img(src="/images/android.svg" width="125" height="54" alt="Get it for Android" class="android") -->
-
-              .col-md-6.col-sm-12.col-xs-12
-                .row
-                  .col-md-5.col-md-offset-1.col-sm-6.col-xs-6
-                    span.title-footer Company
-
-                    hr.under
-
-                    a(href="/about") About
-                    br
-
-                    a(href="/customerservice") Customer Service
-                    br
-
-                    a(href="/pricing") Pricing
-                    br
-
-                    a(href="/contact") Contact
-
-                    br.mobile-only
-
-                    br.mobile-only
-
-
-                  .col-md-5.col-md-offset-1.col-sm-6.col-xs-6
-                    span.title-footer Connect
-
-                    hr.under
-
-                    a(href="/loginorsignup") Facebook
-                    br
-
-                    a(href="/loginorsignup") Twitter
-                    br
-
-                    a(href="/loginorsignup") Yelp
-                    br
-
-                    a(href="/events") Events
-                    br
-
-                    a(href="/blog") Blog
-
-              .col-md-4.col-sm-12.col-xs-12
-                span.title-footer Subscribe
-                hr.under
-                p Stay informed with the latest products, updates and notices from ThisGreatApp!
-                form.form-inline.form-footer(name="form")
-                  .input-group
-                    input.form-control(type="email" placeholder="Enter email" required="")
-                    span.input-group-btn
-                      button.btn.btn-default(type="submit" disabled="disabled") Submit
-
-
-          br
-          hr
-          br
-
-          .container
-            .last-left
-              .address-info
-                span 99 Irving Plaza, 95th floor, New York, NY 10003
-
-              span.phone-info (212) 555-5555
-
-          .container
-            .last-left.bottom-row
-              a(class="legal-link" href="/") © 2016 ThisGreatApp!, Inc.
-              a(class="legal-link" href="/privacy") Privacy
-              a(class="legal-link" href="/terms") Terms
-
-
-    
     block bodyScripts
-
