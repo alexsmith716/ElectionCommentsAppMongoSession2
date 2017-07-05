@@ -32,9 +32,9 @@ block content
 
             div(id="errScrollbox")
 
-  - if (err)
+  - if ( err )
     script.
-      $('.err-title').html( !{JSON.stringify(err.title)} )
-      $('.alertDanger').html( !{JSON.stringify(err.alert)} )
-      $('#errScrollbox').html( !{JSON.stringify(err.message)} )
+      $('.err-title').html( '!{err.title}' )
+      $('.alertDanger').html( '!{err.alert}' )
+      $('#errScrollbox').html( '!{err.message}' )
       $('.alertDanger').addClass('show').removeClass('hide')

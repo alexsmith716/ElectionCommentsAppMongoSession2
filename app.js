@@ -19,7 +19,6 @@ var MongoStore = require('connect-mongo')(session)
 var createError = require('http-errors')
 require('./theAPI/model/dbConnector')
 var sanitize = require('./shared/sanitizeInput')
-require('./shared/sessionPrototype')
 var onFinished = require('on-finished')
 var setUpAuthentication = require('./theAPI/model/authentication')
 var serverRoutes = require('./theServer/routes/serverRoutes')
@@ -80,7 +79,7 @@ app.use(cookieParser())
 
 // var cookieExpireDate = new Date( Date.now() + 14 * 24 * 60 * 60 )
 // 1 hour(s)
-var sessionExpireDate = 1 * 60 * 60 * 1000
+var sessionExpireDate = 6 * 60 * 60 * 1000
 // 1 minute
 // var sessionExpireDate = 1 * 60 * 1000
 // 10 minutes
@@ -121,13 +120,13 @@ app.use(function (req, res, next) {
   // console.log('REQ.fresh ++: ', req.fresh)
   // console.log('REQ.stale ++: ', req.stale)
   // console.log('REQ.protocol ++: ', req.protocol)
-  console.log('REQ.method ++: ', req.method)
+  //console.log('REQ.method ++: ', req.method)
   // console.log('REQ.route ++: ', req.route)
   // console.log('REQ.url ++: ', req.url)
-  console.log('REQ.originalUrl ++++++++++++++++++++++++++++++++++++++++++++++++++: ', req.originalUrl)
-  console.log('REQ.path +++++++++++++++++++++++++++++++++++++++++++++++++++++++++: ', req.path)
+  //console.log('REQ.originalUrl ++: ', req.originalUrl)
+  ///console.log('REQ.path ++: ', req.path)
   // console.log('REQ.headers ++: ', req.headers)
-  console.log('REQ.headers.referer ++++++++++++++++++++++++++++++++++++++++++++++: ', req.headers['referer'])
+  // console.log('REQ.headers.referer ++: ', req.headers['referer'])
   // console.log('REQ.headers.user-agent ++: ', req.headers['user-agent'])
   // console.log('REQ.query ++: ', req.query)
   // console.log('REQ.query.token ++: ', req.query.token)
@@ -158,18 +157,20 @@ app.use(function (req, res, next) {
 app.use(function (req, res, next) {
 
   res.locals.currentUser = req.user
-  res.locals.reqUrl = req.url
+  res.locals.reqUrl = req.originalUrl
 
-  if (req.headers['referer']) {
-    res.locals.referer = url.parse(req.headers['referer']).pathname
+  var expr = /\/api/
+  if ( !expr.test(req.originalUrl) ) {
+    req.session.currentRoute ? req.session.referingRoute = req.session.currentRoute : null
+    req.session.currentRoute = req.originalUrl
   }
-  
+
   console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ GOING THROUGH APP NOW ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
 
-  // if(res.locals.currentUser){
-    // req.session.paginateFrom = res.locals.sortDocsFrom;
-    // req.session.lastPageVisited = '/indexView';
-  // }
+  if(res.locals.currentUser){
+    req.session.paginateFrom = res.locals.sortDocsFrom;
+    req.session.lastPageVisited = '/indexView';
+  }
 
   next()
 })
@@ -233,16 +234,16 @@ if (app.get('env') === 'development') {
 
     res.status(err.status || 500)
 
-    console.log('############################# DEV ERR: ', err)
+    //console.log('############################# DEV ERR: ', err)
     //console.log('############################# DEV ERR.code: ', err.code)
     //console.log('############################# DEV ERR.status: ', err.status)
     //console.log('############################# DEV ERR.name: ', err.name)
     //console.log('############################# DEV ERR.message: ', err.message)
     //console.log('############################# DEV ERR.referer: ', err.referer)
-    console.log('############################# ++++++++++++++++++++++++++++++++++++++++')
-    console.log('############################# DEV REQ.originalUrl: ',  req.originalUrl)
-    console.log('############################# DEV REQ.HEADERS.referer: ', req.headers['referer'])
-    console.log('############################# DEV REQ.xhr: ', req.xhr)
+    //console.log('############################# ++++++++++++++++++++++++++++++++++++++++')
+    //console.log('############################# DEV REQ.originalUrl: ',  req.originalUrl)
+    //console.log('############################# DEV REQ.HEADERS.referer: ', req.headers['referer'])
+    //console.log('############################# DEV REQ.xhr: ', req.xhr)
 
     var referer
 
@@ -262,7 +263,7 @@ if (app.get('env') === 'development') {
     } else {
 
       if (referer) {
-        console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR - referer #############################: ', req.session.renderableErr)
+        console.log('############################# APP UNCAUGHT ERR HANDLER DEVELOPMENT > NO XHR - referer #############################: ', referer)
         res.redirect(referer)
 
       } else {
